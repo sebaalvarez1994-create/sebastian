@@ -12,8 +12,24 @@
 :root{
   --bg:#eef2f7; --card:#ffffff; --line:#e3e8ef; --text:#0f172a; --muted:#64748b; --soft:#f5f7fb;
   --blue:#1f5eff; --blue-50:#eaf0ff; --green:#16a34a; --amber:#f59e0b; --red:#ef4444; --violet:#7c3aed; --teal:#0891b2; --gray:#64748b;
+  --text2:#334155; --muted2:#94a3b8; --line2:#f0f3f7; --track:#e2e8f0; --track2:#cbd5e1; --glass:rgba(255,255,255,.88);
+  --blue-50:#eaf0ff; --green-50:#ecfdf3; --red-50:#fef2f2; --red-ink:#991b1b; --amber-50:#fffbeb; --amber-ink:#92400e; --loc-line:#d6e0f0; --mark:#fff3b0;
+  --st1:#f9fbfe; --st2:#e7edf5; --st3:#dfe6f0; color-scheme:light;
   --radius:16px; --shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.06);
 }
+:root[data-theme="dark"]{
+  --bg:#0a101c; --card:#111a2a; --line:#22304a; --line2:#1a2538; --text:#e7edf7; --text2:#c3cee0; --muted:#8fa0ba; --muted2:#6b7d98; --soft:#16213a;
+  --blue:#5b8bff; --blue-50:#1a2a52; --green:#22c55e; --green-50:#0f2a1c; --red:#f87171; --red-50:#3a1518; --red-ink:#fecaca; --amber-50:#33240a; --amber-ink:#fcd34d;
+  --track:#26344d; --track2:#3a4a66; --glass:rgba(17,26,42,.88); --loc-line:#2c3e63; --mark:#5b4a12;
+  --st1:#1b2740; --st2:#121b2d; --st3:#0d1422; color-scheme:dark;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+}
+.theme-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--soft);display:grid;place-items:center;color:var(--text2);flex:none}
+.theme-btn:hover{color:var(--blue)}
+.theme-btn .moon{display:none}
+:root[data-theme="dark"] .theme-btn .moon{display:block}
+:root[data-theme="dark"] .theme-btn .sun{display:none}
+body,.card,.topbar{transition:background-color .25s,border-color .25s,color .25s}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px;-webkit-font-smoothing:antialiased}
@@ -23,29 +39,29 @@ input{font:inherit;color:inherit}
 .num{font-variant-numeric:tabular-nums}
 
 /* ---------- Top bar ---------- */
-.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;padding:10px 20px;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;padding:10px 20px;background:var(--glass);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
 .brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3b7bff,#1f45d6);display:grid;place-items:center;box-shadow:0 4px 12px rgba(31,94,255,.35)}
 .brand small{display:block;font-weight:500;font-size:11px;color:var(--muted);letter-spacing:0}
 .tabs{display:flex;gap:4px;background:var(--soft);border:1px solid var(--line);padding:4px;border-radius:12px}
 .tab{padding:7px 14px;border-radius:9px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:7px;white-space:nowrap}
-.tab.active{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(15,23,42,.1)}
+.tab.active{background:var(--card);color:var(--blue);box-shadow:0 1px 3px rgba(15,23,42,.1)}
 .gsearch{position:relative;flex:1;max-width:460px;margin-left:auto}
 .gsearch input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--line);border-radius:11px;background:var(--soft);outline:none}
-.gsearch input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px var(--blue-50)}
+.gsearch input:focus{border-color:var(--blue);background:var(--card);box-shadow:0 0 0 3px var(--blue-50)}
 .gsearch svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
-.gresults{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;display:none;max-height:420px;overflow:auto}
+.gresults{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;display:none;max-height:420px;overflow:auto}
 .gresults.open{display:block}
 .gresults h6{margin:8px 8px 4px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .gitem{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:8px;border-radius:8px}
 .gitem:hover,.gitem.hl{background:var(--blue-50)}
 .gitem b{display:block;font-size:13px}
 .gitem span{font-size:12px;color:var(--muted)}
-.live{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--green);background:#ecfdf3;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.live{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--green);background:var(--green-50);padding:5px 10px;border-radius:999px;white-space:nowrap}
 .live i{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 1.6s infinite}
 @keyframes blink{50%{opacity:.25}}
 .user{display:flex;align-items:center;gap:8px;white-space:nowrap}
-.avatar{width:32px;height:32px;border-radius:50%;background:#dbe5ff;color:var(--blue);display:grid;place-items:center;font-weight:700;font-size:12px}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--blue-50);color:var(--blue);display:grid;place-items:center;font-weight:700;font-size:12px}
 .user b{display:block;font-size:13px}.user small{color:var(--muted);font-size:11px}
 
 main{padding:18px 20px 28px;max-width:1600px;margin:0 auto}
@@ -68,25 +84,25 @@ main{padding:18px 20px 28px;max-width:1600px;margin:0 auto}
 .kpi.clickable{cursor:pointer}
 
 /* ---------- Stage ---------- */
-.stage{position:relative;overflow:hidden;min-height:300px;background:radial-gradient(120% 90% at 50% 40%,#f9fbfe 0%,#e7edf5 70%,#dfe6f0 100%)}
+.stage{position:relative;overflow:hidden;min-height:300px;background:radial-gradient(120% 90% at 50% 40%,var(--st1) 0%,var(--st2) 70%,var(--st3) 100%)}
 .stage canvas{display:block;width:100%;height:100%;outline:none}
 .labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.pin{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:5px;padding:4px 8px 4px 6px;border-radius:999px;background:#fff;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(15,23,42,.18);border:1.5px solid var(--c,#1f5eff);will-change:transform}
+.pin{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:5px;padding:4px 8px 4px 6px;border-radius:999px;background:var(--card);color:var(--text);font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(15,23,42,.18);border:1.5px solid var(--c,#1f5eff);will-change:transform}
 .pin::after{content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--c,#1f5eff);border-bottom:0}
 .pin i{width:8px;height:8px;border-radius:50%;background:var(--c,#1f5eff)}
 .pin.sel{background:var(--c,#1f5eff);color:#fff;transform-origin:50% 100%}
 .pin.sel i{background:#fff}
 .pin.big{font-size:12px;padding:6px 10px 6px 8px;animation:pop .35s ease-out}
 @keyframes pop{from{opacity:0;margin-top:-10px}}
-.tag{position:absolute;left:0;top:0;font-size:11px;font-weight:600;color:#334155;background:rgba(255,255,255,.85);padding:3px 8px;border-radius:7px;white-space:nowrap;border:1px solid var(--line);display:flex;align-items:center;gap:6px}
+.tag{position:absolute;left:0;top:0;font-size:11px;font-weight:600;color:var(--text2);background:var(--glass);padding:3px 8px;border-radius:7px;white-space:nowrap;border:1px solid var(--line);display:flex;align-items:center;gap:6px}
 .tag i{width:8px;height:8px;border-radius:2px;background:var(--c)}
-.tag.row{font-size:13px;font-weight:800;color:var(--blue);background:#fff}
+.tag.row{font-size:13px;font-weight:800;color:var(--blue);background:var(--card)}
 .stage-tools{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:6px;z-index:2}
-.stage-tools button{width:34px;height:34px;border-radius:10px;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(15,23,42,.08);font-weight:700;font-size:16px;display:grid;place-items:center}
+.stage-tools button{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--line);box-shadow:0 1px 3px rgba(15,23,42,.08);font-weight:700;font-size:16px;display:grid;place-items:center}
 .stage-tools button:hover{color:var(--blue)}
-.stage-hint{position:absolute;left:12px;top:12px;z-index:2;font-size:12px;color:var(--muted);background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:9px;padding:6px 10px}
+.stage-hint{position:absolute;left:12px;top:12px;z-index:2;font-size:12px;color:var(--muted);background:var(--glass);border:1px solid var(--line);border-radius:9px;padding:6px 10px}
 .legend{position:absolute;left:12px;bottom:12px;z-index:2;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 24px)}
-.legend span{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:999px;padding:4px 9px}
+.legend span{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;background:var(--glass);border:1px solid var(--line);border-radius:999px;padding:4px 9px}
 .legend i{width:8px;height:8px;border-radius:50%;background:var(--c)}
 .webgl-fail{position:absolute;inset:0;display:none;place-items:center;text-align:center;padding:24px;color:var(--muted)}
 
@@ -94,19 +110,19 @@ main{padding:18px 20px 28px;max-width:1600px;margin:0 auto}
 .jefe-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;margin-bottom:14px}
 #stage-jefe{height:560px}
 .side{display:flex;flex-direction:column;height:560px;overflow:hidden}
-.side-sel{padding:14px 16px;border-bottom:1px solid var(--line)}
+.side-sel{padding:14px 16px;border-bottom:1px solid var(--line);max-height:62%;overflow:auto;flex:none}
 .fleet-tabs{display:flex;gap:4px;padding:10px 12px 6px;flex-wrap:wrap}
-.chip{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--soft);border:1px solid var(--line);color:#334155;white-space:nowrap}
+.chip{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--soft);border:1px solid var(--line);color:var(--text2);white-space:nowrap}
 .chip.active{background:var(--blue);border-color:var(--blue);color:#fff}
 .fleet{overflow:auto;flex:1;padding:4px 8px 10px}
 .frow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;padding:9px 8px;border-radius:10px}
 .frow:hover{background:var(--soft)}
 .frow.sel{background:var(--blue-50)}
 .frow b{font-size:13px}.frow small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.t-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,#fff);color:var(--c)}
-.bar{height:5px;border-radius:9px;background:#edf1f6;overflow:hidden;margin-top:6px}
+.t-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,var(--card));color:var(--c)}
+.bar{height:5px;border-radius:9px;background:var(--track);overflow:hidden;margin-top:6px}
 .bar i{display:block;height:100%;border-radius:9px;background:var(--c,var(--blue));transition:width .6s}
-.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,#fff);white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--card));white-space:nowrap}
 .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c)}
 .sel-head{display:flex;align-items:center;gap:10px}
 .sel-head .t-ic{width:42px;height:42px}
@@ -118,7 +134,7 @@ main{padding:18px 20px 28px;max-width:1600px;margin:0 auto}
 .fact{background:var(--soft);border-radius:10px;padding:8px 10px}
 .fact small{display:block;font-size:11px;color:var(--muted)}
 .fact b{font-size:13px}
-.note{display:flex;gap:8px;align-items:flex-start;background:#fef2f2;color:#991b1b;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:500;margin-bottom:10px}
+.note{display:flex;gap:8px;align-items:flex-start;background:var(--red-50);color:var(--red-ink);border-radius:10px;padding:8px 10px;font-size:12px;font-weight:500;margin-bottom:10px}
 .mini-title{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin:12px 0 6px}
 .dist{display:grid;gap:7px}
 .dist-row{display:grid;grid-template-columns:110px 1fr 28px;gap:8px;align-items:center;font-size:12px;font-weight:600}
@@ -127,16 +143,16 @@ main{padding:18px 20px 28px;max-width:1600px;margin:0 auto}
 /* stepper */
 .stepper{display:grid;grid-template-columns:repeat(5,1fr);margin:6px 0 2px}
 .step{position:relative;text-align:center;font-size:10.5px;color:var(--muted);font-weight:600}
-.step::before{content:"";position:absolute;top:9px;left:-50%;right:50%;height:2px;background:#e2e8f0}
+.step::before{content:"";position:absolute;top:9px;left:-50%;right:50%;height:2px;background:var(--track)}
 .step:first-child::before{display:none}
 .step.done::before,.step.cur::before{background:var(--blue)}
-.step .dot{position:relative;z-index:1;width:20px;height:20px;border-radius:50%;margin:0 auto 4px;background:#fff;border:2px solid #cbd5e1;display:grid;place-items:center}
+.step .dot{position:relative;z-index:1;width:20px;height:20px;border-radius:50%;margin:0 auto 4px;background:var(--card);border:2px solid var(--track2);display:grid;place-items:center}
 .step.done .dot{background:var(--blue);border-color:var(--blue)}
 .step.done .dot::after{content:"";width:6px;height:3px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
 .step.cur .dot{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-50)}
 .step.cur .dot::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--blue);animation:blink 1.4s infinite}
 .step.cur{color:var(--blue)}
-.step em{display:block;font-style:normal;font-weight:500;font-size:10px;color:#94a3b8}
+.step em{display:block;font-style:normal;font-weight:500;font-size:10px;color:var(--muted2)}
 .order-card{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}
 .order-card header{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}
 .order-card header b{font-size:13px}
@@ -151,15 +167,15 @@ main{padding:18px 20px 28px;max-width:1600px;margin:0 auto}
 .pstage small i{width:8px;height:8px;border-radius:50%;background:var(--c)}
 .pstage b{display:block;font-size:26px;letter-spacing:-.02em;margin:4px 0 2px}
 .table-wrap{overflow:auto;max-height:440px;padding:0 8px 8px}
-thead th{position:sticky;top:0;background:#fff;z-index:1}
+thead th{position:sticky;top:0;background:var(--card);z-index:1}
 table{width:100%;border-collapse:collapse;min-width:760px}
 th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;font-weight:700;padding:8px 10px;border-bottom:1px solid var(--line)}
-td{padding:10px;border-bottom:1px solid #f0f3f7;font-size:13px;white-space:nowrap}
+td{padding:10px;border-bottom:1px solid var(--line2);font-size:13px;white-space:nowrap}
 tbody tr{cursor:pointer}
 tbody tr:hover{background:var(--soft)}
 tbody tr.sel{background:var(--blue-50)}
 .mini-steps{display:flex;gap:3px;align-items:center}
-.mini-steps i{width:16px;height:5px;border-radius:3px;background:#e2e8f0}
+.mini-steps i{width:16px;height:5px;border-radius:3px;background:var(--track)}
 .mini-steps i.on{background:var(--blue)}
 .late{color:var(--red);font-weight:700;font-size:11px;margin-left:6px}
 
@@ -169,7 +185,7 @@ tbody tr.sel{background:var(--blue-50)}
 .bigsearch{padding:16px 16px 10px}
 .bigsearch label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px}
 .bigsearch .box{position:relative}
-.bigsearch input{width:100%;padding:12px 40px 12px 40px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:15px;outline:none}
+.bigsearch input{width:100%;padding:12px 40px 12px 40px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);font-size:15px;outline:none}
 .bigsearch input:focus{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-50)}
 .bigsearch .box>svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted)}
 .bigsearch .clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:8px;color:var(--muted);display:none;font-size:18px}
@@ -182,18 +198,18 @@ tbody tr.sel{background:var(--blue-50)}
 .prod:hover{background:var(--soft)}
 .prod.sel{background:var(--blue-50);border-color:#c9d8ff}
 .prod-top{display:flex;gap:10px;align-items:flex-start}
-.cat-ic{width:36px;height:36px;border-radius:10px;flex:none;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--c);background:color-mix(in srgb,var(--c) 14%,#fff)}
+.cat-ic{width:36px;height:36px;border-radius:10px;flex:none;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--card))}
 .prod b{font-size:13.5px;display:block}
 .prod small{font-size:12px;color:var(--muted)}
 .prod .qty{margin-left:auto;text-align:right;font-weight:700;font-size:13px;white-space:nowrap}
 .prod .qty small{display:block;font-weight:500}
 .locs{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 0 46px}
-.loc{font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:7px;background:#fff;border:1px solid #d6e0f0;color:var(--blue);font-variant-numeric:tabular-nums}
+.loc{font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:7px;background:var(--card);border:1px solid var(--loc-line);color:var(--blue);font-variant-numeric:tabular-nums}
 .loc:hover,.loc.sel{background:var(--blue);color:#fff;border-color:var(--blue)}
 .low{color:var(--red);font-size:11px;font-weight:700}
-mark{background:#fff3b0;color:inherit;border-radius:3px;padding:0 1px}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
 #stage-dep{height:640px}
-.pdetail{position:absolute;left:12px;bottom:12px;z-index:3;width:min(360px,calc(100% - 24px));background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(15,23,42,.16);padding:14px;display:none}
+.pdetail{position:absolute;left:12px;bottom:12px;z-index:3;width:min(360px,calc(100% - 24px));background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(15,23,42,.16);padding:14px;display:none}
 .pdetail.open{display:block;animation:pop .25s ease-out}
 .where{display:flex;gap:6px;margin:10px 0}
 .where div{flex:1;background:var(--blue-50);border-radius:10px;padding:8px;text-align:center}
@@ -203,15 +219,85 @@ mark{background:#fff3b0;color:inherit;border-radius:3px;padding:0 1px}
 .lots td,.lots th{padding:6px 4px;font-size:12px}
 .lots tr{cursor:pointer}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;font-weight:600;font-size:12.5px;background:var(--blue);color:#fff}
-.btn.ghost{background:var(--soft);color:#334155;border:1px solid var(--line)}
+.btn.ghost{background:var(--soft);color:var(--text2);border:1px solid var(--line)}
 .empty{padding:30px 16px;text-align:center;color:var(--muted)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;font-size:13px;opacity:0;transition:.25s;pointer-events:none;z-index:99}
 .toast.on{opacity:1;transform:translateX(-50%)}
-footer{text-align:center;color:#94a3b8;font-size:12px;padding:0 0 20px}
+.head-actions{display:flex;gap:8px;flex-wrap:wrap}
+.head-actions .btn{padding:9px 13px}
+label.btn{cursor:pointer}
+.btn.danger{color:var(--red)}
+.btn:disabled{opacity:.5;cursor:default}
+/* modal */
+.modal-bg{position:fixed;inset:0;z-index:100;background:rgba(8,12,22,.55);display:grid;place-items:center;padding:16px;animation:fade .15s}
+.modal-bg[hidden]{display:none}
+@keyframes fade{from{opacity:0}}
+.modal{width:min(640px,100%);max-height:calc(100vh - 32px);overflow:auto;overflow-x:hidden;padding:20px 22px;animation:pop .2s ease-out}
+.modal h2{margin:0 0 4px;font-size:18px;letter-spacing:-.01em}
+.modal h4{margin:18px 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap}
+.form-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 12px}
+.field{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:var(--text2)}
+.field input,.field select,.field textarea{padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--soft);outline:none;font-size:13.5px;color:var(--text)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-50)}
+.field textarea{resize:vertical;min-height:60px;font-family:inherit}
+.field input,.field select{min-width:0;width:100%}
+.field.full{grid-column:1/-1}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.checks label{display:flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;background:var(--soft)}
+.checks label:has(input:checked){border-color:var(--blue);background:var(--blue-50);color:var(--blue)}
+.checks input{accent-color:var(--blue);margin:0}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg label{flex:1;min-width:200px;display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;font-size:12.5px}
+.seg label b{display:block;font-size:13px}
+.seg label:has(input:checked){border-color:var(--blue);background:var(--blue-50)}
+.seg input{accent-color:var(--blue);margin-top:2px}
+.imp-sum{display:flex;gap:8px;margin:12px 0}
+.imp-sum div{flex:1;background:var(--soft);border-radius:10px;padding:10px}
+.imp-sum b{font-size:20px;display:block}
+.imp-sum small{color:var(--muted);font-size:11.5px;font-weight:600}
+.errlist{margin:6px 0 0;padding:0;list-style:none;font-size:12px;max-height:150px;overflow:auto}
+.errlist li{padding:5px 8px;border-radius:7px;background:var(--red-50);color:var(--red-ink);margin-bottom:4px}
+.errlist.warn li{background:var(--amber-50);color:var(--amber-ink)}
+.prev{width:100%;min-width:0;border-collapse:collapse}
+.prev td,.prev th{padding:6px 6px;font-size:12px}
+.format{font-size:12px;color:var(--muted);background:var(--soft);border-radius:10px;padding:10px 12px;line-height:1.55}
+.format code{font-weight:700;color:var(--text2)}
+/* venc */
+.vb{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap;color:var(--c);background:color-mix(in srgb,var(--c) 13%,var(--card))}
+/* choferes */
+.drv-toolbar{display:flex;gap:12px;align-items:center;padding:12px;margin-bottom:14px;flex-wrap:wrap}
+.drv-toolbar .box{position:relative;flex:1;min-width:220px}
+.drv-toolbar .box svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.drv-toolbar input{width:100%;padding:9px 12px 9px 34px;border:1px solid var(--line);border-radius:10px;background:var(--soft);outline:none}
+.drv-toolbar input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-50)}
+.drv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.drv{padding:16px;display:flex;flex-direction:column;gap:12px}
+.drv.flash{animation:flash 1.6s ease-out}
+@keyframes flash{0%,40%{box-shadow:0 0 0 4px var(--blue)}}
+.drv-h{display:flex;gap:12px;align-items:center}
+.drv-av{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-weight:800;font-size:15px;color:#fff;background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 60%,#000));flex:none}
+.drv-h b{font-size:15px;display:block}
+.drv-h small{color:var(--muted);font-size:12px}
+.drv-h .pill{margin-left:auto;align-self:flex-start}
+.drv-meta{display:flex;gap:8px;flex-wrap:wrap}
+.drv-meta span{font-size:12px;background:var(--soft);border-radius:8px;padding:5px 9px;color:var(--muted)}
+.drv-meta b{color:var(--text)}
+.docs{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.docs li{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;font-size:12.5px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.docs li:last-child{border-bottom:0}
+.docs .d{color:var(--muted);font-size:12px}
+.habs{display:flex;gap:5px;flex-wrap:wrap}
+.hab{font-size:11px;font-weight:600;padding:3px 8px;border-radius:7px;background:var(--blue-50);color:var(--blue)}
+.drv footer{display:flex;gap:8px;justify-content:flex-end;padding:0;margin-top:auto;color:inherit;font-size:inherit}
+.drv-note{font-size:12px;color:var(--muted);font-style:italic}
+.link{color:var(--blue);font-weight:600;font-size:12px;text-decoration:underline;text-underline-offset:2px}
+footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
 
 @media (max-width:1180px){
   .jefe-grid,.dep-grid{grid-template-columns:minmax(0,1fr)}
   .side{height:auto;max-height:none}
+  .side-sel{max-height:none}
   .fleet{max-height:360px}
   .dep-panel{height:auto}
   .results{max-height:420px}
@@ -232,8 +318,18 @@ footer{text-align:center;color:#94a3b8;font-size:12px;padding:0 0 20px}
   .where b{font-size:15px}
   .tab span{display:none}
   .stage-hint{display:none}
+  .form-grid{grid-template-columns:minmax(0,1fr)}
+  .head-actions{width:100%}
+  .head-actions .btn{flex:1;justify-content:center}
+  .tabs{order:1}
 }
 </style>
+<script>
+// Aplica el tema guardado (o el del sistema) antes de pintar, para evitar parpadeos.
+(function () { let t = null; try { t = localStorage.getItem('valsur.theme'); } catch (e) {}
+  if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.dataset.theme = t; })();
+</script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -255,6 +351,9 @@ footer{text-align:center;color:#94a3b8;font-size:12px;padding:0 0 20px}
     <button class="tab" data-view="deposito" role="tab">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/><path d="M7 21v-8h10v8M7 17h10"/></svg>
       <span>Depósito</span></button>
+    <button class="tab" data-view="choferes" role="tab">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg>
+      <span>Choferes</span></button>
   </nav>
   <div class="gsearch">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -262,6 +361,10 @@ footer{text-align:center;color:#94a3b8;font-size:12px;padding:0 0 20px}
     <div class="gresults" id="gresults"></div>
   </div>
   <div class="live"><i></i>En vivo · <span id="clock" class="num">--:--</span></div>
+  <button class="theme-btn" id="theme-btn" title="Cambiar tema claro / oscuro" aria-label="Cambiar tema claro / oscuro">
+    <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+  </button>
   <div class="user"><div class="avatar">VS</div><div><b>Jefe de operaciones</b><small>Centro de distribución</small></div></div>
 </header>
 
@@ -303,6 +406,11 @@ footer{text-align:center;color:#94a3b8;font-size:12px;padding:0 0 20px}
   <section class="view" id="view-deposito">
     <div class="view-head">
       <div><h1>Depósito central</h1><p>Encontrá cualquier mercadería y su ubicación exacta: pasillo, posición y nivel.</p></div>
+      <div class="head-actions">
+        <button class="btn ghost" id="xls-template" title="Descargar un Excel de ejemplo con el formato correcto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Plantilla</button>
+        <button class="btn ghost" id="xls-export" title="Descargar el inventario actual en Excel"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Exportar</button>
+        <label class="btn" title="Columnas: A Nombre · B Cantidad · C Vencimiento · D Zona"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0-4 4m4-4 4 4M5 20h14"/></svg>Importar Excel<input type="file" id="xls-file" accept=".xlsx,.xls,.csv" hidden></label>
+      </div>
     </div>
     <div class="kpis" id="kpis-dep"></div>
     <div class="dep-grid">
@@ -327,9 +435,26 @@ footer{text-align:center;color:#94a3b8;font-size:12px;padding:0 0 20px}
       </div>
     </div>
   </section>
+  <!-- ================= CHOFERES ================= -->
+  <section class="view" id="view-choferes">
+    <div class="view-head">
+      <div><h1>Choferes</h1><p>Perfiles, vencimientos de documentación y habilitaciones del personal de conducción.</p></div>
+      <div class="head-actions"><button class="btn" id="drv-add">+ Agregar chofer</button></div>
+    </div>
+    <div class="kpis" id="kpis-drv"></div>
+    <div class="card drv-toolbar">
+      <div class="box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="drv-search" type="text" placeholder="Buscar por nombre, DNI, patente o habilitación" autocomplete="off">
+      </div>
+      <div class="cats" id="drv-filters" style="padding:0"></div>
+    </div>
+    <div class="drv-grid" id="drivers"></div>
+  </section>
 </main>
 <footer>Valsur Logística · Datos de demostración simulados</footer>
 <div class="toast" id="toast"></div>
+<div class="modal-bg" id="modal" hidden><div class="modal card" role="dialog" aria-modal="true" id="modal-body"></div></div>
 
 <script type="module">
 import * as THREE from 'three';
@@ -386,6 +511,7 @@ const ICON = {
   order: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>',
   check: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>',
   alert: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></svg>',
+  user: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
   grid: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>',
 };
 
@@ -500,7 +626,15 @@ trucks.forEach(t => t.kg = t.orders.reduce((a, id) => a + orders.find(o => o.id 
    Motor 3D compartido
    ========================================================= */
 const matCache = new Map();
-const M = (c, extra) => { const k = c + JSON.stringify(extra || {}); if (!matCache.has(k)) matCache.set(k, new THREE.MeshLambertMaterial({ color: c, ...extra })); return matCache.get(k); };
+const M = (c, extra) => {
+  const k = c + JSON.stringify(extra || {});
+  if (!matCache.has(k)) { const m = new THREE.MeshLambertMaterial({ color: c, ...extra }); m.userData.base = c; tintMat(m); matCache.set(k, m); }
+  return matCache.get(k);
+};
+// Colores del suelo, calles y edificios para el tema oscuro (el resto mantiene su color).
+const DARK_TINT = { 0xe3ebe2: 0x1d2b2c, 0xc4cdd9: 0x2c3a52, 0xeef2f6: 0x1c2638, 0xf8fafc: 0xc9d3e1, 0xe2e8f0: 0x8592a8, 0xd5dbe3: 0x5d6b82, 0x94a3b8: 0x5b6a82, 0xffffff: 0xdde4ee };
+const isDark = () => document.documentElement.dataset.theme === 'dark';
+function tintMat(m) { const b = m.userData.base; m.color.setHex(isDark() && DARK_TINT[b] != null ? DARK_TINT[b] : b); }
 function box(w, h, d, mat, x = 0, y = 0, z = 0, parent) {
   const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), typeof mat === 'number' ? M(mat) : mat);
   m.position.set(x, y + h / 2, z); m.castShadow = true; m.receiveShadow = true;
@@ -519,14 +653,16 @@ function createStage(host, { viewSize, camDir, shadowSize }) {
   camera.position.copy(home);
   const controls = new OrbitControls(camera, renderer.domElement);
   Object.assign(controls, { enableDamping: true, dampingFactor: .08, minZoom: .6, maxZoom: 5, minPolarAngle: .3, maxPolarAngle: 1.2, screenSpacePanning: false, zoomSpeed: 1.2 });
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xb8c6da, 1.9));
+  const hemi = new THREE.HemisphereLight(0xffffff, 0xb8c6da, 1.9); scene.add(hemi);
   const sun = new THREE.DirectionalLight(0xffffff, 2.1);
   sun.position.set(30, 60, 18); sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, { left: -shadowSize, right: shadowSize, top: shadowSize, bottom: -shadowSize, near: 1, far: 200 });
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
   scene.add(sun);
-  const S = { host, renderer, scene, camera, controls, labelLayer, labels: [], w: 1, h: 1, goal: null, follow: null };
+  const S = { host, renderer, scene, camera, controls, labelLayer, labels: [], w: 1, h: 1, goal: null, follow: null, hemi, sun };
+  S.applyTheme = () => { const d = isDark(); hemi.intensity = d ? 1.25 : 1.9; sun.intensity = d ? 1.6 : 2.1; hemi.groundColor.setHex(d ? 0x223047 : 0xb8c6da); };
+  S.applyTheme();
   const resize = () => {
     S.w = host.clientWidth || 1; S.h = host.clientHeight || 1;
     renderer.setSize(S.w, S.h, false);
@@ -607,7 +743,8 @@ function buildJefeScene() {
   cx.fillStyle = '#1f5eff'; cx.font = '800 190px Inter, Arial'; cx.textAlign = 'center'; cx.fillText('VALSUR', 512, 260);
   cx.font = '600 72px Inter, Arial'; cx.fillStyle = '#334155'; cx.fillText('L O G Í S T I C A', 512, 370);
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-  const roof = new THREE.Mesh(new THREE.PlaneGeometry(14, 7), new THREE.MeshLambertMaterial({ map: tex }));
+  const roofMat = new THREE.MeshLambertMaterial({ map: tex }); roofMat.userData.base = 0xffffff; tintMat(roofMat); matCache.set('roof', roofMat);
+  const roof = new THREE.Mesh(new THREE.PlaneGeometry(14, 7), roofMat);
   roof.rotation.x = -Math.PI / 2; roof.position.set(0, 5.21, -1); roof.receiveShadow = true; dep.add(roof);
   // andenes y portones
   box(16, .5, .4, 0x94a3b8, 0, 0, 3.2, dep);
@@ -793,7 +930,7 @@ function renderKPIsJefe() {
     ['#16a34a', ICON.check, 'Entregados hoy', fmt(kpi.deliveredBase), `<em style="color:var(--green)">${rate}% a tiempo</em>`],
     ['#ef4444', ICON.alert, 'Alertas activas', alerts, alerts ? '<em style="color:var(--red)">revisar</em>' : ''],
   ];
-  setHTML($('#kpis-jefe'), k.map(([c, ic, l, v, x], i) => `<div class="card kpi ${i === 3 ? 'clickable' : ''}" ${i === 3 ? 'data-alert' : ''}><div class="kpi-ic" style="background:color-mix(in srgb,${c} 12%,#fff);color:${c}">${ic}</div><div><small>${l}</small><b class="num">${v}</b>${x}</div></div>`).join(''));
+  setHTML($('#kpis-jefe'), k.map(([c, ic, l, v, x], i) => `<div class="card kpi ${i === 3 ? 'clickable' : ''}" ${i === 3 ? 'data-alert' : ''}><div class="kpi-ic" style="background:color-mix(in srgb,${c} 12%,var(--card));color:${c}">${ic}</div><div><small>${l}</small><b class="num">${v}</b>${x}</div></div>`).join(''));
 }
 $('#kpis-jefe').onclick = e => { if (e.target.closest('[data-alert]')) { const t = trucks.find(t => t.phase === 'incidencia'); t && selectTruck(t.id, true); } };
 
@@ -803,13 +940,14 @@ function renderSide() {
   if (t) {
     const s = statusOf(t), prog = truckProgress(t);
     const os = t.orders.map(id => orders.find(o => o.id === id)).filter(Boolean);
+    const dr = driverOf(t), drBad = dr ? DOCS.filter(([k]) => docState(dr.docs[k]).k === 'bad').map(([, l]) => l) : [];
     setHTML(box, `
       <div class="sel-head"><div class="t-ic" style="--c:${s.color}">${ICON.truck}</div>
         <div><b>${t.plate}</b><small>${t.model}</small></div>
         <span class="pill" style="--c:${s.color};margin-left:auto">${s.label}</span>
         <button class="x" data-close title="Cerrar">×</button></div>
       <div class="facts">
-        <div class="fact"><small>Chofer</small><b>${t.driver}</b></div>
+        <div class="fact"><small>Chofer</small><b>${dr ? `<button class="link" data-driver="${dr.id}">${esc(dr.name)}</button>` : 'Sin asignar'}</b></div>
         <div class="fact"><small>Ubicación</small><b>${esc(where(t))}</b></div>
         <div class="fact"><small>Velocidad</small><b class="num">${truckSpeed(t)} km/h</b></div>
         <div class="fact"><small>Estimado</small><b class="num">${truckEta(t)}</b></div>
@@ -817,6 +955,7 @@ function renderSide() {
         <div class="fact"><small>Combustible</small><b class="num">${t.fuel}%</b></div>
       </div>
       ${t.note ? `<div class="note">${ICON.alert}<span>${esc(t.note)}</span></div>` : ''}
+      ${drBad.length ? `<div class="note">${ICON.alert}<span>Documentación del chofer vencida: ${drBad.join(', ')}</span></div>` : ''}
       ${t.dest ? `<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600"><span>Recorrido</span><span class="num">${prog}%</span></div><div class="bar" style="--c:${s.color}"><i style="width:${prog}%"></i></div>` : ''}
       <div class="mini-title">Pedidos a bordo (${os.length})</div>
       ${os.length ? os.map(orderCard).join('') : '<div class="muted" style="font-size:12px">Sin pedidos asignados en este momento.</div>'}`);
@@ -834,7 +973,10 @@ function renderSide() {
     <div class="dist">${counts.map(([k, n]) => `<div class="dist-row"><span class="pill" style="--c:${STATUS[k].color}">${STATUS[k].label}</span><div class="bar" style="--c:${STATUS[k].color};margin:0"><i style="width:${n / trucks.length * 100}%"></i></div><b class="num" style="text-align:right">${n}</b></div>`).join('')}</div>
     <div class="hint">Tocá un vehículo en el mapa o en la lista para seguirlo y ver sus pedidos.</div>`);
 }
-$('#side-sel').onclick = e => { if (e.target.closest('[data-close]')) { st.selOrder = null; selectTruck(null); } };
+$('#side-sel').onclick = e => {
+  if (e.target.closest('[data-close]')) { st.selOrder = null; selectTruck(null); }
+  const dl = e.target.closest('[data-driver]'); if (dl) showDriver(drivers.find(d => d.id === dl.dataset.driver));
+};
 
 const FLEET_FILTERS = { todos: ['Todos', () => true], ruta: ['En ruta', t => ['ida', 'vuelta', 'descarga'].includes(t.phase)], deposito: ['En depósito', t => ['carga', 'taller'].includes(t.phase)], alertas: ['Alertas', t => t.phase === 'incidencia'] };
 function renderFleet() {
@@ -844,7 +986,7 @@ function renderFleet() {
     const s = statusOf(t), p = truckProgress(t);
     return `<button class="frow ${st.sel === t.id ? 'sel' : ''}" data-id="${t.id}">
       <div class="t-ic" style="--c:${s.color}">${ICON.truck}</div>
-      <div style="min-width:0"><b>${t.plate}</b> <span class="muted" style="font-size:12px">· ${t.driver}</span><small>${esc(where(t))}</small>
+      <div style="min-width:0"><b>${t.plate}</b> <span class="muted" style="font-size:12px">· ${esc(driverName(t))}</span><small>${esc(where(t))}</small>
         ${t.dest ? `<div class="bar" style="--c:${s.color}"><i style="width:${p}%"></i></div>` : ''}</div>
       <div style="text-align:right"><span class="pill" style="--c:${s.color}">${s.label}</span><small class="num" style="margin-top:4px">${truckEta(t)}</small></div></button>`;
   }).join('') || '<div class="empty">No hay vehículos en este estado.</div>');
@@ -918,6 +1060,7 @@ const CATS = {
   Higiene:    { color: '#a855f7', box: 0xc4a1f7, rows: ['D', 'E'], ab: 'HI' },
   Ferretería: { color: '#475569', box: 0x94a3b8, rows: ['E'],      ab: 'FE' },
   Automotor:  { color: '#ea580c', box: 0xfb923c, rows: ['F'],      ab: 'AU' },
+  General:    { color: '#0284c7', box: 0x7dd3fc, rows: ['A', 'B', 'C', 'D', 'E', 'F'], ab: 'GE' },
 };
 const PRODUCTS_DEF = {
   Alimentos: ['Aceite de girasol 1,5 L', 'Harina 000 1 kg', 'Yerba mate 1 kg', 'Arroz largo fino 1 kg', 'Fideos tirabuzón 500 g', 'Azúcar 1 kg', 'Leche larga vida 1 L', 'Dulce de leche 400 g', 'Tomate triturado 520 g', 'Galletitas surtidas 400 g', 'Café molido 500 g', 'Atún al natural 170 g', 'Polenta instantánea 500 g', 'Mermelada de durazno 454 g'],
@@ -929,33 +1072,72 @@ const PRODUCTS_DEF = {
 };
 const ROWS = ['A', 'B', 'C', 'D', 'E', 'F'], BAYS = 10, LEVELS = 4;
 const rowZ = i => -11 + i * 4.4, bayX = j => -8.1 + j * 1.8, SHELF_Y = [.12, 1.1, 2.08, 3.06];
-const free = [];
-ROWS.forEach((r, i) => { for (let j = 0; j < BAYS; j++) for (let l = 0; l < LEVELS; l++) free.push({ row: r, ri: i, bay: j, lvl: l }); });
 const codeOf = b => `${b.row}-${String(b.bay + 1).padStart(2, '0')}-${b.lvl + 1}`;
-function takeBin(rows) {
-  let cand = free.filter(b => rows.includes(b.row));
-  if (!cand.length) cand = free;
-  const b = cand[Math.floor(rnd() * cand.length)];
+const ALL_BINS = [];
+ROWS.forEach((r, i) => { for (let j = 0; j < BAYS; j++) for (let l = 0; l < LEVELS; l++) { const b = { row: r, ri: i, bay: j, lvl: l }; b.code = codeOf(b); ALL_BINS.push(b); } });
+const binByCode = code => ALL_BINS.find(b => b.code === code);
+let free = [], products = [], placements = [], pidSeq = 0;
+const resetBins = () => { free = ALL_BINS.slice(); };
+// Toma una posición libre: primero la pedida (pasillo/posición/nivel), si no, cualquiera del pasillo, si no, cualquiera.
+function takeBin(rows, { bay = null, lvl = null, random = false } = {}) {
+  const tiers = [
+    free.filter(b => rows.includes(b.row) && (bay == null || b.bay === bay) && (lvl == null || b.lvl === lvl)),
+    free.filter(b => rows.includes(b.row)),
+    free,
+  ];
+  const cand = tiers.find(t => t.length); if (!cand) return null;
+  const b = random ? cand[Math.floor(rnd() * cand.length)] : cand[0];
   free.splice(free.indexOf(b), 1); return b;
 }
-const products = [];
-const placements = [];
-Object.entries(PRODUCTS_DEF).forEach(([cat, names]) => names.forEach((name, i) => {
-  const c = CATS[cat];
-  const p = { id: 'P' + products.length, sku: `${c.ab}-${1000 + i * 7 + ri(1, 6)}`, name, cat, min: ri(3, 8) * 10, places: [] };
-  const n = 1 + (rnd() < .55) + (rnd() < .2);
-  for (let k = 0; k < n; k++) {
-    const b = takeBin(c.rows);
-    const pl = { ...b, code: codeOf(b), product: p, qty: ri(18, 260), lote: 'L' + ri(10000, 99999),
-      venc: ['Alimentos', 'Bebidas', 'Higiene', 'Limpieza'].includes(cat) ? new Date(2026 + ri(0, 1), ri(0, 11), ri(1, 28)) : null };
-    p.places.push(pl); placements.push(pl);
-  }
-  products.push(p);
-}));
-// algunos con stock bajo para que las alertas sean realistas
-products.filter((_, i) => i % 9 === 4).forEach(p => p.places.forEach(pl => pl.qty = ri(3, 12)));
-products.forEach(p => { p.total = p.places.reduce((a, pl) => a + pl.qty, 0); p.low = p.total < p.min; p.hay = norm([p.name, p.sku, p.cat, ...p.places.flatMap(pl => [pl.code, pl.lote, 'pasillo ' + pl.row])].join(' ')); });
-products.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+const ymd = d => d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : null;
+const fromYmd = s => { if (!s) return null; const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+function newProduct(name, cat = 'General', sku = null, min = 10) {
+  const p = { id: 'P' + (pidSeq++), sku: sku || `${CATS[cat].ab}-${2000 + pidSeq}`, name, cat, min, places: [] };
+  products.push(p); return p;
+}
+function addPlacement(p, b, qty, venc, lote = '—') {
+  const pl = { ...b, product: p, qty, lote, venc };
+  p.places.push(pl); placements.push(pl); return pl;
+}
+function finalizeInventory() {
+  products = products.filter(p => p.places.length);
+  products.forEach(p => { p.total = p.places.reduce((a, pl) => a + pl.qty, 0); p.low = p.total < p.min; p.hay = norm([p.name, p.sku, p.cat, ...p.places.flatMap(pl => [pl.code, pl.lote, 'pasillo ' + pl.row])].join(' ')); });
+  products.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+}
+function seedDemoInventory() {
+  products = []; placements = []; resetBins();
+  Object.entries(PRODUCTS_DEF).forEach(([cat, names]) => names.forEach((name, i) => {
+    const c = CATS[cat];
+    const p = newProduct(name, cat, `${c.ab}-${1000 + i * 7 + ri(1, 6)}`, ri(3, 8) * 10);
+    const n = 1 + (rnd() < .55) + (rnd() < .2);
+    for (let k = 0; k < n; k++) addPlacement(p, takeBin(c.rows, { random: true }), ri(18, 260),
+      ['Alimentos', 'Bebidas', 'Higiene', 'Limpieza'].includes(cat) ? new Date(2026 + ri(0, 1), ri(0, 11), ri(1, 28)) : null, 'L' + ri(10000, 99999));
+  }));
+  // algunos con stock bajo para que las alertas sean realistas
+  products.filter((_, i) => i % 9 === 4).forEach(p => p.places.forEach(pl => pl.qty = ri(3, 12)));
+  finalizeInventory();
+}
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+};
+function saveInventory() {
+  store.set('valsur.inv', products.map(p => ({ name: p.name, sku: p.sku, cat: p.cat, min: p.min, places: p.places.map(pl => ({ code: pl.code, qty: pl.qty, lote: pl.lote, venc: ymd(pl.venc) })) })));
+}
+function loadInventory() {
+  const data = store.get('valsur.inv');
+  if (!Array.isArray(data)) return false;
+  products = []; placements = []; resetBins();
+  data.forEach(d => {
+    const p = newProduct(d.name, CATS[d.cat] ? d.cat : 'General', d.sku, d.min ?? 10);
+    (d.places || []).forEach(x => { const b = binByCode(x.code); const i = free.indexOf(b); if (i < 0) return; free.splice(i, 1); addPlacement(p, b, x.qty, fromYmd(x.venc), x.lote || '—'); });
+  });
+  finalizeInventory();
+  return true;
+}
+let invFromFile = loadInventory();
+if (!invFromFile) seedDemoInventory();
 
 const ds = { cat: 'Todas', q: '', sel: null, selPlace: null, pins: [] };
 let forkPath = [], fork;
@@ -987,18 +1169,23 @@ function buildDepScene() {
     D.addLabel(el, new THREE.Vector3(-9.8, 4.2, rowZ(i)), 0);
   });
 
-  // mercadería
-  const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+  buildInventoryMeshes();
+  fork = forklift(); fork.position.set(11.6, 0, 14); fork.rotation.y = Math.PI; s.add(fork);
+}
+const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+const palletMat = () => new THREE.MeshLambertMaterial({ color: 0xc8a26b });
+function buildInventoryMeshes() {
+  D.scene.children.filter(o => o.userData.inv).forEach(o => { D.scene.remove(o); o.traverse(m => m.material?.dispose?.()); });
   placements.forEach(pl => {
-    const g = new THREE.Group(); const x = bayX(pl.bay), y = SHELF_Y[pl.lvl] + .02, z = rowZ(pl.ri);
-    const pal = new THREE.Mesh(boxGeo, new THREE.MeshLambertMaterial({ color: 0xc8a26b })); pal.scale.set(1.3, .12, .95); pal.position.set(0, .06, 0);
-    const h = .45 + rnd() * .3;
+    const g = new THREE.Group(); g.userData.inv = true;
+    const x = bayX(pl.bay), y = SHELF_Y[pl.lvl] + .02, z = rowZ(pl.ri);
+    const pal = new THREE.Mesh(boxGeo, palletMat()); pal.scale.set(1.3, .12, .95); pal.position.set(0, .06, 0);
+    const h = .45 + ((pl.bay * 7 + pl.lvl * 13 + pl.ri * 5) % 10) * .03;
     const crate = new THREE.Mesh(boxGeo, new THREE.MeshLambertMaterial({ color: CATS[pl.product.cat].box })); crate.scale.set(1.18, h, .86); crate.position.set(0, .12 + h / 2, 0);
     [pal, crate].forEach(m => { m.castShadow = m.receiveShadow = true; g.add(m); });
-    g.position.set(x, y, z); s.add(g);
+    g.position.set(x, y, z); D.scene.add(g);
     pl.obj = g; pl.mats = [pal.material, crate.material]; pl.top = new THREE.Vector3(x, y + .12 + h + .1, z);
   });
-  fork = forklift(); fork.position.set(11.6, 0, 14); fork.rotation.y = Math.PI; s.add(fork);
 }
 function stepFork(dt) {
   if (!forkPath.length) return;
@@ -1049,11 +1236,12 @@ function renderKPIsDep() {
     ['#16a34a', ICON.check, 'Unidades en stock', fmt(units), ''],
     ['#ef4444', ICON.alert, 'Stock bajo', low, '<em style="color:var(--red)">ver</em>'],
   ];
-  $('#kpis-dep').innerHTML = k.map(([c, ic, l, v, x], i) => `<div class="card kpi ${i === 3 ? 'clickable' : ''}" ${i === 3 ? 'data-low' : ''}><div class="kpi-ic" style="background:color-mix(in srgb,${c} 12%,#fff);color:${c}">${ic}</div><div><small>${l}</small><b class="num">${v}</b>${x}</div></div>`).join('');
+  $('#kpis-dep').innerHTML = k.map(([c, ic, l, v, x], i) => `<div class="card kpi ${i === 3 ? 'clickable' : ''}" ${i === 3 ? 'data-low' : ''}><div class="kpi-ic" style="background:color-mix(in srgb,${c} 12%,var(--card));color:${c}">${ic}</div><div><small>${l}</small><b class="num">${v}</b>${x}</div></div>`).join('');
 }
 $('#kpis-dep').onclick = e => { if (e.target.closest('[data-low]')) { ds.cat = 'Stock bajo'; renderCats(); renderResults(); } };
 function renderCats() {
-  const list = ['Todas', ...Object.keys(CATS), 'Stock bajo'];
+  const list = ['Todas', ...Object.keys(CATS).filter(c => products.some(p => p.cat === c)), 'Stock bajo'];
+  if (!list.includes(ds.cat)) ds.cat = 'Todas';
   $('#cats').innerHTML = list.map(c => `<button class="chip ${ds.cat === c ? 'active' : ''}" data-c="${c}">${c}</button>`).join('');
 }
 $('#cats').onclick = e => { const b = e.target.closest('[data-c]'); if (b) { ds.cat = b.dataset.c; renderCats(); renderResults(); } };
@@ -1079,6 +1267,11 @@ $('#results').onclick = e => {
   const r = e.target.closest('[data-p]'); r && selectProduct(products.find(p => p.id === r.dataset.p));
 };
 $('#results').onkeydown = e => { if (e.key === 'Enter') { const r = e.target.closest('[data-p]'); r && selectProduct(products.find(p => p.id === r.dataset.p)); } };
+function vencCell(d) {
+  if (!d) return '<span class="muted">—</span>';
+  const s = docState(ymd(d));
+  return `<span class="num">${fmtDate(d)}</span>${s.k === 'ok' ? '' : ` <span class="vb" style="--c:${s.c}">${s.k === 'bad' ? 'Vencido' : s.label}</span>`}`;
+}
 function renderDetail() {
   const box = $('#pdetail'), p = ds.sel;
   if (!p) { box.classList.remove('open'); box.innerHTML = ''; return; }
@@ -1087,7 +1280,7 @@ function renderDetail() {
     <div class="sel-head"><div class="cat-ic" style="--c:${c.color}">${c.ab}</div><div style="min-width:0"><b style="font-size:14px">${esc(p.name)}</b><small>${p.sku} · ${p.cat}</small></div><button class="x" data-close title="Cerrar">×</button></div>
     <div class="where"><div><small>Pasillo</small><b>${pl.row}</b></div><div><small>Posición</small><b>${pl.code.slice(2, 4)}</b></div><div><small>Nivel</small><b>${pl.lvl + 1}</b></div></div>
     <table class="lots"><thead><tr><th>Ubicación</th><th>Lote</th><th>Vence</th><th style="text-align:right">Cant.</th></tr></thead><tbody>
-    ${p.places.map(x => `<tr data-code="${x.code}" style="${x === pl ? 'background:var(--blue-50)' : ''}"><td><b style="color:var(--blue)">${x.code}</b></td><td>${x.lote}</td><td class="muted">${x.venc ? x.venc.toLocaleDateString('es-AR', { month: 'short', year: 'numeric' }) : '—'}</td><td class="num" style="text-align:right;font-weight:700">${x.qty}</td></tr>`).join('')}
+    ${p.places.map(x => `<tr data-code="${x.code}" style="${x === pl ? 'background:var(--blue-50)' : ''}"><td><b style="color:var(--blue)">${x.code}</b></td><td>${x.lote}</td><td>${vencCell(x.venc)}</td><td class="num" style="text-align:right;font-weight:700">${x.qty}</td></tr>`).join('')}
     </tbody></table>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px;flex-wrap:wrap">
       <span style="font-size:12px">Total <b class="num">${fmt(p.total)}</b> · mín. ${p.min} ${p.low ? '<span class="low">· REPONER</span>' : ''}</span>
@@ -1116,6 +1309,308 @@ dsearch.onkeydown = e => { if (e.key === 'Enter') { const f = filtered()[0]; f &
 $('#dclear').onclick = () => { dsearch.value = ''; dsearch.oninput(); dsearch.focus(); };
 
 /* =========================================================
+   Modal genérico
+   ========================================================= */
+const modal = $('#modal'), modalBody = $('#modal-body');
+function openModal(html, bind) { modalBody.innerHTML = html; modal.hidden = false; bind && bind(modalBody); modalBody.querySelector('input:not([type=radio]):not([type=checkbox]),button.btn')?.focus(); }
+function closeModal() { modal.hidden = true; modalBody.innerHTML = ''; }
+modal.addEventListener('mousedown', e => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+modalBody.addEventListener('click', e => { if (e.target.closest('[data-cancel]')) closeModal(); });
+function confirmModal(title, text, okLabel, onOk, danger = true) {
+  openModal(`<h2>${esc(title)}</h2><p class="muted" style="margin:6px 0 0">${text}</p>
+    <div class="modal-actions"><button class="btn ghost" data-cancel>Cancelar</button><button class="btn" data-ok style="${danger ? 'background:var(--red)' : ''}">${esc(okLabel)}</button></div>`,
+    root => root.querySelector('[data-ok]').onclick = () => { closeModal(); onOk(); });
+}
+
+/* =========================================================
+   Inventario desde Excel
+   Columnas: A Nombre · B Cantidad · C Fecha de vencimiento · D Zona (A–F, opcional posición y nivel: B, B-04 o B-04-2)
+   ========================================================= */
+let xlsxP = null;
+function loadXLSX() {
+  return xlsxP ||= new Promise((res, rej) => {
+    if (window.XLSX) return res(window.XLSX);
+    const sc = document.createElement('script');
+    sc.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    sc.onload = () => res(window.XLSX);
+    sc.onerror = () => { xlsxP = null; sc.remove(); rej(new Error('No se pudo cargar el lector de Excel. Revisá la conexión a internet.')); };
+    document.head.appendChild(sc);
+  });
+}
+const fmtDate = d => d ? d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+function parseQty(v) {
+  if (typeof v === 'number') return v;
+  let t = String(v ?? '').trim().replace(/\s/g, '');
+  if (!t) return NaN;
+  if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(t)) t = t.replace(/\./g, '');
+  return Number(t.replace(',', '.'));
+}
+function parseDate(v, X) {
+  if (v === '' || v == null) return { d: null };
+  if (v instanceof Date && !isNaN(v)) return { d: new Date(v.getFullYear(), v.getMonth(), v.getDate()) };
+  if (typeof v === 'number') { const c = X.SSF.parse_date_code(v); return c && c.y > 1900 ? { d: new Date(c.y, c.m - 1, c.d) } : { err: true }; }
+  const t = String(v).trim(); let y, m, d, k;
+  if ((k = t.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2}|\d{4})$/))) { d = +k[1]; m = +k[2]; y = +k[3]; if (y < 100) y += 2000; }
+  else if ((k = t.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})/))) { y = +k[1]; m = +k[2]; d = +k[3]; }
+  else return { err: true };
+  const r = new Date(y, m - 1, d);
+  return r.getMonth() === m - 1 && r.getDate() === d ? { d: r } : { err: true };
+}
+function parseZone(v) {
+  const t = norm(v ?? '').replace(/pasillo|zona|rack|posicion|nivel/g, ' ').trim().toUpperCase();
+  const k = t.match(/^([A-Z])\s*[-\/\s]?\s*(\d{1,2})?\s*[-\/\s]?\s*(\d)?$/);
+  if (!k || !ROWS.includes(k[1])) return null;
+  const bay = k[2] ? +k[2] - 1 : null, lvl = k[3] ? +k[3] - 1 : null;
+  if (bay != null && (bay < 0 || bay >= BAYS)) return null;
+  if (lvl != null && (lvl < 0 || lvl >= LEVELS)) return null;
+  return { row: k[1], bay, lvl, label: k[1] + (bay != null ? '-' + String(bay + 1).padStart(2, '0') : '') + (lvl != null ? '-' + (lvl + 1) : '') };
+}
+async function readInventoryFile(file) {
+  const X = await loadXLSX();
+  const wb = X.read(await file.arrayBuffer(), { type: 'array' });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const raw = X.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+  const rows = [], errors = [];
+  raw.forEach((r, i) => {
+    const line = i + 1, [a, b, c, d] = r;
+    if ([a, b, c, d].every(x => String(x ?? '').trim() === '')) return;
+    const qty = parseQty(b);
+    if (i === 0 && isNaN(qty)) return; // fila de títulos
+    const name = String(a ?? '').trim(), why = [];
+    if (!name) why.push('falta el nombre (columna A)');
+    if (isNaN(qty) || qty < 0) why.push(`cantidad inválida “${b}” (columna B)`);
+    const dt = parseDate(c, X); if (dt.err) why.push(`fecha inválida “${c}” (columna C, usá dd/mm/aaaa)`);
+    const zone = parseZone(d); if (!zone) why.push(`zona inválida “${d}” (columna D, ej. B, B-04 o B-04-2)`);
+    if (why.length) errors.push({ line, msg: why.join(' · ') });
+    else rows.push({ line, name, qty: Math.round(qty), venc: dt.d, zone });
+  });
+  return { rows, errors, sheet: wb.SheetNames[0] };
+}
+function applyImport(rows, mode) {
+  if (mode === 'replace') { products = []; placements = []; resetBins(); }
+  const warns = [];
+  rows.forEach(r => {
+    let p = products.find(p => norm(p.name) === norm(r.name)) || newProduct(r.name);
+    const z = r.zone;
+    if (z.bay != null && z.lvl != null) {
+      const same = placements.find(pl => pl.code === z.label && pl.product === p);
+      if (same) { same.qty += r.qty; if (r.venc) same.venc = r.venc; return; }
+    }
+    const b = takeBin([z.row], { bay: z.bay, lvl: z.lvl });
+    if (!b) return warns.push({ line: r.line, msg: `${r.name}: no quedan posiciones libres en el depósito` });
+    if (z.bay != null && z.lvl != null && b.code !== z.label) warns.push({ line: r.line, msg: `${r.name}: ${z.label} estaba ocupada, se ubicó en ${b.code}` });
+    else if (b.row !== z.row) warns.push({ line: r.line, msg: `${r.name}: el pasillo ${z.row} está completo, se ubicó en ${b.code}` });
+    addPlacement(p, b, r.qty, r.venc);
+  });
+  finalizeInventory();
+  invFromFile = true;
+  saveInventory();
+  refreshInventory();
+  return warns;
+}
+function refreshInventory() {
+  ds.sel = null; ds.selPlace = null;
+  if (D) { buildInventoryMeshes(); applyDepHighlight(); D.reset(); }
+  renderCats(); renderResults(); renderDetail(); renderKPIsDep();
+}
+function showImportPreview(file, res) {
+  const { rows, errors } = res;
+  const names = new Set(rows.map(r => norm(r.name))).size, units = rows.reduce((a, r) => a + r.qty, 0);
+  openModal(`<h2>Importar inventario</h2><p class="muted" style="margin:0">Archivo <b>${esc(file.name)}</b> · hoja “${esc(res.sheet)}”</p>
+    <div class="imp-sum"><div><b class="num">${rows.length}</b><small>filas válidas</small></div><div><b class="num">${names}</b><small>productos</small></div><div><b class="num">${fmt(units)}</b><small>unidades</small></div><div><b class="num" style="color:${errors.length ? 'var(--red)' : 'inherit'}">${errors.length}</b><small>con errores</small></div></div>
+    ${rows.length ? `<table class="prev"><thead><tr><th>Fila</th><th>Nombre</th><th style="text-align:right">Cant.</th><th>Vence</th><th>Zona</th></tr></thead><tbody>
+      ${rows.slice(0, 6).map(r => `<tr><td class="muted">${r.line}</td><td>${esc(r.name)}</td><td class="num" style="text-align:right">${fmt(r.qty)}</td><td class="num">${fmtDate(r.venc)}</td><td><b style="color:var(--blue)">${r.zone.label}</b></td></tr>`).join('')}
+      ${rows.length > 6 ? `<tr><td></td><td colspan="4" class="muted">… y ${rows.length - 6} filas más</td></tr>` : ''}</tbody></table>` : ''}
+    ${errors.length ? `<h4>Filas que no se van a importar</h4><ul class="errlist">${errors.map(e => `<li>Fila ${e.line}: ${esc(e.msg)}</li>`).join('')}</ul>` : ''}
+    ${rows.length ? `<h4>¿Cómo cargarlo?</h4>
+    <div class="seg"><label><input type="radio" name="mode" value="add" checked><span><b>Sumar al inventario actual</b><span class="muted">Si el producto ya existe en esa ubicación, se suma la cantidad.</span></span></label>
+      <label><input type="radio" name="mode" value="replace"><span><b>Reemplazar todo</b><span class="muted">Borra el inventario actual y deja solo lo del archivo.</span></span></label></div>` : '<div class="format" style="margin-top:12px">No hay filas válidas. Revisá que el archivo tenga: <code>A</code> Nombre · <code>B</code> Cantidad · <code>C</code> Vencimiento · <code>D</code> Zona.</div>'}
+    <div class="modal-actions"><button class="btn ghost" data-cancel>Cancelar</button>${rows.length ? `<button class="btn" data-ok>Importar ${rows.length} fila${rows.length === 1 ? '' : 's'}</button>` : ''}</div>`,
+    root => {
+      const ok = root.querySelector('[data-ok]'); if (!ok) return;
+      ok.onclick = () => {
+        const mode = root.querySelector('input[name=mode]:checked').value;
+        const warns = applyImport(rows, mode);
+        if (!warns.length) { closeModal(); return toast(`Inventario actualizado: ${rows.length} filas importadas`); }
+        openModal(`<h2>Importación completa</h2><p class="muted" style="margin:0">Se cargaron ${rows.length - warns.filter(w => /no quedan/.test(w.msg)).length} filas. Algunas se reubicaron:</p>
+          <ul class="errlist warn">${warns.map(w => `<li>Fila ${w.line}: ${esc(w.msg)}</li>`).join('')}</ul>
+          <div class="modal-actions"><button class="btn" data-cancel>Entendido</button></div>`);
+      };
+    });
+}
+$('#xls-file').onchange = async e => {
+  const file = e.target.files[0]; e.target.value = '';
+  if (!file) return;
+  try { showImportPreview(file, await readInventoryFile(file)); }
+  catch (err) { console.error(err); openModal(`<h2>No se pudo leer el archivo</h2><p class="muted">${esc(err.message || 'Formato no reconocido.')} Usá un archivo .xlsx, .xls o .csv.</p><div class="modal-actions"><button class="btn" data-cancel>Cerrar</button></div>`); }
+};
+$('#xls-template').onclick = async () => {
+  try {
+    const X = await loadXLSX();
+    const ws = X.utils.aoa_to_sheet([
+      ['Nombre', 'Cantidad', 'Fecha de vencimiento', 'Zona'],
+      ['Aceite de girasol 1,5 L', 120, new Date(2026, 11, 31), 'A-04-2'],
+      ['Yerba mate 1 kg', 80, new Date(2027, 2, 15), 'B'],
+      ['Agua mineral 2 L', 200, new Date(2027, 5, 30), 'C-02'],
+      ['Pintura látex blanca 20 L', 15, '', 'E-07-1'],
+    ], { cellDates: true, dateNF: 'dd/mm/yyyy' });
+    ws['!cols'] = [{ wch: 32 }, { wch: 10 }, { wch: 22 }, { wch: 10 }];
+    const wb = X.utils.book_new(); X.utils.book_append_sheet(wb, ws, 'Inventario');
+    X.writeFile(wb, 'plantilla-inventario-valsur.xlsx');
+  } catch (err) { toast(err.message); }
+};
+$('#xls-export').onclick = async () => {
+  try {
+    const X = await loadXLSX();
+    const data = [['Nombre', 'Cantidad', 'Fecha de vencimiento', 'Zona', 'Código', 'Categoría', 'Lote']];
+    products.forEach(p => p.places.forEach(pl => data.push([p.name, pl.qty, pl.venc || '', pl.code, p.sku, p.cat, pl.lote])));
+    const ws = X.utils.aoa_to_sheet(data, { cellDates: true, dateNF: 'dd/mm/yyyy' });
+    ws['!cols'] = [{ wch: 32 }, { wch: 10 }, { wch: 20 }, { wch: 10 }, { wch: 10 }, { wch: 12 }, { wch: 9 }];
+    const wb = X.utils.book_new(); X.utils.book_append_sheet(wb, ws, 'Inventario');
+    X.writeFile(wb, `inventario-valsur-${ymd(new Date())}.xlsx`);
+  } catch (err) { toast(err.message); }
+};
+
+/* =========================================================
+   Choferes
+   ========================================================= */
+const DOCS = [
+  ['licencia', 'Licencia de conducir'],
+  ['linti', 'Licencia Nacional Habilitante (LiNTI)'],
+  ['psicofisico', 'Examen psicofísico'],
+  ['peligrosas', 'Curso de cargas peligrosas'],
+  ['art', 'ART / Seguro de vida'],
+  ['sanitaria', 'Libreta sanitaria'],
+];
+const HABS = ['Cargas generales', 'Cargas peligrosas', 'Refrigerados', 'Semirremolque', 'Autoelevador', 'Larga distancia'];
+const LIC_CATS = ['B1', 'B2', 'C1', 'C2', 'C3', 'D1', 'D2', 'E1', 'E2', 'E3'];
+const AV_COLORS = ['#1f5eff', '#7c3aed', '#0891b2', '#16a34a', '#ea580c', '#db2777', '#0d9488', '#4f46e5', '#ca8a04'];
+const dPlus = n => ymd(new Date(Date.now() + n * 864e5));
+const daysTo = iso => Math.ceil((fromYmd(iso) - new Date(new Date().toDateString())) / 864e5);
+function docState(iso) {
+  if (!iso) return { k: 'none', label: 'Sin cargar', c: '#94a3b8', rank: 0 };
+  const n = daysTo(iso);
+  if (n < 0) return { k: 'bad', label: `Vencido hace ${-n} d`, c: '#ef4444', rank: 3 };
+  if (n <= 30) return { k: 'warn', label: n === 0 ? 'Vence hoy' : `Vence en ${n} d`, c: '#f59e0b', rank: 2 };
+  return { k: 'ok', label: 'Al día', c: '#16a34a', rank: 1 };
+}
+function driverState(d) {
+  const worst = Math.max(0, ...DOCS.map(([k]) => docState(d.docs[k]).rank));
+  return worst === 3 ? { k: 'bad', label: 'Docs. vencidos', c: '#ef4444' } : worst === 2 ? { k: 'warn', label: 'Por vencer', c: '#f59e0b' } : { k: 'ok', label: 'Al día', c: '#16a34a' };
+}
+function seedDrivers() {
+  const extra = [
+    ['30.512.884', '11 5523-4410', 'E1', [400, 210, 45, 180, 300, 120], ['Cargas generales', 'Semirremolque', 'Larga distancia']],
+    ['28.940.112', '11 6012-7788', 'E1', [90, 25, 160, 0, 200, 75], ['Cargas generales', 'Semirremolque']],
+    ['33.127.506', '11 4877-2301', 'E2', [600, 330, 12, 260, 145, 220], ['Cargas generales', 'Cargas peligrosas', 'Semirremolque', 'Larga distancia']],
+    ['35.660.219', '11 3398-5402', 'C2', [250, 140, 95, 0, -6, 60], ['Cargas generales', 'Refrigerados']],
+    ['31.004.735', '11 5741-9020', 'E1', [-12, 190, 70, 0, 310, 18], ['Cargas generales', 'Semirremolque']],
+    ['37.892.441', '11 2250-6613', 'C1', [520, 280, 200, 0, 190, 240], ['Cargas generales', 'Refrigerados', 'Autoelevador']],
+    ['29.385.067', '11 6630-1185', 'C2', [140, 22, 130, 0, 175, 90], ['Cargas generales', 'Autoelevador']],
+    ['34.218.590', '11 4105-3376', 'E2', [380, 160, -3, 90, 260, 150], ['Cargas generales', 'Cargas peligrosas', 'Semirremolque']],
+    ['32.777.948', '11 5098-8841', 'B2', [700, 0, 210, 0, 220, 200], ['Cargas generales', 'Autoelevador']],
+  ];
+  return TRUCKS_DEF.map(([plate, name], i) => {
+    const [dni, phone, lic, ds_, habs] = extra[i];
+    const docs = {}; DOCS.forEach(([k], j) => docs[k] = ds_[j] ? dPlus(ds_[j]) : (k === 'peligrosas' ? '' : dPlus(365)));
+    return { id: 'D' + i, name, dni, phone, lic, vehicle: plate, docs, habs, notes: '' };
+  });
+}
+let drivers = store.get('valsur.drivers');
+if (!Array.isArray(drivers)) drivers = seedDrivers();
+const saveDrivers = () => store.set('valsur.drivers', drivers);
+const driverOf = t => drivers.find(d => d.vehicle === t.plate);
+const driverName = t => driverOf(t)?.name || 'Sin chofer asignado';
+const initials = n => n.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+const avColor = d => AV_COLORS[[...d.id].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_COLORS.length];
+const dv = { q: '', f: 'todos' };
+const DRV_FILTERS = { todos: ['Todos', () => true], ok: ['Al día', d => driverState(d).k === 'ok'], warn: ['Por vencer', d => driverState(d).k === 'warn'], bad: ['Vencidos', d => driverState(d).k === 'bad'], libre: ['Sin vehículo', d => !d.vehicle] };
+function renderDriverKPIs() {
+  const all = drivers.flatMap(d => DOCS.map(([k]) => docState(d.docs[k]).k));
+  const k = [
+    ['#1f5eff', ICON.user, 'Choferes', drivers.length, ''],
+    ['#ef4444', ICON.alert, 'Documentos vencidos', all.filter(x => x === 'bad').length, ''],
+    ['#f59e0b', ICON.alert, 'Vencen en 30 días', all.filter(x => x === 'warn').length, ''],
+    ['#16a34a', ICON.truck, 'Con vehículo asignado', drivers.filter(d => d.vehicle).length, `<em class="muted">de ${trucks.length}</em>`],
+  ];
+  setHTML($('#kpis-drv'), k.map(([c, ic, l, v, x]) => `<div class="card kpi"><div class="kpi-ic" style="background:color-mix(in srgb,${c} 12%,var(--card));color:${c}">${ic}</div><div><small>${l}</small><b class="num">${v}</b>${x}</div></div>`).join(''));
+}
+function renderDrivers() {
+  renderDriverKPIs();
+  $('#drv-filters').innerHTML = Object.entries(DRV_FILTERS).map(([k, [l, f]]) => `<button class="chip ${dv.f === k ? 'active' : ''}" data-f="${k}">${l} · ${drivers.filter(f).length}</button>`).join('');
+  const toks = norm(dv.q).split(/\s+/).filter(Boolean);
+  const list = drivers.filter(DRV_FILTERS[dv.f][1]).filter(d => toks.every(t => norm([d.name, d.dni, d.phone, d.vehicle, d.lic, ...d.habs].join(' ')).includes(t)))
+    .sort((a, b) => ({ bad: 0, warn: 1, ok: 2 })[driverState(a).k] - ({ bad: 0, warn: 1, ok: 2 })[driverState(b).k] || a.name.localeCompare(b.name, 'es'));
+  $('#drivers').innerHTML = list.map(d => {
+    const s = driverState(d), t = trucks.find(t => t.plate === d.vehicle);
+    return `<article class="card drv" data-d="${d.id}">
+      <header class="drv-h"><div class="drv-av" style="--c:${avColor(d)}">${esc(initials(d.name))}</div>
+        <div style="min-width:0"><b>${highlight(d.name, dv.q)}</b><small>DNI ${highlight(d.dni || '—', dv.q)}${d.phone ? ' · ' + esc(d.phone) : ''}</small></div>
+        <span class="pill" style="--c:${s.c}">${s.label}</span></header>
+      <div class="drv-meta"><span>Licencia <b>${esc(d.lic || '—')}</b></span><span>Vehículo <b>${d.vehicle ? highlight(d.vehicle, dv.q) : 'Sin asignar'}</b></span>${t ? `<span style="color:${STATUS[t.phase].color}"><b style="color:inherit">${STATUS[t.phase].label}</b></span>` : ''}</div>
+      <ul class="docs">${DOCS.map(([k, l]) => { const x = docState(d.docs[k]); return `<li><span>${l}</span><span class="d num">${d.docs[k] ? fmtDate(fromYmd(d.docs[k])) : ''}</span><span class="vb" style="--c:${x.c}">${x.label}</span></li>`; }).join('')}</ul>
+      <div class="habs">${d.habs.length ? d.habs.map(h => `<span class="hab">${highlight(h, dv.q)}</span>`).join('') : '<span class="muted" style="font-size:12px">Sin habilitaciones cargadas</span>'}</div>
+      ${d.notes ? `<div class="drv-note">${esc(d.notes)}</div>` : ''}
+      <footer><button class="btn ghost danger" data-del>Eliminar</button><button class="btn ghost" data-edit>Editar</button></footer>
+    </article>`;
+  }).join('') || `<div class="card empty" style="grid-column:1/-1">${drivers.length ? 'No hay choferes que coincidan con la búsqueda.' : 'Todavía no hay choferes. Tocá “Agregar chofer” para crear el primero.'}</div>`;
+}
+$('#drv-filters').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { dv.f = b.dataset.f; renderDrivers(); } };
+$('#drv-search').oninput = e => { dv.q = e.target.value.trim(); renderDrivers(); };
+$('#drivers').onclick = e => {
+  const card = e.target.closest('[data-d]'); if (!card) return;
+  const d = drivers.find(x => x.id === card.dataset.d);
+  if (e.target.closest('[data-edit]')) editDriver(d);
+  if (e.target.closest('[data-del]')) confirmModal('Eliminar chofer', `¿Seguro que querés eliminar el perfil de <b>${esc(d.name)}</b>? Esta acción no se puede deshacer.`, 'Eliminar', () => {
+    drivers = drivers.filter(x => x !== d); saveDrivers(); renderDrivers(); renderAllJefe(); toast('Perfil eliminado');
+  });
+};
+$('#drv-add').onclick = () => editDriver(null);
+function editDriver(d) {
+  const isNew = !d;
+  const v = d || { name: '', dni: '', phone: '', lic: 'E1', vehicle: '', docs: {}, habs: ['Cargas generales'], notes: '' };
+  const owner = plate => drivers.find(x => x.vehicle === plate && x !== d);
+  openModal(`<form id="drv-form" novalidate>
+    <h2>${isNew ? 'Nuevo chofer' : 'Editar chofer'}</h2><p class="muted" style="margin:0">${isNew ? 'Completá los datos del perfil.' : esc(v.name)}</p>
+    <h4>Datos personales</h4>
+    <div class="form-grid">
+      <label class="field full">Nombre y apellido *<input name="name" required value="${esc(v.name)}" placeholder="Ej. Juan Pérez"></label>
+      <label class="field">DNI<input name="dni" value="${esc(v.dni)}" inputmode="numeric" placeholder="30.123.456"></label>
+      <label class="field">Teléfono<input name="phone" value="${esc(v.phone)}" inputmode="tel" placeholder="11 5555-1234"></label>
+      <label class="field">Categoría de licencia<select name="lic">${LIC_CATS.map(c => `<option ${c === v.lic ? 'selected' : ''}>${c}</option>`).join('')}</select></label>
+      <label class="field">Vehículo asignado<select name="vehicle"><option value="">Sin asignar</option>${trucks.map(t => { const o = owner(t.plate); return `<option value="${t.plate}" ${t.plate === v.vehicle ? 'selected' : ''}>${t.plate} · ${t.model}${o ? ' (hoy: ' + esc(o.name) + ')' : ''}</option>`; }).join('')}</select></label>
+    </div>
+    <h4>Vencimientos de documentación</h4>
+    <div class="form-grid">${DOCS.map(([k, l]) => `<label class="field">${l}<input type="date" name="doc_${k}" value="${v.docs[k] || ''}"></label>`).join('')}</div>
+    <h4>Habilitaciones</h4>
+    <div class="checks">${HABS.map(h => `<label><input type="checkbox" name="habs" value="${h}" ${v.habs.includes(h) ? 'checked' : ''}>${h}</label>`).join('')}</div>
+    <h4>Observaciones</h4>
+    <label class="field full"><textarea name="notes" placeholder="Notas internas (opcional)">${esc(v.notes || '')}</textarea></label>
+    <div class="modal-actions"><button type="button" class="btn ghost" data-cancel>Cancelar</button><button type="submit" class="btn">${isNew ? 'Crear perfil' : 'Guardar cambios'}</button></div>
+  </form>`, root => {
+    const f = root.querySelector('form');
+    f.onsubmit = e => {
+      e.preventDefault();
+      const fd = new FormData(f), name = fd.get('name').trim();
+      if (!name) { f.name.focus(); f.name.style.borderColor = 'var(--red)'; return toast('El nombre es obligatorio'); }
+      const data = { name, dni: fd.get('dni').trim(), phone: fd.get('phone').trim(), lic: fd.get('lic'), vehicle: fd.get('vehicle'), habs: fd.getAll('habs'), notes: fd.get('notes').trim(), docs: {} };
+      DOCS.forEach(([k]) => data.docs[k] = fd.get('doc_' + k) || '');
+      const prev = data.vehicle && owner(data.vehicle);
+      if (prev) prev.vehicle = '';
+      if (isNew) drivers.push({ id: 'D' + Date.now().toString(36), ...data }); else Object.assign(d, data);
+      saveDrivers(); closeModal(); renderDrivers(); renderAllJefe();
+      toast(isNew ? 'Chofer agregado' : 'Cambios guardados' + (prev ? ` · ${data.vehicle} se quitó a ${prev.name}` : ''));
+    };
+  });
+}
+function showDriver(d) {
+  go('choferes'); dv.q = ''; dv.f = 'todos'; $('#drv-search').value = ''; renderDrivers();
+  const el = $(`#drivers [data-d="${d.id}"]`); if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+}
+
+/* =========================================================
    Navegación y buscador global
    ========================================================= */
 function go(view) {
@@ -1126,7 +1621,7 @@ function go(view) {
 }
 document.querySelectorAll('.tab').forEach(t => t.onclick = () => go(t.dataset.view));
 document.addEventListener('keydown', e => {
-  if (e.key === '/' && !/input|textarea/i.test(document.activeElement.tagName)) { e.preventDefault(); if (st.view === 'deposito') dsearch.focus(); else $('#gsearch').focus(); }
+  if (e.key === '/' && !/input|textarea/i.test(document.activeElement.tagName)) { e.preventDefault(); if (st.view === 'deposito') dsearch.focus(); else if (st.view === 'choferes') $('#drv-search').focus(); else $('#gsearch').focus(); }
 });
 
 const gs = $('#gsearch'), gr = $('#gresults'); let gItems = [], gIdx = 0;
@@ -1134,10 +1629,11 @@ function runGlobal() {
   const q = gs.value.trim(); const toks = norm(q).split(/\s+/).filter(Boolean);
   if (!toks.length) { gr.classList.remove('open'); return; }
   const m = s => toks.every(t => norm(s).includes(t));
-  const T = trucks.filter(t => m(`${t.plate} ${t.driver} ${t.model} ${STATUS[t.phase].label}`)).slice(0, 4).map(t => ({ g: 'Vehículos', ic: ICON.truck, c: STATUS[t.phase].color, t: t.plate, s: `${t.driver} · ${STATUS[t.phase].label}`, run: () => { go('jefe'); selectTruck(t.id, true); } }));
+  const C = drivers.filter(d => m(`${d.name} ${d.dni} ${d.vehicle}`)).slice(0, 4).map(d => { const s = driverState(d); return { g: 'Choferes', ic: ICON.user, c: s.c, t: d.name, s: `${d.vehicle || 'Sin vehículo'} · ${s.label}`, run: () => showDriver(d) }; });
+  const T = trucks.filter(t => m(`${t.plate} ${driverName(t)} ${t.model} ${STATUS[t.phase].label}`)).slice(0, 4).map(t => ({ g: 'Vehículos', ic: ICON.truck, c: STATUS[t.phase].color, t: t.plate, s: `${driverName(t)} · ${STATUS[t.phase].label}`, run: () => { go('jefe'); selectTruck(t.id, true); } }));
   const O = orders.filter(o => m(`${o.id} ${o.client} ${destBy[o.dest].city}`)).slice(0, 4).map(o => ({ g: 'Pedidos', ic: ICON.order, c: STAGES[o.stage].color, t: o.id, s: `${o.client} · ${STAGES[o.stage].label}`, run: () => { go('jefe'); selectOrder(o.id); } }));
   const P = products.filter(p => toks.every(t => p.hay.includes(t))).slice(0, 5).map(p => ({ g: 'Mercadería', ic: ICON.box, c: CATS[p.cat].color, t: p.name, s: `${p.sku} · ${p.places.map(x => x.code).join(', ')}`, run: () => { go('deposito'); selectProduct(p); } }));
-  gItems = [...T, ...O, ...P]; gIdx = 0;
+  gItems = [...T, ...C, ...O, ...P]; gIdx = 0;
   let last = '';
   gr.innerHTML = gItems.map((it, i) => { const h = it.g !== last ? `<h6>${it.g}</h6>` : ''; last = it.g; return h + `<button class="gitem ${i === 0 ? 'hl' : ''}" data-i="${i}"><span class="t-ic" style="--c:${it.c}">${it.ic}</span><div><b>${highlight(it.t, q)}</b><span>${highlight(it.s, q)}</span></div></button>`; }).join('') || '<div class="empty">Sin resultados</div>';
   gr.classList.add('open');
@@ -1153,9 +1649,21 @@ gr.onmousedown = e => { const b = e.target.closest('[data-i]'); if (b) { e.preve
 gs.onblur = () => setTimeout(() => gr.classList.remove('open'), 120);
 
 /* =========================================================
+   Tema claro / oscuro
+   ========================================================= */
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem('valsur.theme', t); } catch (e) {}
+  matCache.forEach(tintMat);
+  J?.applyTheme(); D?.applyTheme();
+  $('#theme-btn').title = t === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro';
+}
+$('#theme-btn').onclick = () => setTheme(isDark() ? 'light' : 'dark');
+
+/* =========================================================
    Arranque
    ========================================================= */
-renderLegend(); renderCats(); renderResults(); renderKPIsDep();
+renderLegend(); renderCats(); renderResults(); renderKPIsDep(); renderDrivers();
 try {
   buildJefeScene(); buildDepScene();
 } catch (err) {
@@ -1163,7 +1671,7 @@ try {
   document.querySelectorAll('.webgl-fail').forEach(x => x.style.display = 'grid');
 }
 st.view = 'jefe';
-go(location.hash === '#deposito' ? 'deposito' : 'jefe');
+go(['deposito', 'choferes'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'jefe');
 renderAllJefe();
 setInterval(() => { $('#clock').textContent = hhmm(new Date()); renderAllJefe(); }, 1000);
 $('#clock').textContent = hhmm(new Date());
