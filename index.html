@@ -380,6 +380,32 @@ details summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--muted)
 .job-act .btn.full{grid-column:1/-1}
 .btn.green{background:var(--green)}
 .btn.red{background:var(--red)}
+/* login */
+body.locked .topbar,body.locked main,body.locked footer{display:none}
+.login{min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:radial-gradient(90% 70% at 20% 10%,var(--blue-50),transparent 60%),var(--bg)}
+.login-card{width:min(400px,100%);padding:28px;display:flex;flex-direction:column;gap:14px}
+.login-card h1{margin:6px 0 0;font-size:24px;letter-spacing:-.02em}
+.login-card p{margin:-8px 0 4px}
+.login-card .field input{font-size:15px;padding:11px 12px}
+.pass{position:relative;display:block}
+.pass input{width:100%;padding-right:78px!important}
+.pass button{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:600;color:var(--blue);padding:6px 8px;border-radius:7px}
+.lg-btn{justify-content:center;padding:12px;font-size:15px;margin-top:4px}
+.lg-err{background:var(--red-50);color:var(--red-ink);border-radius:9px;padding:9px 11px;font-size:13px;font-weight:600}
+.lg-roles{display:grid;grid-template-columns:1fr 1fr;gap:6px;border-top:1px solid var(--line);padding-top:12px;margin-top:4px}
+.lg-roles span{font-size:11.5px;color:var(--muted)}
+.lg-roles b{display:block;color:var(--text2);font-size:12px}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
+.user .btn{padding:6px 10px;font-size:12px}
+body.single-view .tabs{display:none}
+@media (prefers-reduced-motion:reduce){.shake{animation:none}}
+/* despachos */
+.desp-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.desp-row:last-child{border:0}
+.desp-row time{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.desp-row b{display:block}
+.desp-row small{color:var(--muted)}
 /* acceso / equipo */
 .access{max-width:520px;margin:40px auto;padding:28px}
 .access h1{margin:0 0 6px;font-size:22px}
@@ -403,7 +429,7 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
   .fleet{max-height:360px}
   .dep-panel{height:auto}
   .results{max-height:420px}
-  .user div{display:none}
+  .user > div{display:none}
 }
 @media (max-width:820px){
   .topbar{flex-wrap:wrap;padding:10px 16px;gap:10px}
@@ -443,6 +469,19 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
 </head>
 <body>
 
+<div class="login" id="login" hidden>
+  <form class="card login-card" id="login-card" autocomplete="on">
+    <div class="brand"><div class="brand-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5l8 14 8-14"/></svg></div><div>Valsur<small>Logística</small></div></div>
+    <h1>Ingresar</h1>
+    <p class="muted">Usá el usuario de tu sector.</p>
+    <label class="field" for="lg-user">Usuario<input id="lg-user" name="username" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Ej. pedidos" required></label>
+    <label class="field" for="lg-pass">Contraseña
+      <span class="pass"><input id="lg-pass" name="password" type="password" autocomplete="current-password" required><button type="button" id="lg-show">Mostrar</button></span></label>
+    <div class="lg-err" id="lg-err" hidden>Usuario o contraseña incorrectos.</div>
+    <button class="btn lg-btn">Entrar</button>
+    <div class="lg-roles"><span><b>Jefe</b> todo</span><span><b>Pedidos</b> pedidos y choferes</span><span><b>Choferes</b> app chofer</span><span><b>Depósito</b> mercadería</span></div>
+  </form>
+</div>
 <header class="topbar">
   <div class="brand">
     <div class="brand-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5l8 14 8-14"/></svg></div>
@@ -475,7 +514,7 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
     <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
     <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
   </button>
-  <div class="user"><div class="avatar" id="me-av">VS</div><div><b id="me-name">Oficina</b><small id="me-sub">Centro de distribución</small></div></div>
+  <div class="user"><div class="avatar" id="me-av">VS</div><div><b id="me-name">Valsur</b><small id="me-sub"></small></div><button class="btn ghost" id="logout" title="Cerrar sesión">Salir</button></div>
 </header>
 
 <main>
@@ -517,9 +556,12 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
     <div class="view-head">
       <div><h1>Depósito central</h1><p>Encontrá cualquier mercadería y su ubicación exacta: pasillo, posición y nivel.</p></div>
       <div class="head-actions">
+        <button class="btn ghost" id="desp-list" title="Ver la mercadería que salió">Despachos<b class="tab-badge" id="desp-count" style="background:var(--blue)" hidden></b></button>
+        <span class="head-actions" data-perm="inventoryFiles" style="width:auto">
         <button class="btn ghost" id="xls-template" title="Descargar un Excel de ejemplo con el formato correcto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Plantilla</button>
         <button class="btn ghost" id="xls-export" title="Descargar el inventario actual en Excel"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Exportar</button>
         <label class="btn" title="Columnas: A Nombre · B Cantidad · C Vencimiento · D Zona"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0-4 4m4-4 4 4M5 20h14"/></svg>Importar Excel<input type="file" id="xls-file" accept=".xlsx,.xls,.csv" hidden></label>
+        </span>
       </div>
     </div>
     <div class="kpis" id="kpis-dep"></div>
@@ -574,8 +616,8 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
   <section class="view" id="view-chofer">
     <div class="cv-wrap">
       <div class="cv-preview" id="cv-preview">
-        <span>Vista previa como:</span><select id="cv-driver"></select>
-        <small class="muted">Así ve la app cada chofer en su celular.</small>
+        <label for="cv-driver" id="cv-label">Vista previa como:</label><select id="cv-driver"></select>
+        <small class="muted" id="cv-hint">Así ve la app cada chofer en su celular.</small>
       </div>
       <div class="card cv-hero" id="cv-hero"></div>
       <div class="cv-tabs" id="cv-tabs"></div>
@@ -583,16 +625,11 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
     </div>
   </section>
 
-  <!-- ================= ACCESO ================= -->
-  <section class="view" id="view-acceso">
-    <div class="card access" id="access"></div>
-  </section>
-
   <!-- ================= CHOFERES ================= -->
   <section class="view" id="view-choferes">
     <div class="view-head">
       <div><h1>Choferes</h1><p>Perfiles, vencimientos de documentación y habilitaciones del personal de conducción.</p></div>
-      <div class="head-actions"><button class="btn" id="drv-add">+ Agregar chofer</button></div>
+      <div class="head-actions" data-perm="editDrivers"><button class="btn" id="drv-add">+ Agregar chofer</button></div>
     </div>
     <div class="kpis" id="kpis-drv"></div>
     <div class="card drv-toolbar">
@@ -602,11 +639,10 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
       </div>
       <div class="cats" id="drv-filters" style="padding:0"></div>
     </div>
-    <div class="card team" id="team"></div>
     <div class="drv-grid" id="drivers"></div>
   </section>
 </main>
-<footer>Valsur Logística · El mapa de la flota es una simulación hasta conectar el GPS</footer>
+<footer>Valsur Logística · El mapa ubica cada camión según los pedidos de su chofer</footer>
 <div class="toast" id="toast"></div>
 <div class="modal-bg" id="modal" hidden><div class="modal card" role="dialog" aria-modal="true" id="modal-body"></div></div>
 
@@ -678,68 +714,21 @@ const ICON = {
 /* =========================================================
    Datos: destinos, flota y pedidos
    ========================================================= */
+// Estado de cada vehículo en el mapa, según los pedidos de su chofer.
 const STATUS = {
-  carga:      { label: 'Cargando',    color: '#7c3aed' },
-  ida:        { label: 'En ruta',     color: '#1f5eff' },
-  descarga:   { label: 'Descargando', color: '#f59e0b' },
-  vuelta:     { label: 'Regresando',  color: '#0891b2' },
-  incidencia: { label: 'Incidencia',  color: '#ef4444' },
-  taller:     { label: 'En taller',   color: '#64748b' },
+  base:     { label: 'En base',    color: '#64748b' },
+  asignado: { label: 'Preparando', color: '#7c3aed' },
+  ruta:     { label: 'En ruta',    color: '#1f5eff' },
+  demorado: { label: 'Demorado',   color: '#ef4444' },
+  taller:   { label: 'En taller',  color: '#d97706' },
 };
-// b = [x, z, ancho, prof, alto]; path = recorrido desde la salida del depósito
-const DESTS = [
-  { key: 'norte',  name: 'Supermercados del Norte', city: 'Zona Norte',         b: [-28, -26, 6, 5, 3.2],  color: 0x22c55e, path: [[0, 11], [-22, 11], [-22, -24]] },
-  { key: 'centro', name: 'Farmacias Centro',        city: 'Microcentro',        b: [0, -27, 7, 4.5, 3.8],  color: 0xec4899, path: [[0, 11], [22, 11], [22, -22], [3, -22]] },
-  { key: 'sur',    name: 'Ferretería Sur',          city: 'Zona Sur',           b: [6, 25, 5, 5, 2.6],     color: 0xf97316, path: [[0, 11], [0, 24]] },
-  { key: 'este',   name: 'Distribuidora Este',      city: 'Parque Industrial',  b: [28.5, -6, 6, 7, 3.4],  color: 0x8b5cf6, path: [[0, 11], [22, 11], [22, -6]] },
-  { key: 'puerto', name: 'Puerto Valsur',           city: 'Terminal Portuaria', b: [-27, 17.5, 7, 5, 3],   color: 0x0ea5e9, path: [[0, 11], [-26, 11]] },
-  { key: 'frigo',  name: 'Frigorífico Pampa',       city: 'Ruta 3 km 12',       b: [27, 17.5, 6, 5, 3.2],  color: 0x14b8a6, path: [[0, 11], [26, 11]] },
-];
-const destBy = Object.fromEntries(DESTS.map(d => [d.key, d]));
-const DOCKS = [-6.6, -4.4, -2.2, 0, 2.2, 4.4, 6.6];
-
 const TRUCKS_DEF = [
-  ['AF 214 KD', 'Martín Gómez',    'Scania R450',          'norte',  'carga',      0,    0],
-  ['AE 873 JL', 'Lucía Fernández', 'Mercedes-Benz Actros', 'centro', 'ida',        .35,  1],
-  ['AG 105 PR', 'Diego Sosa',      'Volvo FH 460',         'este',   'ida',        .7,   2],
-  ['AD 552 TB', 'Carla Benítez',   'Iveco Tector',         'sur',    'descarga',   1,    3],
-  ['AF 690 MX', 'Javier Ruiz',     'Scania G410',          'puerto', 'vuelta',     .5,   4],
-  ['AH 031 QS', 'Sofía Romero',    'Ford Cargo 1723',      'frigo',  'ida',        .15,  5],
-  ['AE 447 CN', 'Pablo Medina',    'Mercedes-Benz Atego',  'norte',  'vuelta',     .25,  6],
-  ['AG 918 LW', 'Andrea Castro',   'Volvo FM 380',         'centro', 'incidencia', .58,  3],
-  ['AC 276 HV', 'Nicolás Herrera', 'Iveco Daily',          null,     'taller',     0,    0],
+  ['AF 214 KD', 'Scania R450'], ['AE 873 JL', 'Mercedes-Benz Actros'], ['AG 105 PR', 'Volvo FH 460'],
+  ['AD 552 TB', 'Iveco Tector'], ['AF 690 MX', 'Scania G410'], ['AH 031 QS', 'Ford Cargo 1723'],
+  ['AE 447 CN', 'Mercedes-Benz Atego'], ['AG 918 LW', 'Volvo FM 380'], ['AC 276 HV', 'Iveco Daily'],
 ];
-
-function makePath(pts) {
-  const segs = []; let total = 0;
-  for (let i = 0; i < pts.length - 1; i++) {
-    const [x1, z1] = pts[i], [x2, z2] = pts[i + 1];
-    const len = Math.hypot(x2 - x1, z2 - z1); if (len < .01) continue;
-    segs.push({ x1, z1, dx: (x2 - x1) / len, dz: (z2 - z1) / len, len, start: total }); total += len;
-  }
-  return {
-    total,
-    at(d) {
-      d = Math.max(0, Math.min(total, d));
-      let idx = segs.length - 1;
-      for (let i = 0; i < segs.length; i++) if (d <= segs[i].start + segs[i].len) { idx = i; break; }
-      const s = segs[idx], k = d - s.start;
-      return { x: s.x1 + s.dx * k, z: s.z1 + s.dz * k, dx: s.dx, dz: s.dz, seg: idx };
-    }
-  };
-}
-
-const trucks = TRUCKS_DEF.map(([plate, driver, model, dest, phase, prog, dock], i) => {
-  const t = { id: 'T' + i, plate, driver, model, dest, phase, dock, timer: 6 + rnd() * 8, speed: 3.6 + rnd() * 1.4, fuel: ri(38, 96), heading: 0 };
-  if (dest) {
-    const dx = DOCKS[dock];
-    t.path = makePath([[dx, 5.7], [dx, 7.9], [0, 9.4], ...destBy[dest].path]);
-    t.dist = prog * t.path.total;
-  }
-  if (phase === 'incidencia') t.note = 'Neumático pinchado en Av. Costanera · asistencia en camino (ETA 25 min)';
-  if (phase === 'taller') t.note = 'Service de 60.000 km · disponible mañana 8:00';
-  return t;
-});
+const trucks = TRUCKS_DEF.map(([plate, model], i) => ({ id: 'T' + i, idx: i, plate, model, fuel: ri(45, 96), heading: 0, state: 'base', road: null, pedido: null, orders: [], since: null, wps: [] }));
+const vehKey = plate => plate.replace(/\s+/g, '-');
 const truckBy = id => trucks.find(t => t.id === id);
 
 /* =========================================================
@@ -826,89 +815,108 @@ function createStage(host, { viewSize, camDir, shadowSize }) {
    Escena: mapa de la flota (Panel Jefe)
    ========================================================= */
 let J, D;
-const ROADS = [[-31, 11, 31, 11], [-22, -28, -22, 11], [22, -28, 22, 11], [-22, -22, 22, -22], [0, 11, 0, 28]];
+// Mapa simbólico: base Valsur a la izquierda, 4 rutas de reparto, una calle de demorados y el taller.
+const ROAD_Z = [-13.5, -4.5, 4.5, 13.5], ROAD_X0 = -7.5, ROAD_X1 = 31, DEMO_Z = 24, TRUNK_X = -7.5;
+const ROADS = [...ROAD_Z.map(z => [TRUNK_X, z, ROAD_X1, z]), [TRUNK_X, -27, TRUNK_X, DEMO_Z], [TRUNK_X, DEMO_Z, 24, DEMO_Z]];
+function signTexture(lines, { bg = '#ffffff', fg = '#1f5eff', w = 1024, h = 512, stripes = false } = {}) {
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const cx = cv.getContext('2d');
+  cx.fillStyle = bg; cx.fillRect(0, 0, w, h);
+  if (stripes) { cx.fillStyle = '#111827'; for (let x = -h; x < w; x += 90) { cx.beginPath(); cx.moveTo(x, 0); cx.lineTo(x + 45, 0); cx.lineTo(x + 45 + h * .35, h * .35); cx.lineTo(x + h * .35, h * .35); cx.fill(); cx.beginPath(); cx.moveTo(x, h * .65); cx.lineTo(x + 45, h * .65); cx.lineTo(x + 45 + h * .35, h); cx.lineTo(x + h * .35, h); cx.fill(); } }
+  cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  lines.forEach(([txt, size, color, y]) => { cx.fillStyle = color || fg; cx.font = `800 ${size}px Inter, Arial`; cx.fillText(txt, w / 2, y); });
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+}
+function signMat(key, tex) { const m = new THREE.MeshLambertMaterial({ map: tex }); m.userData.base = 0xffffff; tintMat(m); matCache.set(key, m); return m; }
+function roofSign(parent, key, tex, w, d, x, y, z) {
+  const g = new THREE.Group(); g.rotation.y = Math.PI / 2; g.position.set(x, y, z); parent.add(g);
+  const pl = new THREE.Mesh(new THREE.PlaneGeometry(w, d), signMat(key, tex)); pl.rotation.x = -Math.PI / 2; pl.receiveShadow = true; g.add(pl);
+}
+function cone(parent, x, z, sc = 1) {
+  const c = new THREE.Mesh(new THREE.ConeGeometry(.32 * sc, .9 * sc, 14), M(0xf97316)); c.position.set(x, .45 * sc + .08, z); c.castShadow = true; parent.add(c);
+  const band = new THREE.Mesh(new THREE.CylinderGeometry(.17 * sc, .22 * sc, .14 * sc, 14), M(0xffffff)); band.position.set(x, .5 * sc + .08, z); parent.add(band);
+  box(.7 * sc, .08, .7 * sc, 0xea580c, x, 0, z, parent);
+}
 function buildJefeScene() {
-  J = createStage($('#stage-jefe'), { viewSize: 52, camDir: new THREE.Vector3(1, 1.05, 1), shadowSize: 46 });
+  J = createStage($('#stage-jefe'), { viewSize: 56, camDir: new THREE.Vector3(1, 1.05, 1), shadowSize: 48 });
   const s = J.scene;
-  const ground = new THREE.Mesh(new THREE.CircleGeometry(44, 64), M(0xe3ebe2));
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(46, 64), M(0xe3ebe2));
   ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; s.add(ground);
 
   // calles con línea central
   const dashGeo = new THREE.BoxGeometry(1, .02, .14); const dashes = [];
-  ROADS.forEach(([x1, z1, x2, z2]) => {
+  ROADS.forEach(([x1, z1, x2, z2], i) => {
     const horiz = z1 === z2, len = horiz ? Math.abs(x2 - x1) + 3 : Math.abs(z2 - z1) + 3;
-    const r = new THREE.Mesh(new THREE.BoxGeometry(horiz ? len : 3, .04, horiz ? 3 : len), M(0xc4cdd9));
+    const r = new THREE.Mesh(new THREE.BoxGeometry(horiz ? len : 3, .04, horiz ? 3 : len), M(i === ROADS.length - 1 ? 0xd9c7b0 : 0xc4cdd9));
     r.position.set((x1 + x2) / 2, .02, (z1 + z2) / 2); r.receiveShadow = true; s.add(r);
     const n = Math.floor(len / 2.2);
-    for (let i = 1; i < n; i++) {
-      const k = i / n; const x = x1 + (x2 - x1) * k, z = z1 + (z2 - z1) * k;
-      dashes.push([x, z, horiz]);
-    }
+    for (let k = 2; k < n - 1; k++) { const f = k / n; dashes.push([x1 + (x2 - x1) * f, z1 + (z2 - z1) * f, horiz]); }
   });
   const dm = new THREE.InstancedMesh(dashGeo, M(0xffffff), dashes.length); const o3 = new THREE.Object3D();
   dashes.forEach(([x, z, h], i) => { o3.position.set(x, .05, z); o3.rotation.y = h ? 0 : Math.PI / 2; o3.updateMatrix(); dm.setMatrixAt(i, o3.matrix); });
   s.add(dm);
 
-  // playón del depósito
-  const pad = box(24, .06, 17, 0xeef2f6, 2.5, 0, 1); pad.castShadow = false; s.add(pad);
+  // base Valsur
+  box(12.5, .06, 21, 0xeef2f6, -14.5, 0, 0, s).castShadow = false;
+  const hq = new THREE.Group(); s.add(hq);
+  box(11, 6, 18, 0xf8fafc, -25.5, 0, 0, hq);
+  box(11.15, .8, 18.15, 0x1f5eff, -25.5, 4.9, 0, hq);
+  box(11.3, .2, 18.3, 0xe2e8f0, -25.5, 6, 0, hq);
+  roofSign(hq, 'roof', signTexture([['VALSUR', 200, '#1f5eff', 230], ['L O G Í S T I C A', 70, '#334155', 360]]), 16.5, 9.5, -25.5, 6.21, 0);
+  for (let i = 0; i < 5; i++) { const z = -6.4 + i * 3.2; box(.08, 2.6, 2.2, 0x334155, -19.98, .3, z, hq); box(.1, .25, 2.2, 0xf59e0b, -19.96, 3.05, z, hq); }
+  for (let i = 0; i < 3; i++) { box(1, .15, 1, 0xc8a26b, -18.6, 0, -9.3 + i * 1.2, s); box(.85, .65, .85, i % 2 ? 0x2f6bff : 0xd9b27c, -18.6, .15, -9.3 + i * 1.2, s); }
+  const fl = forklift(); fl.position.set(-18.4, 0, 9.2); fl.rotation.y = -1.2; s.add(fl);
 
-  // edificio del depósito
-  const dep = new THREE.Group(); s.add(dep);
-  box(16, 5, 8, 0xf8fafc, 0, 0, -1, dep);
-  box(16.15, .7, 8.15, 0x1f5eff, 0, 4.1, -1, dep);
-  box(16.3, .2, 8.3, 0xe2e8f0, 0, 5, -1, dep);
-  // logo en el techo
-  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const cx = cv.getContext('2d');
-  cx.fillStyle = '#f8fafc'; cx.fillRect(0, 0, 1024, 512);
-  cx.fillStyle = '#1f5eff'; cx.font = '800 190px Inter, Arial'; cx.textAlign = 'center'; cx.fillText('VALSUR', 512, 260);
-  cx.font = '600 72px Inter, Arial'; cx.fillStyle = '#334155'; cx.fillText('L O G Í S T I C A', 512, 370);
-  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-  const roofMat = new THREE.MeshLambertMaterial({ map: tex }); roofMat.userData.base = 0xffffff; tintMat(roofMat); matCache.set('roof', roofMat);
-  const roof = new THREE.Mesh(new THREE.PlaneGeometry(14, 7), roofMat);
-  roof.rotation.x = -Math.PI / 2; roof.position.set(0, 5.21, -1); roof.receiveShadow = true; dep.add(roof);
-  // andenes y portones
-  box(16, .5, .4, 0x94a3b8, 0, 0, 3.2, dep);
-  DOCKS.forEach(x => { box(1.7, 2.4, .08, 0x334155, x, .5, 3.02, dep); box(1.7, .25, .1, 0xf59e0b, x, 2.9, 3.04, dep); });
-  // ventanas
-  for (let i = 0; i < 5; i++) box(.08, .9, 1.1, 0x9cc0ff, 8.02, 2.6, -4 + i * 1.5, dep);
-  // vallado del playón
-  [[-9.6, 6.2, .08, 6.4], [14.6, 1, .08, 17], [-6, 9.4, 7.2, .08], [9.3, 9.4, 10.6, .08]].forEach(([x, z, w, d]) => box(w, .9, d, M(0x94a3b8, { transparent: true, opacity: .55 }), x, 0, z, s));
-  // pallets y cajas al costado
-  for (let i = 0; i < 6; i++) {
-    const x = -9 + (i % 3) * 1.3, z = -6.6 + Math.floor(i / 3) * 1.3;
-    box(1.1, .15, 1.1, 0xc8a26b, x, 0, z, s); box(.95, .7, .95, i % 2 ? 0x2f6bff : 0xd9b27c, x, .15, z, s);
-  }
-  for (let i = 0; i < 4; i++) { box(1.1, .15, 1.1, 0xc8a26b, 10.5 + (i % 2) * 1.3, 0, 4.2 + Math.floor(i / 2) * 1.3, s); box(.95, .6, .95, 0xd9b27c, 10.5 + (i % 2) * 1.3, .15, 4.2 + Math.floor(i / 2) * 1.3, s); }
-  const fl = forklift(); fl.position.set(12.5, 0, 7.4); fl.rotation.y = 2.4; s.add(fl);
+  // taller mecánico
+  box(12.5, .06, 11, 0xeef2f6, -14.5, 0, -26, s).castShadow = false;
+  const tl = new THREE.Group(); s.add(tl);
+  box(10, 5, 10, 0xf1f5f9, -26, 0, -26, tl);
+  box(10.15, .7, 10.15, 0xf59e0b, -26, 4.1, -26, tl);
+  box(10.3, .2, 10.3, 0xe2e8f0, -26, 5, -26, tl);
+  roofSign(tl, 'roof-taller', signTexture([['TALLER', 170, '#b45309', 200], ['MECÁNICO', 150, '#334155', 360]], { bg: '#fff7ed' }), 9.4, 8.6, -26, 5.21, -26);
+  box(.08, 3.2, 3.6, 0x475569, -20.98, .2, -27.5, tl);
+  for (let i = 0; i < 6; i++) box(.1, .08, 3.4, 0x94a3b8, -20.94, .5 + i * .5, -27.5, tl);
+  [-23.6, -22.5].forEach(z => { const tire = new THREE.Mesh(new THREE.TorusGeometry(.38, .17, 8, 16), M(0x1f2937)); tire.rotation.x = Math.PI / 2; tire.position.set(-19.6, .17, z); s.add(tire); });
 
-  // clientes
-  DESTS.forEach(d => {
-    const [x, z, w, dd, h] = d.b; const g = new THREE.Group(); s.add(g);
-    box(w, h, dd, 0xffffff, x, 0, z, g);
-    box(w + .1, .45, dd + .1, d.color, x, h - .6, z, g);
-    box(w + .25, .15, dd + .25, 0xe2e8f0, x, h, z, g);
-    box(w + 2, .05, dd + 2, 0xeef2f6, x, 0, z, g).castShadow = false;
-    const el = document.createElement('div'); el.className = 'tag';
-    el.style.setProperty('--c', '#' + d.color.toString(16).padStart(6, '0'));
-    el.innerHTML = `<i></i>${esc(d.name)}`;
-    J.addLabel(el, new THREE.Vector3(x, h + .3, z), 0);
+  // calle de demorados: conos, barrera y cartel
+  for (let x = -3; x <= 22; x += 3) { cone(s, x, DEMO_Z - 1.75); cone(s, x + 1.5, DEMO_Z + 1.75); }
+  [-1, 0, 1].forEach(dz => cone(s, 25.5, DEMO_Z + dz * 1.1, 1.15));
+  box(.25, 1, 4.2, M(0xffffff), 27, 0, DEMO_Z, s);
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(.3, .45, 4.4), new THREE.MeshLambertMaterial({ map: signTexture([], { bg: '#fbbf24', stripes: true, w: 512, h: 128 }) })); bar.position.set(27, 1.2, DEMO_Z); bar.castShadow = true; s.add(bar);
+  // arco con cartel sobre la entrada de la calle de demorados
+  const arch = new THREE.Group(); arch.position.set(-3, 0, DEMO_Z); s.add(arch);
+  [-2.6, 2.6].forEach(z => box(.2, 3.6, .2, 0x475569, 0, 0, z, arch));
+  const signTex = signMat('sign-demorado', signTexture([['DEMORADO', 230, '#111827', 260]], { bg: '#fbbf24', stripes: true }));
+  const sign = new THREE.Mesh(new THREE.BoxGeometry(.18, 1.9, 6), [signTex, signTex, M(0xf59e0b), M(0xf59e0b), M(0xf59e0b), M(0xf59e0b)]);
+  sign.position.set(0, 3.9, 0); sign.castShadow = true; arch.add(sign);
+  const dl = document.createElement('div'); dl.className = 'tag row'; dl.style.color = 'var(--red)'; dl.textContent = 'DEMORADOS';
+  J.addLabel(dl, new THREE.Vector3(-3, 5.3, DEMO_Z), 0);
+  J.hazard = new THREE.PointLight(0xff6a00, 0, 12); J.hazard.position.set(-1.5, 5, DEMO_Z); s.add(J.hazard);
+
+  // destinos simbólicos al final de cada ruta
+  J.roadEnds = ROAD_Z.map((z, i) => {
+    box(3.4, 2.6, 3.4, 0xffffff, ROAD_X1 + 4, 0, z, s); box(3.5, .35, 3.5, 0x16a34a, ROAD_X1 + 4, 2.1, z, s);
+    const el = document.createElement('div'); el.className = 'tag'; el.style.setProperty('--c', '#16a34a');
+    J.addLabel(el, new THREE.Vector3(ROAD_X1 + 4, 3.2, z), 0);
+    const st0 = document.createElement('div'); st0.className = 'tag row'; st0.textContent = 'RUTA ' + (i + 1);
+    J.addLabel(st0, new THREE.Vector3(ROAD_X0 + 3.5, .3, z - 2.4), 0);
+    return el;
   });
 
-  // árboles
+  // árboles en los bordes
   const freeAt = (x, z) => {
-    if (Math.hypot(x, z) > 41) return false;
-    if (x > -11 && x < 16 && z > -9 && z < 11) return false;
+    if (Math.hypot(x, z) > 43) return false;
+    if (x < -7 && z > -33 && z < 12 && x > -33) return false;
+    if (x > -10 && x < 38 && z > -17 && z < 17) return false;
     for (const [x1, z1, x2, z2] of ROADS) {
       const nx = Math.max(Math.min(x1, x2), Math.min(Math.max(x1, x2), x)), nz = Math.max(Math.min(z1, z2), Math.min(Math.max(z1, z2), z));
-      if (Math.hypot(x - nx, z - nz) < 2.8) return false;
+      if (Math.hypot(x - nx, z - nz) < 3.6) return false;
     }
-    for (const d of DESTS) { const [bx, bz, w, dd] = d.b; if (Math.abs(x - bx) < w / 2 + 2 && Math.abs(z - bz) < dd / 2 + 2) return false; }
-    return true;
+    return !(x > -8 && x < 30 && Math.abs(z - DEMO_Z) < 6);
   };
   const trunkGeo = new THREE.CylinderGeometry(.12, .16, .7, 6), crownGeo = new THREE.IcosahedronGeometry(.8, 0);
   let placed = 0;
-  for (let tries = 0; tries < 900 && placed < 85; tries++) {
-    const x = (rnd() * 2 - 1) * 40, z = (rnd() * 2 - 1) * 40; if (!freeAt(x, z)) continue;
+  for (let tries = 0; tries < 900 && placed < 70; tries++) {
+    const x = (rnd() * 2 - 1) * 42, z = (rnd() * 2 - 1) * 42; if (!freeAt(x, z)) continue;
     const sc = .7 + rnd() * .7;
     const tr = new THREE.Mesh(trunkGeo, M(0x8b6b4a)); tr.position.set(x, .35 * sc, z); tr.scale.setScalar(sc); tr.castShadow = true; s.add(tr);
     const cr = new THREE.Mesh(crownGeo, M(rnd() < .5 ? 0x7cc27a : 0x9ad08a)); cr.position.set(x, 1.15 * sc, z); cr.scale.setScalar(sc); cr.rotation.y = rnd() * 3; cr.castShadow = true; s.add(cr);
@@ -919,13 +927,10 @@ function buildJefeScene() {
   const ring = new THREE.Mesh(new THREE.RingGeometry(2.7, 3.05, 48), new THREE.MeshBasicMaterial({ color: 0x1f5eff, transparent: true, opacity: .8 }));
   ring.rotation.x = -Math.PI / 2; ring.position.y = .08; ring.visible = false; s.add(ring); J.ring = ring;
   trucks.forEach(t => {
-    t.obj = truckModel(t.phase === 'taller' ? 0x94a3b8 : 0x1f5eff);
-    s.add(t.obj);
-    if (t.phase === 'taller') { t.obj.position.set(12, 0, -2); t.obj.rotation.y = Math.PI / 2; t.heading = Math.PI / 2; }
+    t.obj = truckModel(0x1f5eff); s.add(t.obj);
     const el = document.createElement('div'); el.className = 'pin';
     el.onclick = e => { e.stopPropagation(); selectTruck(t.id, true); };
     t.pin = el; J.addLabel(el, t.obj, 2.6);
-    poseTruck(t, 1);
   });
   // clic sobre el modelo 3D
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); let down = null;
@@ -938,6 +943,7 @@ function buildJefeScene() {
     const hit = ray.intersectObjects(trucks.map(t => t.obj), true)[0];
     if (hit) { let o = hit.object; while (o.parent && !o.userData.truck) o = o.parent; const t = trucks.find(t => t.obj === o); t && selectTruck(t.id, true); }
   });
+  J.reset();
 }
 
 function truckModel(cabColor) {
@@ -967,57 +973,75 @@ function forklift() {
 /* =========================================================
    Simulación
    ========================================================= */
-function poseTruck(t, snap = 0) {
-  if (!t.path) return;
-  const p = t.path.at(t.dist), back = t.phase === 'vuelta';
-  const tx = back ? -p.dx : p.dx, tz = back ? -p.dz : p.dz;
-  const off = .78 * Math.min(1, t.dist / 4, (t.path.total - t.dist) / 4);
-  t.obj.position.set(p.x - tz * off, 0, p.z + tx * off);
-  const fx = p.seg === 0 ? p.dx : tx, fz = p.seg === 0 ? p.dz : tz;
-  const target = Math.atan2(-fz, fx);
-  let diff = target - t.heading; diff = Math.atan2(Math.sin(diff), Math.cos(diff));
-  t.heading += snap ? diff : diff * .15;
-  t.obj.rotation.y = t.heading;
+// Cada camión toma su lugar según los pedidos de su chofer: base, ruta (1 a 4), demorados o taller.
+const roadOf = new Map();
+function computeFleet() {
+  const active = [];
+  trucks.forEach(t => {
+    const d = driverOf(t);
+    const os = d ? pedidosOf(d.id).filter(activeP) : [];
+    const v = DATA.vehiculos.get(vehKey(t.plate));
+    const prob = os.find(p => p.estado === 'problema'), road = os.find(p => p.estado === 'en_camino'), prep = os.find(p => p.estado === 'enviado' || p.estado === 'aceptado');
+    t.driver = d || null; t.orders = os; t.taller = v?.taller ? v : null;
+    t.state = t.taller ? 'taller' : prob ? 'demorado' : road ? 'ruta' : prep ? 'asignado' : 'base';
+    t.pedido = t.state === 'taller' ? null : prob || road || prep || null;
+    t.since = t.pedido ? ([...(t.pedido.hist || [])].reverse().find(h => h.e === t.pedido.estado)?.at || t.pedido.updatedAt) : t.taller?.desde || null;
+    if (t.state === 'ruta' || t.state === 'asignado') active.push(t);
+  });
+  // cada chofer conserva su ruta mientras siga con un pedido; los nuevos toman la ruta menos ocupada
+  [...roadOf.keys()].forEach(k => { if (!active.some(a => a.id === k)) roadOf.delete(k); });
+  active.forEach(t => {
+    if (!roadOf.has(t.id)) { const use = [0, 0, 0, 0]; roadOf.forEach(r => use[r]++); roadOf.set(t.id, use.indexOf(Math.min(...use))); }
+    t.road = roadOf.get(t.id);
+  });
+  trucks.forEach(t => { if (!active.includes(t)) t.road = null; });
 }
-function stepSim(dt) {
-  for (const t of trucks) {
-    switch (t.phase) {
-      case 'carga':
-        t.timer -= dt;
-        if (t.timer <= 0) { t.phase = 'ida'; t.dist = 0; t.fuel = Math.max(30, t.fuel - ri(1, 4)); }
-        break;
-      case 'ida':
-        t.dist += t.speed * dt;
-        if (t.dist >= t.path.total) { t.dist = t.path.total; t.phase = 'descarga'; t.timer = 7 + rnd() * 5; }
-        break;
-      case 'descarga':
-        t.timer -= dt;
-        if (t.timer <= 0) t.phase = 'vuelta';
-        break;
-      case 'vuelta':
-        t.dist -= t.speed * 1.1 * dt;
-        if (t.dist <= 0) { t.dist = 0; t.phase = 'carga'; t.timer = 9 + rnd() * 6; if (t.fuel < 45) t.fuel = 100; }
-        break;
+function targetPose(t, now) {
+  const same = trucks.filter(x => x.state === t.state && x.road === t.road), k = same.indexOf(t);
+  switch (t.state) {
+    case 'asignado': return { x: ROAD_X0 + 4 + k * 5.4, z: ROAD_Z[t.road] + .78, h: 0 };
+    case 'ruta': {
+      const min = Math.max(0, (now - (t.since || now)) / 60000), p = Math.min(.93, .05 + (1 - Math.exp(-min / 20)));
+      return { x: ROAD_X0 + 6 + p * (ROAD_X1 - ROAD_X0 - 9) - k * 5.4, z: ROAD_Z[t.road] - .78, h: 0, moving: true };
     }
-    poseTruck(t);
+    case 'demorado': return { x: 1 + k * 6, z: DEMO_Z, h: 0 };
+    case 'taller': return { x: -14, z: -29.6 + k * 2.4, h: Math.PI };
+    default: return { x: t.idx < 5 ? -16.6 : -11.2, z: -7.4 + (t.idx % 5) * 3.6 + (t.idx < 5 ? 0 : 1.8), h: 0 };
   }
 }
+function stepFleet(dt) {
+  const now = Date.now();
+  trucks.forEach(t => {
+    const g = targetPose(t, now), p = t.obj.position, key = t.state + ':' + t.road;
+    if (!t.placed) { p.set(g.x, 0, g.z); t.heading = g.h; t.placed = true; t.goalKey = key; }
+    if (t.goalKey !== key) { // cambio de lugar: va por la avenida central
+      t.goalKey = key;
+      t.wps = Math.abs(p.z - g.z) < 1 ? [] : [[TRUNK_X + (p.x < TRUNK_X ? -.8 : .8), p.z], [TRUNK_X + (g.x < TRUNK_X ? -.8 : .8), g.z]];
+    }
+    const [tx, tz] = t.wps.length ? t.wps[0] : [g.x, g.z];
+    const dx = tx - p.x, dz = tz - p.z, d = Math.hypot(dx, dz);
+    const step = Math.min(d, Math.max(5, Math.min(14, d * 1.6)) * dt);
+    if (d > .02) { p.x += dx / d * step; p.z += dz / d * step; }
+    if (t.wps.length && d < .3) t.wps.shift();
+    const goalH = d > .5 ? Math.atan2(-dz, dx) : g.h;
+    const diff = Math.atan2(Math.sin(goalH - t.heading), Math.cos(goalH - t.heading));
+    t.heading += diff * Math.min(1, dt * 6); t.obj.rotation.y = t.heading;
+  });
+  if (J.hazard) J.hazard.intensity = trucks.some(t => t.state === 'demorado') ? (Math.sin(now / 250) > 0 ? 14 : 0) : 0;
+}
+
 /* =========================================================
    UI Panel Jefe
    ========================================================= */
 const st = { sel: null, stageFilter: null, fleetFilter: 'todos' };
-const statusOf = t => STATUS[t.phase];
-function truckProgress(t) { if (!t.path) return 0; if (t.phase === 'carga') return 0; if (t.phase === 'descarga') return 100; const p = t.dist / t.path.total * 100; return Math.round(t.phase === 'vuelta' ? 100 - p : p); }
+const statusOf = t => STATUS[t.state];
+const minsAgo = ts => ts ? Math.max(0, Math.round((Date.now() - ts) / 60000)) : 0;
+function truckProgress(t) { return t.state === 'ruta' ? Math.round(Math.min(.93, .05 + (1 - Math.exp(-minsAgo(t.since) / 20))) * 100) : 0; }
 function truckEta(t) {
-  if (t.phase === 'ida') return 'Llega ' + hhmm(new Date(Date.now() + (t.path.total - t.dist) / t.speed * 90000));
-  if (t.phase === 'vuelta') return 'Vuelve ' + hhmm(new Date(Date.now() + t.dist / t.speed * 80000));
-  if (t.phase === 'carga') return 'Sale ' + hhmm(new Date(Date.now() + t.timer * 60000));
-  if (t.phase === 'descarga') return 'Libera ' + hhmm(new Date(Date.now() + t.timer * 60000));
-  if (t.phase === 'incidencia') return 'Demorado';
-  return '—';
+  return { ruta: 'Salió hace ' + minsAgo(t.since) + ' min', asignado: 'Asignado hace ' + minsAgo(t.since) + ' min', demorado: 'Hace ' + minsAgo(t.since) + ' min', taller: t.taller?.nota ? '' : '', base: '' }[t.state] || '';
 }
-const truckSpeed = t => (t.phase === 'ida' || t.phase === 'vuelta') ? Math.round(58 + Math.sin(Date.now() / 3000 + t.dock) * 12) : 0;
-const where = t => t.dest ? ({ carga: 'Andén ' + (t.dock + 1), ida: '→ ' + destBy[t.dest].city, descarga: 'En ' + destBy[t.dest].name, vuelta: '← Depósito central', incidencia: 'Av. Costanera' })[t.phase] : 'Taller interno';
+const truckSpeed = t => t.state === 'ruta' ? Math.round(52 + Math.sin(Date.now() / 3000 + t.idx) * 10) : 0;
+const where = t => ({ base: 'En la base Valsur', asignado: `Ruta ${t.road + 1} · preparando la salida`, ruta: `Ruta ${t.road + 1} → ${t.pedido?.cliente || ''}`, demorado: 'Calle de demorados', taller: 'Taller mecánico' })[t.state];
 
 function pedidoStepper(p) {
   const idx = flowIdx(p.estado), times = {};
@@ -1030,12 +1054,12 @@ function orderCard(p) {
 }
 
 function renderKPIsJefe() {
-  const moving = trucks.filter(t => t.phase === 'ida' || t.phase === 'vuelta').length;
+  const moving = trucks.filter(t => t.state === 'ruta').length;
   const active = pedidos.filter(activeP).length, sinAsig = pedidos.filter(p => p.estado === 'nuevo' || p.estado === 'rechazado').length;
   const hoy = pedidos.filter(p => p.estado === 'entregado' && isToday(p.entregadoAt)).length;
-  const alerts = trucks.filter(t => t.phase === 'incidencia').length + pedidos.filter(p => p.estado === 'problema' || p.estado === 'rechazado').length;
+  const alerts = trucks.filter(t => t.state === 'demorado').length + pedidos.filter(p => p.estado === 'rechazado').length;
   const k = [
-    ['#1f5eff', ICON.truck, 'Vehículos en movimiento', `${moving}<span class="muted" style="font-size:14px;font-weight:600"> / ${trucks.length}</span>`, ''],
+    ['#1f5eff', ICON.truck, 'Vehículos en ruta', `${moving}<span class="muted" style="font-size:14px;font-weight:600"> / ${trucks.length}</span>`, ''],
     ['#7c3aed', ICON.order, 'Pedidos en curso', active, sinAsig ? `<em style="color:var(--amber)">${sinAsig} sin asignar</em>` : ''],
     ['#16a34a', ICON.check, 'Entregados hoy', hoy, ''],
     ['#ef4444', ICON.alert, 'Alertas activas', alerts, alerts ? '<em style="color:var(--red)">revisar</em>' : ''],
@@ -1045,15 +1069,15 @@ function renderKPIsJefe() {
 $('#kpis-jefe').onclick = e => {
   if (!e.target.closest('[data-alert]')) return;
   if (pedidos.some(p => p.estado === 'problema' || p.estado === 'rechazado')) { pv.f = 'problemas'; go('pedidos'); renderPedidos(); return; }
-  const t = trucks.find(t => t.phase === 'incidencia'); t && selectTruck(t.id, true);
+  const t = trucks.find(t => t.state === 'demorado'); t && selectTruck(t.id, true);
 };
 
 function renderSide() {
   const box = $('#side-sel');
   const t = st.sel && truckBy(st.sel);
   if (t) {
-    const s = statusOf(t), prog = truckProgress(t);
-    const dr = driverOf(t), os = dr ? pedidosOf(dr.id).filter(activeP) : [], drBad = dr ? DOCS.filter(([k]) => docState(dr.docs[k]).k === 'bad').map(([, l]) => l) : [];
+    const s = statusOf(t), dr = t.driver, os = t.orders;
+    const drBad = dr ? DOCS.filter(([k]) => docState(dr.docs[k]).k === 'bad').map(([, l]) => l) : [];
     setHTML(box, `
       <div class="sel-head"><div class="t-ic" style="--c:${s.color}">${ICON.truck}</div>
         <div><b>${t.plate}</b><small>${t.model}</small></div>
@@ -1061,31 +1085,39 @@ function renderSide() {
         <button class="x" data-close title="Cerrar">×</button></div>
       <div class="facts">
         <div class="fact"><small>Chofer</small><b>${dr ? `<button class="link" data-driver="${dr.id}">${esc(dr.name)}</button>` : 'Sin asignar'}</b></div>
-        <div class="fact"><small>Ubicación</small><b>${esc(where(t))}</b></div>
-        <div class="fact"><small>Velocidad</small><b class="num">${truckSpeed(t)} km/h</b></div>
-        <div class="fact"><small>Estimado</small><b class="num">${truckEta(t)}</b></div>
+        <div class="fact"><small>Dónde está</small><b>${esc(where(t))}</b></div>
+        <div class="fact"><small>Pedido actual</small><b>${t.pedido ? `<button class="link" data-pid="${t.pedido.id}">${esc(t.pedido.num)}</button>` : '—'}</b></div>
+        <div class="fact"><small>Tiempo</small><b class="num">${truckEta(t) || '—'}</b></div>
         <div class="fact"><small>Carga</small><b class="num">${fmt(os.reduce((a, p) => a + (+p.peso || 0), 0))} kg</b></div>
         <div class="fact"><small>Combustible</small><b class="num">${t.fuel}%</b></div>
       </div>
-      ${t.note ? `<div class="note">${ICON.alert}<span>${esc(t.note)}</span></div>` : ''}
+      ${t.state === 'demorado' ? `<div class="note">${ICON.alert}<span><b>Demorado:</b> ${esc(t.pedido?.motivo || 'el chofer reportó un problema')}</span></div>` : ''}
+      ${t.taller ? `<div class="note" style="background:var(--amber-50);color:var(--amber-ink)">${ICON.alert}<span><b>En el taller</b>${t.taller.nota ? ': ' + esc(t.taller.nota) : ''}</span></div>` : ''}
       ${drBad.length ? `<div class="note">${ICON.alert}<span>Documentación del chofer vencida: ${drBad.join(', ')}</span></div>` : ''}
-      ${t.dest ? `<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600"><span>Recorrido</span><span class="num">${prog}%</span></div><div class="bar" style="--c:${s.color}"><i style="width:${prog}%"></i></div>` : ''}
+      ${t.state === 'ruta' ? `<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600"><span>Recorrido estimado</span><span class="num">${truckProgress(t)}%</span></div><div class="bar" style="--c:${s.color}"><i style="width:${truckProgress(t)}%"></i></div>` : ''}
+      ${me.role === 'jefe' ? `<div style="margin-top:10px"><button class="btn ghost" data-taller>${t.taller ? 'Salió del taller' : 'Mandar al taller'}</button></div>` : ''}
       <div class="mini-title">Pedidos del chofer (${os.length})</div>
-      ${os.length ? os.map(orderCard).join('') : '<div class="muted" style="font-size:12px">Sin pedidos asignados en este momento.</div>'}`);
+      ${os.length ? os.map(orderCard).join('') : '<div class="muted" style="font-size:12px">Sin pedidos activos.</div>'}`);
     return;
   }
-  const counts = Object.keys(STATUS).map(k => [k, trucks.filter(t => t.phase === k).length]);
+  const counts = Object.keys(STATUS).map(k => [k, trucks.filter(t => t.state === k).length]);
   setHTML(box, `<div class="card-h" style="padding:0 0 4px"><h3>Resumen de la flota</h3><span class="muted">${trucks.length} vehículos</span></div>
     <div class="dist">${counts.map(([k, n]) => `<div class="dist-row"><span class="pill" style="--c:${STATUS[k].color}">${STATUS[k].label}</span><div class="bar" style="--c:${STATUS[k].color};margin:0"><i style="width:${n / trucks.length * 100}%"></i></div><b class="num" style="text-align:right">${n}</b></div>`).join('')}</div>
-    <div class="hint">Tocá un vehículo en el mapa o en la lista para seguirlo y ver sus pedidos.</div>`);
+    <div class="hint">Cada camión se ubica según su chofer: en la base, en una de las 4 rutas cuando tiene un pedido, en la calle de demorados si reportó un problema, o en el taller.</div>`);
 }
 $('#side-sel').onclick = e => {
   if (e.target.closest('[data-close]')) selectTruck(null);
   const oc = e.target.closest('[data-pid]'); if (oc) openPedido(oc.dataset.pid);
+  if (e.target.closest('[data-taller]')) {
+    const t = truckBy(st.sel); if (!t) return;
+    if (t.taller) removeDoc('vehiculos', vehKey(t.plate)).then(ok => ok && toast(t.plate + ' volvió a la base'));
+    else askText('Mandar al taller', `${t.plate} · ${t.model}`, 'Motivo', 'Ej. Service de 60.000 km', 'Mandar al taller', false,
+      txt => put('vehiculos', vehKey(t.plate), { taller: true, nota: txt, desde: Date.now() }).then(ok => ok && toast(t.plate + ' está en el taller')));
+  }
   const dl = e.target.closest('[data-driver]'); if (dl) showDriver(drivers.find(d => d.id === dl.dataset.driver));
 };
 
-const FLEET_FILTERS = { todos: ['Todos', () => true], ruta: ['En ruta', t => ['ida', 'vuelta', 'descarga'].includes(t.phase)], deposito: ['En depósito', t => ['carga', 'taller'].includes(t.phase)], alertas: ['Alertas', t => t.phase === 'incidencia'] };
+const FLEET_FILTERS = { todos: ['Todos', () => true], ruta: ['Con pedido', t => t.state === 'ruta' || t.state === 'asignado'], base: ['En base', t => t.state === 'base'], demorado: ['Demorados', t => t.state === 'demorado'], taller: ['Taller', t => t.state === 'taller'] };
 function renderFleet() {
   setHTML($('#fleet-tabs'), Object.entries(FLEET_FILTERS).map(([k, [l, f]]) => `<button class="chip ${st.fleetFilter === k ? 'active' : ''}" data-f="${k}">${l} · ${trucks.filter(f).length}</button>`).join(''));
   const list = trucks.filter(FLEET_FILTERS[st.fleetFilter][1]);
@@ -1093,8 +1125,8 @@ function renderFleet() {
     const s = statusOf(t), p = truckProgress(t);
     return `<button class="frow ${st.sel === t.id ? 'sel' : ''}" data-id="${t.id}">
       <div class="t-ic" style="--c:${s.color}">${ICON.truck}</div>
-      <div style="min-width:0"><b>${t.plate}</b> <span class="muted" style="font-size:12px">· ${esc(driverName(t))}</span><small>${esc(where(t))}</small>
-        ${t.dest ? `<div class="bar" style="--c:${s.color}"><i style="width:${p}%"></i></div>` : ''}</div>
+      <div style="min-width:0"><b>${t.plate}</b> <span class="muted" style="font-size:12px">· ${esc(t.driver?.name || 'sin chofer')}</span><small>${esc(where(t))}</small>
+        ${t.state === 'ruta' ? `<div class="bar" style="--c:${s.color}"><i style="width:${p}%"></i></div>` : ''}</div>
       <div style="text-align:right"><span class="pill" style="--c:${s.color}">${s.label}</span><small class="num" style="margin-top:4px">${truckEta(t)}</small></div></button>`;
   }).join('') || '<div class="empty">No hay vehículos en este estado.</div>');
 }
@@ -1131,11 +1163,17 @@ function renderLegend() {
 function updatePins() {
   trucks.forEach(t => {
     const s = statusOf(t);
-    const html = `<i></i>${t.plate}`;
+    const html = `<i></i>${t.plate}${t.driver ? ' · ' + esc(t.driver.name.split(' ')[0]) : ''}`;
     if (t.pin.innerHTML !== html) t.pin.innerHTML = html;
     t.pin.style.setProperty('--c', s.color);
     t.pin.classList.toggle('sel', st.sel === t.id);
     t.pin.style.zIndex = st.sel === t.id ? 5 : 1;
+  });
+  J.roadEnds?.forEach((el, i) => {
+    const on = trucks.filter(t => t.road === i && t.pedido).map(t => t.pedido.cliente);
+    const html = `<i></i>${on.length ? esc(on.join(' · ')) : 'Ruta libre'}`;
+    if (el.innerHTML !== html) el.innerHTML = html;
+    el.style.opacity = on.length ? 1 : .6;
   });
 }
 function selectTruck(id, focus) {
@@ -1146,7 +1184,7 @@ function selectTruck(id, focus) {
   if (!t) J.follow = null;
   renderAllJefe();
 }
-function renderAllJefe() { renderKPIsJefe(); renderSide(); renderFleet(); renderPipeline(); renderOrders(); updatePins(); }
+function renderAllJefe() { computeFleet(); renderKPIsJefe(); renderSide(); renderFleet(); renderPipeline(); renderOrders(); updatePins(); }
 
 /* =========================================================
    Depósito: inventario y escena
@@ -1386,7 +1424,7 @@ function renderDetail() {
     </tbody></table>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px;flex-wrap:wrap">
       <span style="font-size:12px">Total <b class="num">${fmt(p.total)}</b> · mín. ${p.min} ${p.low ? '<span class="low">· REPONER</span>' : ''}</span>
-      <span style="display:flex;gap:6px">${p.places.length > 1 ? '<button class="btn ghost" data-all>Ver todas</button>' : ''}<button class="btn" data-copy>Copiar ubicación</button></span>
+      <span style="display:flex;gap:6px;flex-wrap:wrap">${p.places.length > 1 ? '<button class="btn ghost" data-all>Ver todas</button>' : ''}<button class="btn ghost" data-copy>Copiar ubicación</button>${can('despachar') ? '<button class="btn green" data-desp>Despachar</button>' : ''}</span>
     </div>`;
   box.classList.add('open');
 }
@@ -1394,6 +1432,7 @@ $('#pdetail').onclick = e => {
   const p = ds.sel; if (!p) return;
   if (e.target.closest('[data-close]')) return selectProduct(null);
   if (e.target.closest('[data-all]')) return selectProduct(p);
+  if (e.target.closest('[data-desp]')) return despachar(p, ds.selPlace || p.places[0]);
   if (e.target.closest('[data-copy]')) { const pl = ds.selPlace || p.places[0]; const txt = `${p.name} — Pasillo ${pl.row}, posición ${pl.code.slice(2, 4)}, nivel ${pl.lvl + 1} (${pl.code})`; navigator.clipboard?.writeText(txt).catch(() => {}); return toast('Ubicación copiada: ' + pl.code); }
   const r = e.target.closest('[data-code]'); if (r) selectPlace(p.places.find(x => x.code === r.dataset.code));
 };
@@ -1621,7 +1660,8 @@ function seedDrivers() {
     ['34.218.590', '11 4105-3376', 'E2', [380, 160, -3, 90, 260, 150], ['Cargas generales', 'Cargas peligrosas', 'Semirremolque']],
     ['32.777.948', '11 5098-8841', 'B2', [700, 0, 210, 0, 220, 200], ['Cargas generales', 'Autoelevador']],
   ];
-  return TRUCKS_DEF.map(([plate, name], i) => {
+  const names = ['Martín Gómez', 'Lucía Fernández', 'Diego Sosa', 'Carla Benítez', 'Javier Ruiz', 'Sofía Romero', 'Pablo Medina', 'Andrea Castro', 'Nicolás Herrera'];
+  return TRUCKS_DEF.map(([plate], i) => { const name = names[i];
     const [dni, phone, lic, ds_, habs] = extra[i];
     const docs = {}; DOCS.forEach(([k], j) => docs[k] = ds_[j] ? dPlus(ds_[j]) : (k === 'peligrosas' ? '' : dPlus(365)));
     return { id: 'D' + i, name, dni, phone, lic, vehicle: plate, docs, habs, notes: '' };
@@ -1656,13 +1696,13 @@ function renderDrivers() {
       <header class="drv-h"><div class="drv-av" style="--c:${avColor(d)}">${esc(initials(d.name))}</div>
         <div style="min-width:0"><b>${highlight(d.name, dv.q)}</b><small>DNI ${highlight(d.dni || '—', dv.q)}${d.phone ? ' · ' + esc(d.phone) : ''}</small></div>
         <span class="pill" style="--c:${s.c}">${s.label}</span></header>
-      <div class="drv-meta"><span>Licencia <b>${esc(d.lic || '—')}</b></span><span>Vehículo <b>${d.vehicle ? highlight(d.vehicle, dv.q) : 'Sin asignar'}</b></span>${t ? `<span style="color:${STATUS[t.phase].color}"><b style="color:inherit">${STATUS[t.phase].label}</b></span>` : ''}</div>
+      <div class="drv-meta"><span>Licencia <b>${esc(d.lic || '—')}</b></span><span>Vehículo <b>${d.vehicle ? highlight(d.vehicle, dv.q) : 'Sin asignar'}</b></span>${t ? `<span style="color:${STATUS[t.state].color}"><b style="color:inherit">${STATUS[t.state].label}</b></span>` : ''}</div>
       <ul class="docs">${DOCS.map(([k, l]) => { const x = docState(d.docs[k]); return `<li><span>${l}</span><span class="d num">${d.docs[k] ? fmtDate(fromYmd(d.docs[k])) : ''}</span><span class="vb" style="--c:${x.c}">${x.label}</span></li>`; }).join('')}</ul>
       <div class="habs">${d.habs.length ? d.habs.map(h => `<span class="hab">${highlight(h, dv.q)}</span>`).join('') : '<span class="muted" style="font-size:12px">Sin habilitaciones cargadas</span>'}</div>
       ${d.notes ? `<div class="drv-note">${esc(d.notes)}</div>` : ''}
-      <footer><button class="btn ghost danger" data-del>Eliminar</button><button class="btn ghost" data-edit>Editar</button></footer>
+      ${can('editDrivers') ? '<footer><button class="btn ghost danger" data-del>Eliminar</button><button class="btn ghost" data-edit>Editar</button></footer>' : ''}
     </article>`;
-  }).join('') || `<div class="card empty" style="grid-column:1/-1">${drivers.length ? 'No hay choferes que coincidan con la búsqueda.' : 'Todavía no hay choferes. Tocá “Agregar chofer” para crear el primero.<br><br><button class="btn ghost" data-seed>Cargar los choferes de ejemplo para probar</button>'}</div>`;
+  }).join('') || `<div class="card empty" style="grid-column:1/-1">${drivers.length ? 'No hay choferes que coincidan con la búsqueda.' : (can('editDrivers') ? 'Todavía no hay choferes. Tocá “Agregar chofer” para crear el primero.<br><br><button class="btn ghost" data-seed>Cargar los choferes de ejemplo para probar</button>' : 'Todavía no hay choferes cargados.')}</div>`;
 }
 $('#drv-filters').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { dv.f = b.dataset.f; renderDrivers(); } };
 $('#drv-search').oninput = e => { dv.q = e.target.value.trim(); renderDrivers(); };
@@ -1722,12 +1762,12 @@ function showDriver(d) {
 
 /* =========================================================
    Datos compartidos
-   Publicada en Claude, la app guarda pedidos, choferes, equipo e inventario en la base de datos
+   Publicada en Claude, la app guarda pedidos, choferes, vehículos, despachos e inventario en la base de datos
    del artifact (compartida y en vivo). Abierta como archivo local, usa el navegador (modo demo).
    ========================================================= */
 const sync = { cloud: false, db: null, user: null, uid: null, owner: false, sample: null, loaded: new Set() };
-const DATA = { pedidos: new Map(), drivers: new Map(), equipo: new Map() };
-const dataListeners = { pedidos: [], drivers: [], equipo: [] };
+const DATA = { pedidos: new Map(), drivers: new Map(), vehiculos: new Map(), movimientos: new Map() };
+const dataListeners = { pedidos: [], drivers: [], vehiculos: [], movimientos: [] };
 const onData = (name, fn) => dataListeners[name].push(fn);
 const emitData = name => dataListeners[name].forEach(fn => fn());
 function loadLocal(name) {
@@ -1793,38 +1833,65 @@ const readMarks = store.get('valsur.read') || {};
 function markRead(pid) { readMarks[pid] = Date.now(); store.set('valsur.read', readMarks); }
 const unread = (p, side) => p.lastMsg && p.lastMsg.de !== side && p.lastMsg.at > (readMarks[p.id] || 0);
 
-/* ---------- Quién está usando la app ---------- */
-// Dentro de claude.ai esperamos a saber quién es antes de mostrar nada.
-const me = { role: window.claude?.use ? 'cargando' : 'oficina', driverId: null };
-function computeRole() {
-  me.driverId = null;
-  if (!sync.cloud) { if (me.role === 'cargando' && !sync.localReady) return; me.role = 'oficina'; return; }
-  if (sync.owner) { me.role = 'oficina'; return; }
-  if (!sync.loaded.has('equipo')) { me.role = 'cargando'; return; }
-  if (!sync.uid) { me.role = 'anon'; return; }
-  const e = DATA.equipo.get(sync.uid);
-  if (!e) me.role = 'nuevo';
-  else if (e.estado === 'aprobado') { me.role = e.rol; me.driverId = e.driverId || null; }
-  else me.role = e.estado === 'rechazado' ? 'rechazado' : 'pendiente';
+/* ---------- Usuarios y permisos ---------- */
+// Usuarios fijos de la empresa. Las contraseñas no se guardan en texto: se compara una huella (hash).
+const USERS = {
+  jefe:     { role: 'jefe',     label: 'Jefe',     sub: 'Acceso completo',        h: 'w8d98ofkbb' },
+  pedidos:  { role: 'pedidos',  label: 'Pedidos',  sub: 'Pedidos y choferes',     h: '1wh641s4dln' },
+  choferes: { role: 'choferes', label: 'Choferes', sub: 'App chofer',             h: 'qnj0jjqol6' },
+  deposito: { role: 'deposito', label: 'Depósito', sub: 'Mercadería y despachos', h: '6uci6qwih4' },
+};
+function cyrb53(str, seed = 0) {
+  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
 }
-const ROLE_VIEWS = { oficina: ['jefe', 'pedidos', 'deposito', 'choferes', 'chofer'], chofer: ['chofer'] };
-const allowedViews = () => ROLE_VIEWS[me.role] || ['acceso'];
+const ROLE_VIEWS = { jefe: ['jefe', 'pedidos', 'deposito', 'choferes', 'chofer'], pedidos: ['pedidos', 'choferes'], choferes: ['chofer'], deposito: ['deposito'] };
+const session = store.get('valsur.session');
+const me = { user: USERS[session?.user] ? session.user : null, role: USERS[session?.user]?.role || null };
+const allowedViews = () => ROLE_VIEWS[me.role] || [];
+const can = what => ({
+  editDrivers: me.role === 'jefe', inventoryFiles: me.role === 'jefe', despachar: me.role === 'jefe' || me.role === 'deposito',
+  search: me.role === 'jefe', officeAlerts: me.role === 'jefe' || me.role === 'pedidos',
+})[what];
 function applyRole() {
-  const prev = document.body.dataset.role;
-  computeRole();
+  const logged = !!me.role;
+  document.body.classList.toggle('locked', !logged);
+  $('#login').hidden = logged;
+  if (!logged) { setTimeout(() => $('#lg-user').focus(), 30); return; }
   const views = allowedViews();
-  document.body.classList.toggle('role-chofer', me.role === 'chofer');
-  document.body.classList.toggle('role-acceso', !ROLE_VIEWS[me.role]);
   document.body.dataset.role = me.role;
+  document.body.classList.toggle('single-view', views.length === 1);
   document.querySelectorAll('.tab').forEach(t => t.hidden = !views.includes(t.dataset.view));
-  $('#cv-preview').hidden = me.role !== 'oficina';
-  const d = me.role === 'chofer' && driverById(me.driverId);
-  $('#me-name').textContent = d ? d.name : me.role === 'oficina' ? 'Oficina' : 'Valsur';
-  $('#me-sub').textContent = d ? (d.vehicle ? 'Vehículo ' + d.vehicle : 'Chofer') : me.role === 'oficina' ? (sync.cloud ? 'Centro de distribución' : 'Modo demo · este navegador') : 'Acceso pendiente';
-  $('#me-av').textContent = d ? initials(d.name) : 'VS';
-  if (!views.includes(st.view) || prev !== me.role) go(views.includes(st.view) ? st.view : views[0]);
-  renderAccess();
+  $('.gsearch').hidden = !can('search');
+  document.querySelectorAll('[data-perm]').forEach(el => el.hidden = !can(el.dataset.perm));
+  const u = USERS[me.user], d = me.role === 'choferes' && driverById(cvDriverId());
+  $('#me-name').textContent = d ? d.name : u.label;
+  $('#me-sub').textContent = d ? (d.vehicle ? 'Vehículo ' + d.vehicle : 'Chofer') : u.sub;
+  $('#me-av').textContent = d ? initials(d.name) : u.label.slice(0, 2).toUpperCase();
+  $('#cv-label').textContent = me.role === 'choferes' ? '¿Quién sos?' : 'Vista previa como:';
+  $('#cv-hint').textContent = me.role === 'choferes' ? 'Elegí tu nombre una vez; este celular lo recuerda.' : 'Así ve la app cada chofer en su celular.';
+  if (!views.includes(st.view)) go(views[0]); else go(st.view);
+  renderDrivers(); renderDetail(); renderDriverApp(); updateBadges();
 }
+function login(user, pass) {
+  const k = String(user).trim().toLowerCase(), u = USERS[k];
+  if (!u || cyrb53(`valsur|${k}|${pass}`) !== u.h) return false;
+  me.user = k; me.role = u.role; store.set('valsur.session', { user: k, at: Date.now() });
+  firstLoad = true; applyRole(); return true;
+}
+function logout() { store.del('valsur.session'); me.user = null; me.role = null; closeModal(); applyRole(); }
+$('#login-card').onsubmit = e => {
+  e.preventDefault();
+  const ok = login($('#lg-user').value, $('#lg-pass').value);
+  $('#lg-err').hidden = ok;
+  if (ok) { $('#lg-pass').value = ''; toast('Hola, ' + USERS[me.user].label); }
+  else { $('#lg-pass').select(); $('#login-card').classList.remove('shake'); void $('#login-card').offsetWidth; $('#login-card').classList.add('shake'); }
+};
+$('#lg-show').onclick = () => { const i = $('#lg-pass'); i.type = i.type === 'password' ? 'text' : 'password'; $('#lg-show').textContent = i.type === 'password' ? 'Mostrar' : 'Ocultar'; };
+$('#logout').onclick = () => confirmModal('Cerrar sesión', `Vas a salir del usuario <b>${esc(USERS[me.user]?.label || '')}</b>.`, 'Cerrar sesión', logout, false);
 
 /* =========================================================
    Pedidos
@@ -1850,7 +1917,7 @@ const pedidosOf = did => pedidos.filter(p => p.driverId === did);
 const mapsUrl = p => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent([p.direccion, p.localidad].filter(Boolean).join(', '));
 const telUrl = t => 'tel:' + String(t).replace(/[^\d+]/g, '');
 const fmtFecha = s => s ? fromYmd(s).toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' }) : '';
-const actorSide = () => me.role === 'chofer' || st.view === 'chofer' ? 'chofer' : 'oficina';
+const actorSide = () => me.role === 'choferes' || st.view === 'chofer' ? 'chofer' : 'oficina';
 async function changeEstado(p, estado, extra = {}, nota = '') {
   const hist = [...(p.hist || []), { e: estado, at: Date.now(), by: actorSide(), uid: sync.uid || '', nota }].slice(-40);
   return patch('pedidos', p.id, { ...extra, estado, hist, updatedAt: Date.now() });
@@ -2058,7 +2125,7 @@ function mountChat(pid, host, side) {
    App del chofer
    ========================================================= */
 const cv = { tab: 'nuevos', previewId: null };
-const cvDriverId = () => me.role === 'chofer' ? me.driverId : (cv.previewId && driverById(cv.previewId) ? cv.previewId : drivers.find(d => d.vehicle)?.id || drivers[0]?.id);
+const cvDriverId = () => me.role === 'choferes' ? (driverById(store.get('valsur.yo')) ? store.get('valsur.yo') : null) : (cv.previewId && driverById(cv.previewId) ? cv.previewId : drivers.find(d => d.vehicle)?.id || drivers[0]?.id);
 const CV_TABS = {
   nuevos: ['Nuevos', p => p.estado === 'enviado'],
   curso:  ['En curso', p => ['aceptado', 'en_camino', 'problema'].includes(p.estado)],
@@ -2068,10 +2135,12 @@ function renderDriverApp() {
   const sel = $('#cv-driver');
   const opts = drivers.map(d => `<option value="${d.id}">${esc(d.name)}${d.vehicle ? ' · ' + esc(d.vehicle) : ''}</option>`).join('');
   if (sel.dataset.opts !== opts) { sel.innerHTML = opts; sel.dataset.opts = opts; }
-  const did = cvDriverId(); if (did) sel.value = did;
+  const did = cvDriverId();
+  if (me.role === 'choferes' && !did && !sel.querySelector('option[value=""]')) sel.insertAdjacentHTML('afterbegin', '<option value="">Elegí tu nombre…</option>');
+  sel.value = did || '';
   const d = driverById(did);
   if (!d) {
-    $('#cv-hero').innerHTML = `<div class="empty" style="width:100%">${me.role === 'chofer' ? 'Tu perfil de chofer no existe más. Pedile a la oficina que lo revise.' : 'Todavía no hay choferes cargados.'}</div>`;
+    $('#cv-hero').innerHTML = `<div class="empty" style="width:100%">${me.role === 'choferes' ? (drivers.length ? 'Elegí tu nombre en la lista de arriba para ver tus pedidos.' : 'La oficina todavía no cargó los perfiles de los choferes.') : 'Todavía no hay choferes cargados.'}</div>`;
     $('#cv-tabs').innerHTML = ''; $('#cv-list').innerHTML = ''; return;
   }
   const mine = pedidosOf(d.id), bad = DOCS.filter(([k]) => docState(d.docs[k]).k === 'bad').map(([, l]) => l);
@@ -2104,7 +2173,11 @@ function renderDriverApp() {
     </article>`;
   }).join('') || `<div class="card empty">${{ nuevos: 'No tenés pedidos nuevos. Cuando la oficina te envíe uno, aparece acá.', curso: 'No tenés pedidos en curso.', hechos: 'Todavía no entregaste pedidos hoy.' }[cv.tab]}</div>`);
 }
-$('#cv-driver').onchange = e => { cv.previewId = e.target.value; renderDriverApp(); };
+$('#cv-driver').onchange = e => {
+  if (me.role === 'choferes') { store.set('valsur.yo', e.target.value); firstLoad = true; notifyChanges(); applyRole(); }
+  else cv.previewId = e.target.value;
+  renderDriverApp(); updateBadges();
+};
 $('#cv-tabs').onclick = e => { const b = e.target.closest('[data-t]'); if (b) { cv.tab = b.dataset.t; renderDriverApp(); } };
 $('#cv-list').onclick = async e => {
   const b = e.target.closest('[data-a]'); if (!b) return;
@@ -2147,16 +2220,16 @@ function driverChat(p) {
 const prevEstado = new Map(); let firstLoad = true;
 function beep() { try { const a = new AudioContext(), o = a.createOscillator(), g = a.createGain(); o.connect(g); g.connect(a.destination); o.frequency.value = 880; g.gain.setValueAtTime(.15, a.currentTime); g.gain.exponentialRampToValueAtTime(.001, a.currentTime + .4); o.start(); o.stop(a.currentTime + .4); } catch (e) {} }
 function notifyChanges() {
-  const did = me.role === 'chofer' ? me.driverId : null;
+  const did = me.role === 'choferes' ? cvDriverId() : null;
   pedidos.forEach(p => {
     const before = prevEstado.get(p.id);
     if (!firstLoad && before !== p.estado) {
       if (did && p.driverId === did && p.estado === 'enviado') { toast(`Nuevo pedido: ${p.cliente}`); beep(); navigator.vibrate?.([200, 100, 200]); }
       if (did && before && before !== 'cancelado' && p.estado === 'cancelado' && p.hist?.some(h => h.e === 'enviado')) toast(`La oficina canceló ${p.num}`);
-      if (me.role === 'oficina' && before && p.hist?.at(-1)?.by === 'chofer') { const d = driverById(p.driverId || p.rechazadoPor); toast(`${d ? d.name.split(' ')[0] : 'Chofer'}: ${p.num} → ${OST[p.estado].label}`); if (['rechazado', 'problema'].includes(p.estado)) beep(); }
+      if (can('officeAlerts') && before && p.hist?.at(-1)?.by === 'chofer') { const d = driverById(p.driverId || p.rechazadoPor); toast(`${d ? d.name.split(' ')[0] : 'Chofer'}: ${p.num} → ${OST[p.estado].label}`); if (['rechazado', 'problema'].includes(p.estado)) beep(); }
     }
     if (!firstLoad && p.lastMsg && p.lastMsg.at > Date.now() - 15000 && p.lastMsg.at !== prevEstado.get(p.id + ':m') && p.lastMsg.de !== actorSide() && pv.chatFor !== p.id) {
-      if ((me.role === 'chofer' && p.driverId === did) || me.role === 'oficina') toast(`Mensaje · ${p.num}: ${p.lastMsg.texto}`);
+      if ((me.role === 'choferes' && p.driverId === did) || can('officeAlerts')) toast(`Mensaje · ${p.num}: ${p.lastMsg.texto}`);
     }
     prevEstado.set(p.id, p.estado); if (p.lastMsg) prevEstado.set(p.id + ':m', p.lastMsg.at);
   });
@@ -2165,90 +2238,23 @@ function notifyChanges() {
 function updateBadges() {
   const set = (id, n) => { const b = $(id); b.hidden = !n; b.textContent = n; };
   set('#badge-pedidos', pedidos.filter(p => P_FILTERS.problemas[1](p) || p.estado === 'nuevo' || unread(p, 'oficina')).length);
-  set('#badge-choferes', me.role === 'oficina' ? [...DATA.equipo.values()].filter(e => e.estado === 'pendiente').length : 0);
   const did = cvDriverId();
-  const nNew = me.role === 'chofer' ? pedidosOf(did).filter(p => p.estado === 'enviado' || unread(p, 'chofer')).length : 0;
+  const nNew = me.role === 'choferes' ? pedidosOf(did).filter(p => p.estado === 'enviado' || unread(p, 'chofer')).length : 0;
   set('#badge-chofer', nNew);
-  const n = me.role === 'chofer' ? nNew : pedidos.filter(p => p.estado === 'rechazado' || p.estado === 'problema').length;
+  const n = me.role === 'choferes' ? nNew : me.role === 'deposito' ? 0 : pedidos.filter(p => p.estado === 'rechazado' || p.estado === 'problema').length;
   document.title = (n ? `(${n}) ` : '') + 'Valsur Logística';
 }
 
-/* =========================================================
-   Acceso a la app publicada (solicitud y aprobación)
-   ========================================================= */
-async function fillNames(root) {
-  const els = [...root.querySelectorAll('[data-uid]')]; if (!els.length || !sync.user) return;
-  const ps = await sync.user.profiles([...new Set(els.map(e => e.dataset.uid))]);
-  els.forEach(e => { const p = ps[e.dataset.uid]; if (!p) return; if (e.tagName === 'IMG') e.src = p.avatarUrl; else e.textContent = p.name || 'Usuario sin nombre'; });
-}
-function renderAccess() {
-  const box = $('#access');
-  if (ROLE_VIEWS[me.role]) { box.innerHTML = ''; return; }
-  const e = DATA.equipo.get(sync.uid);
-  if (me.role === 'cargando') { box.innerHTML = '<div class="empty">Cargando Valsur…</div>'; return; }
-  if (me.role === 'anon') { box.innerHTML = `<h1>Valsur Logística</h1><p class="muted">Iniciá sesión en Claude con la cuenta con la que te invitaron para usar la app.</p>`; return; }
-  if (me.role === 'pendiente') {
-    box.innerHTML = `<h1>Solicitud enviada</h1><p class="muted">La oficina tiene que aprobar tu acceso${e?.rol === 'chofer' ? ` como chofer <b>${esc(driverById(e.driverId)?.name || '')}</b>` : ' como personal de oficina'}. Esta pantalla se actualiza sola.</p>
-      <div class="modal-actions" style="justify-content:flex-start"><button class="btn ghost" data-undo>Cambiar mi solicitud</button></div>`;
-    box.querySelector('[data-undo]').onclick = () => removeDoc('equipo', sync.uid);
-    return;
-  }
-  const taken = new Set([...DATA.equipo.values()].filter(x => x.estado === 'aprobado' && x.rol === 'chofer').map(x => x.driverId));
-  const free = drivers.filter(d => !taken.has(d.id));
-  box.innerHTML = `<h1>Bienvenido a Valsur</h1>
-    <p class="muted">${me.role === 'rechazado' ? '<b style="color:var(--red)">Tu solicitud anterior no fue aprobada.</b> Revisá los datos y volvé a pedir acceso.' : 'Contanos quién sos. La oficina aprueba tu acceso y listo.'}</p>
-    <form>
-      <div class="seg" style="flex-direction:column;margin-top:14px">
-        <label><input type="radio" name="rol" value="chofer" checked><span><b>Soy chofer</b><span class="muted">Vas a recibir tus pedidos y avisar cada entrega.</span></span></label>
-        <label><input type="radio" name="rol" value="oficina"><span><b>Soy de la oficina</b><span class="muted">Cargar y asignar pedidos, ver la flota y el depósito.</span></span></label>
-      </div>
-      <label class="field full" style="margin-top:12px" id="acc-drv">¿Cuál es tu perfil?<select name="driverId">${free.map(d => `<option value="${d.id}">${esc(d.name)}${d.vehicle ? ' · ' + esc(d.vehicle) : ''}</option>`).join('') || '<option value="">No hay perfiles libres: pedile a la oficina que te cree uno</option>'}</select></label>
-      <div class="modal-actions" style="justify-content:flex-start"><button class="btn">Solicitar acceso</button></div>
-    </form>`;
-  const f = box.querySelector('form');
-  f.onchange = () => { box.querySelector('#acc-drv').hidden = f.rol.value !== 'chofer'; };
-  f.onsubmit = async ev => {
-    ev.preventDefault();
-    const rol = f.rol.value, driverId = rol === 'chofer' ? f.driverId.value : '';
-    if (rol === 'chofer' && !driverId) return toast('Pedile a la oficina que cree tu perfil de chofer');
-    if (await put('equipo', sync.uid, { rol, driverId, estado: 'pendiente', at: Date.now() })) toast('Solicitud enviada');
-  };
-}
-function renderTeam() {
-  const box = $('#team');
-  if (!sync.cloud) {
-    box.innerHTML = `<div class="card-h" style="padding:0"><h3>Accesos a la app</h3></div><p class="muted" style="font-size:12.5px;margin:6px 0 0">Estás en modo demo (archivo local). Cuando la app está publicada, acá aprobás a cada chofer y a cada persona de la oficina que se conecta. Para probar el flujo, abrí la pestaña <b>App chofer</b>.</p>`;
-    return;
-  }
-  const all = [...DATA.equipo.values()].sort((a, b) => (a.estado !== 'pendiente') - (b.estado !== 'pendiente') || b.at - a.at);
-  const pend = all.filter(e => e.estado === 'pendiente'), ok = all.filter(e => e.estado === 'aprobado');
-  const row = e => `<div class="team-row" data-u="${e.id}"><img data-uid="${e.id}" alt=""><div class="who"><b data-uid="${e.id}">…</b><span class="muted">${e.rol === 'chofer' ? 'Chofer · ' + esc(driverById(e.driverId)?.name || 'perfil eliminado') : 'Oficina'}</span></div>
-    ${e.estado === 'pendiente' ? '<button class="btn green" data-ok>Aprobar</button><button class="btn ghost danger" data-no>Rechazar</button>' : '<button class="btn ghost danger" data-no>Quitar acceso</button>'}</div>`;
-  box.innerHTML = `<div class="card-h" style="padding:0 0 6px"><h3>Accesos a la app</h3><span class="muted">${ok.length} con acceso</span></div>
-    ${pend.length ? `<div class="mini-title" style="color:var(--red)">Solicitudes pendientes (${pend.length})</div>${pend.map(row).join('')}` : ''}
-    ${ok.length ? `<details ${pend.length ? '' : 'open'}><summary>Personas con acceso (${ok.length})</summary>${ok.map(row).join('')}</details>` : ''}
-    ${!all.length ? '<p class="muted" style="font-size:12.5px;margin:4px 0 0">Invitá a cada chofer al link de la app (como <b>Editor</b> desde el botón Compartir). Cuando entre, elige su perfil y aparece acá para que lo apruebes.</p>' : ''}`;
-  fillNames(box);
-}
-$('#team').onclick = async e => {
-  const r = e.target.closest('[data-u]'); if (!r) return;
-  const x = DATA.equipo.get(r.dataset.u); if (!x) return;
-  if (e.target.closest('[data-ok]')) {
-    // un perfil de chofer queda vinculado a una sola persona
-    for (const o of DATA.equipo.values()) if (o !== x && o.rol === 'chofer' && o.driverId === x.driverId && o.estado === 'aprobado') await patch('equipo', o.id, { estado: 'rechazado' });
-    if (await patch('equipo', x.id, { estado: 'aprobado' })) toast('Acceso aprobado');
-  }
-  if (e.target.closest('[data-no]')) confirmModal(x.estado === 'pendiente' ? 'Rechazar solicitud' : 'Quitar acceso', 'Esta persona no va a poder usar la app hasta que vuelva a pedir acceso y la apruebes.', x.estado === 'pendiente' ? 'Rechazar' : 'Quitar acceso', () => patch('equipo', x.id, { estado: 'rechazado' }));
-};
-
 /* ---------- Conexión de datos ---------- */
-onData('drivers', () => { drivers = [...DATA.drivers.values()]; applyRole(); renderDrivers(); renderAllJefe(); renderPedidos(); renderDriverApp(); renderTeam(); });
+onData('drivers', () => { drivers = [...DATA.drivers.values()]; if (me.role) applyRole(); renderDrivers(); renderAllJefe(); renderPedidos(); renderDriverApp(); });
 onData('pedidos', () => { pedidos = [...DATA.pedidos.values()].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)); renderPedidos(); renderDriverApp(); renderAllJefe(); notifyChanges(); updateBadges(); });
-onData('equipo', () => { applyRole(); renderTeam(); renderDriverApp(); updateBadges(); });
+onData('vehiculos', () => renderAllJefe());
+onData('movimientos', () => renderDespachos());
 function seedLocalDemo() {
   if (!loadLocal('drivers')) { seedDrivers().forEach(d => DATA.drivers.set(d.id, d)); saveLocal('drivers'); }
   if (!loadLocal('pedidos')) { demoPedidos().forEach(p => DATA.pedidos.set(p.id, p)); saveLocal('pedidos'); }
-  loadLocal('equipo');
+  if (!loadLocal('vehiculos')) { DATA.vehiculos.set('AC-276-HV', { taller: true, nota: 'Service de 60.000 km', desde: Date.now() - 3 * 3600e3, id: 'AC-276-HV' }); saveLocal('vehiculos'); }
+  loadLocal('movimientos');
 }
 function demoPedidos() {
   const now = Date.now(), m = n => now - n * 60000, H = (e, at, by = 'oficina', nota = '') => ({ e, at, by, uid: '', nota });
@@ -2259,6 +2265,7 @@ function demoPedidos() {
     mk(3, { cliente: 'Ferretería Sur', contacto: 'Raúl', telefono: '11 4302-7788', direccion: 'Av. Mitre 3300', localidad: 'Zona Sur', bultos: 40, peso: 1250, ventana: '14 a 18 h', notas: '', estado: 'nuevo', driverId: null, origen: 'Hola! Soy Raúl de Ferretería Sur, necesito que me traigan hoy a la tarde los 40 bultos del pedido de pintura. Av Mitre 3300. Gracias!', hist: [H('nuevo', m(6))] }),
     mk(4, { cliente: 'Distribuidora Este', contacto: 'Laura', telefono: '11 5210-4400', direccion: 'Calle 9 nº 410, Parque Industrial', localidad: 'Parque Industrial', bultos: 18, peso: 640, ventana: '9 a 17 h', notas: '', estado: 'rechazado', driverId: null, rechazadoPor: 'D2', motivo: 'El camión ya va completo', hist: [H('nuevo', m(70)), H('enviado', m(66), 'oficina', 'a Diego Sosa'), H('rechazado', m(30), 'chofer', 'El camión ya va completo')] }),
     mk(5, { cliente: 'Frigorífico Pampa', contacto: 'Guardia', telefono: '', direccion: 'Ruta 3 km 12', localidad: 'Ruta 3', bultos: 30, peso: 980, ventana: '', notas: 'Cadena de frío.', estado: 'entregado', driverId: 'D5', recibio: 'Hernán Paz', entregadoAt: m(25), hist: [H('nuevo', m(240)), H('enviado', m(235), 'oficina', 'a Sofía Romero'), H('aceptado', m(230), 'chofer'), H('en_camino', m(150), 'chofer'), H('entregado', m(25), 'chofer', 'recibió Hernán Paz')] }),
+    mk(7, { cliente: 'Mayorista Oeste', contacto: 'Julio', telefono: '11 4650-3321', direccion: 'Av. Rivadavia 11200', localidad: 'Zona Oeste', bultos: 20, peso: 700, ventana: '9 a 13 h', notas: '', estado: 'problema', driverId: 'D7', motivo: 'Corte de calle por obra, esperando desvío', hist: [H('nuevo', m(120)), H('enviado', m(115), 'oficina', 'a Andrea Castro'), H('aceptado', m(110), 'chofer'), H('en_camino', m(60), 'chofer'), H('problema', m(18), 'chofer', 'Corte de calle por obra, esperando desvío')] }),
     mk(6, { cliente: 'Puerto Valsur', contacto: 'Depósito 4', telefono: '11 4311-0900', direccion: 'Dársena Norte, Depósito 4', localidad: 'Terminal Portuaria', bultos: 12, peso: 420, ventana: '10 a 16 h', notas: '', estado: 'aceptado', driverId: 'D4', hist: [H('nuevo', m(50)), H('enviado', m(48), 'oficina', 'a Javier Ruiz'), H('aceptado', m(45), 'chofer')] }),
   ];
 }
@@ -2266,29 +2273,76 @@ async function initData() {
   if (window.claude?.use) {
     const [db, user, sample] = await Promise.all([claude.use('db'), claude.use('user'), claude.use('sample')]);
     if (db) {
-      Object.assign(sync, { cloud: true, db, user, sample, uid: user ? await user.id() : null, owner: user ? await user.isOwner() : false });
-      ['drivers', 'pedidos', 'equipo'].forEach(subscribe);
+      Object.assign(sync, { cloud: true, db, user, sample, uid: user ? await user.id() : null });
+      ['drivers', 'pedidos', 'vehiculos', 'movimientos'].forEach(subscribe);
       sync.db.doc('inventario/actual').onSnapshot(snap => {
         const items = snap.exists ? snap.data().items : null;
         if (!Array.isArray(items) || snap.metadata.hasPendingWrites) return;
         const j = JSON.stringify(items); if (j === lastInvJSON) return;
         lastInvJSON = j; loadInventory(items); refreshInventory();
       }, e => console.error(e));
-      applyRole(); renderTeam();
       return;
     }
   }
-  sync.localReady = true;
   seedLocalDemo();
-  ['drivers', 'pedidos', 'equipo'].forEach(emitData);
-  applyRole();
+  ['drivers', 'pedidos', 'vehiculos', 'movimientos'].forEach(emitData);
+}
+
+/* =========================================================
+   Despacho de mercadería (salidas del depósito)
+   ========================================================= */
+function renderDespachos() {
+  const hoy = [...DATA.movimientos.values()].filter(m => isToday(m.at)).length, b = $('#desp-count');
+  b.hidden = !hoy; b.textContent = hoy;
+}
+$('#desp-list').onclick = () => {
+  const list = [...DATA.movimientos.values()].sort((a, b) => b.at - a.at).slice(0, 80);
+  const hoy = list.filter(m => isToday(m.at));
+  openModal(`<h2>Despachos</h2><p class="muted" style="margin:0">Mercadería que salió del depósito · hoy ${hoy.length} despacho${hoy.length === 1 ? '' : 's'}, ${fmt(hoy.reduce((a, m) => a + m.qty, 0))} unidades.</p>
+    <div style="margin-top:10px">${list.map(m => `<div class="desp-row"><time>${new Date(m.at).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</time>
+      <div style="min-width:0"><b>${esc(m.producto)} · ${fmt(m.qty)} u.</b><small>${esc(m.destino || 'Sin destino')}${m.nota ? ' · ' + esc(m.nota) : ''}${m.usuario ? ' · por ' + esc(USERS[m.usuario]?.label || m.usuario) : ''}</small></div>
+      <span class="loc">${esc(m.code)}</span></div>`).join('') || '<div class="empty">Todavía no hay despachos.</div>'}</div>
+    <div class="modal-actions"><button class="btn" data-cancel>Cerrar</button></div>`);
+};
+function despachar(p, pl0) {
+  const places = p.places;
+  const abiertos = pedidos.filter(x => !['entregado', 'cancelado'].includes(x.estado));
+  openModal(`<form id="desp-form" novalidate><h2>Despachar mercadería</h2><p class="muted" style="margin:0">${esc(p.name)} · ${esc(p.sku)} · ${fmt(p.total)} unidades en stock</p>
+    <div class="form-grid" style="margin-top:14px">
+      <label class="field" for="dp-code">Sacar de<select id="dp-code" name="code">${places.map(x => `<option value="${x.code}" ${x === pl0 ? 'selected' : ''}>${x.code} · ${fmt(x.qty)} u.${x.lote && x.lote !== '—' ? ' · lote ' + esc(x.lote) : ''}</option>`).join('')}</select></label>
+      <label class="field" for="dp-qty">Cantidad *<input id="dp-qty" name="qty" type="number" min="1" step="1" inputmode="numeric" required></label>
+      <label class="field full" for="dp-ped">Para el pedido<select id="dp-ped" name="pedido"><option value="">Sin pedido / otro destino</option>${abiertos.map(x => `<option value="${x.id}">${esc(x.num)} · ${esc(x.cliente)}</option>`).join('')}</select></label>
+      <label class="field full" for="dp-nota">Destino u observación<input id="dp-nota" name="nota" placeholder="Ej. Retiro en mostrador, reposición de sucursal"></label>
+    </div>
+    <div class="modal-actions"><button type="button" class="btn ghost" data-cancel>Cancelar</button><button class="btn green">Despachar</button></div></form>`, root => {
+    const f = root.querySelector('form');
+    const upd = () => { const q = places.find(x => x.code === f.code.value)?.qty || 0; f.qty.max = q; f.qty.placeholder = 'Máximo ' + fmt(q); };
+    f.code.onchange = upd; upd();
+    f.onsubmit = async e => {
+      e.preventDefault();
+      const n = Math.floor(+f.qty.value), pl = places.find(x => x.code === f.code.value);
+      if (!pl || !(n > 0)) { f.qty.focus(); return toast('Indicá cuántas unidades salen'); }
+      if (n > pl.qty) { f.qty.focus(); return toast(`En ${pl.code} hay ${fmt(pl.qty)} unidades`); }
+      const ped = f.pedido.value && DATA.pedidos.get(f.pedido.value), nota = f.nota.value.trim();
+      pl.qty -= n;
+      if (pl.qty === 0) { places.splice(places.indexOf(pl), 1); placements.splice(placements.indexOf(pl), 1); free.push(binByCode(pl.code)); }
+      finalizeInventory(); saveInventory();
+      const at = Date.now();
+      await put('movimientos', 'm' + at.toString(36) + Math.random().toString(36).slice(2, 5), { at, tipo: 'salida', producto: p.name, sku: p.sku, code: pl.code, qty: n, pedidoId: ped ? ped.id : '', destino: ped ? `${ped.num} · ${ped.cliente}` : nota, nota: ped ? nota : '', usuario: me.user || '' });
+      closeModal();
+      refreshInventory();
+      if (products.includes(p)) selectProduct(p);
+      toast(`Salieron ${fmt(n)} u. de ${p.name} (${pl.code})${pl.qty === 0 ? ' · la posición quedó libre' : ''}`);
+    };
+  });
 }
 
 /* =========================================================
    Navegación y buscador global
    ========================================================= */
 function go(view) {
-  const ok = allowedViews(); if (!ok.includes(view)) view = ok[0];
+  const ok = allowedViews(); if (!ok.length) return;
+  if (!ok.includes(view)) view = ok[0];
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + view));
   st.view = view;
@@ -2307,7 +2361,7 @@ function runGlobal() {
   if (!toks.length) { gr.classList.remove('open'); return; }
   const m = s => toks.every(t => norm(s).includes(t));
   const C = drivers.filter(d => m(`${d.name} ${d.dni} ${d.vehicle}`)).slice(0, 4).map(d => { const s = driverState(d); return { g: 'Choferes', ic: ICON.user, c: s.c, t: d.name, s: `${d.vehicle || 'Sin vehículo'} · ${s.label}`, run: () => showDriver(d) }; });
-  const T = trucks.filter(t => m(`${t.plate} ${driverName(t)} ${t.model} ${STATUS[t.phase].label}`)).slice(0, 4).map(t => ({ g: 'Vehículos', ic: ICON.truck, c: STATUS[t.phase].color, t: t.plate, s: `${driverName(t)} · ${STATUS[t.phase].label}`, run: () => { go('jefe'); selectTruck(t.id, true); } }));
+  const T = trucks.filter(t => m(`${t.plate} ${driverName(t)} ${t.model} ${STATUS[t.state].label}`)).slice(0, 4).map(t => ({ g: 'Vehículos', ic: ICON.truck, c: STATUS[t.state].color, t: t.plate, s: `${driverName(t)} · ${STATUS[t.state].label}`, run: () => { go('jefe'); selectTruck(t.id, true); } }));
   const O = pedidos.filter(p => m(`${p.num} ${p.cliente} ${p.localidad} ${p.direccion}`)).slice(0, 4).map(p => ({ g: 'Pedidos', ic: ICON.order, c: OST[p.estado].color, t: `${p.num} · ${p.cliente}`, s: `${p.direccion || ''} · ${OST[p.estado].label}`, run: () => openPedido(p.id) }));
   const P = products.filter(p => toks.every(t => p.hay.includes(t))).slice(0, 5).map(p => ({ g: 'Mercadería', ic: ICON.box, c: CATS[p.cat].color, t: p.name, s: `${p.sku} · ${p.places.map(x => x.code).join(', ')}`, run: () => { go('deposito'); selectProduct(p); } }));
   gItems = [...T, ...C, ...O, ...P]; gIdx = 0;
@@ -2350,7 +2404,7 @@ try {
 st.view = location.hash.slice(1) || 'jefe';
 applyRole();
 go(st.view);
-renderAllJefe(); renderTeam();
+renderAllJefe();
 initData();
 setInterval(() => { $('#clock').textContent = hhmm(new Date()); renderAllJefe(); }, 1000);
 $('#clock').textContent = hhmm(new Date());
@@ -2359,7 +2413,7 @@ const clock = new THREE.Clock();
 function loop() {
   const dt = Math.min(clock.getDelta(), .1);
   if (J) {
-    stepSim(dt); updatePins();
+    stepFleet(dt); updatePins();
     const t = st.sel && truckBy(st.sel);
     if (t) { J.ring.position.x = t.obj.position.x; J.ring.position.z = t.obj.position.z; J.ring.scale.setScalar(1 + Math.sin(performance.now() / 300) * .05); }
   }

@@ -13,17 +13,40 @@ Secciones:
 - **App chofer**: la pantalla que usa cada chofer en el celular: pedidos nuevos (Aceptar / Rechazar), en curso (Salir hacia el cliente, Entregado con nombre de quien recibió, Reportar problema) y entregados hoy, con botones para abrir Google Maps, llamar y escribir a la oficina. La oficina la ve como vista previa eligiendo un chofer.
 - **Choferes**: perfiles con nombre, DNI, teléfono, categoría de licencia, vehículo asignado, vencimientos (licencia de conducir, LiNTI, psicofísico, cargas peligrosas, ART, libreta sanitaria) y habilitaciones. Se pueden agregar, editar y eliminar. Los vencidos o próximos a vencer (30 días) se marcan en rojo / amarillo, y el Panel Jefe avisa si el chofer de un camión tiene documentación vencida.
 
+## Usuarios
+
+Al abrir la app se pide usuario y contraseña. Cada sector ve solo lo suyo:
+
+| Usuario | Contraseña | Qué ve |
+|---|---|---|
+| `jefe` | `jefe` | Toda la app: mapa, pedidos, depósito, choferes y la vista previa de la app chofer. Es el único que importa/exporta Excel, edita choferes y manda camiones al taller. |
+| `pedidos` | `pedidos` | Pedidos y los perfiles de los choferes (sin poder editarlos). |
+| `choferes` | `choferes` | Solo la App chofer. La primera vez cada chofer elige su nombre y el celular lo recuerda. |
+| `deposito` | `deposito` | Solo el depósito: mapa, buscador y despacho de mercadería. |
+
+La sesión queda abierta en ese navegador hasta tocar **Salir**. Las contraseñas no están escritas en el código (se compara una huella), pero esto es un control de acceso simple entre sectores, no una protección fuerte: quien tenga el link y conocimientos técnicos podría saltearlo.
+
+## El mapa de la flota
+
+El Panel Jefe muestra un mapa simbólico: la base Valsur, el taller mecánico, cuatro rutas de reparto y una calle de **demorados** con conos. Cada camión se ubica solo, según los pedidos de su chofer:
+
+- **En base**: el chofer no tiene pedidos activos.
+- **Preparando** (al inicio de una ruta): tiene un pedido enviado o aceptado.
+- **En ruta** (avanza por la ruta): salió hacia el cliente; en el final de la ruta se ve el nombre del cliente.
+- **Demorado** (calle con conos): el chofer reportó un problema.
+- **En taller**: el jefe lo mandó al taller desde el panel del vehículo.
+
+## Despachos del depósito
+
+En **Depósito**, al elegir un producto aparece **Despachar**: se elige la ubicación, la cantidad y, opcionalmente, el pedido al que va. El stock se descuenta al instante (si la posición queda vacía, se libera) y el botón **Despachos** muestra el registro de salidas con fecha, cantidad, destino y quién lo hizo.
+
 ## Cómo se conectan oficina y choferes
 
-La app publicada en Claude guarda pedidos, choferes, accesos e inventario en una base de datos compartida, y todos ven los cambios al instante.
-
-1. Desde el botón **Compartir** del link, invitá a cada chofer y a cada persona de la oficina por email como **Editor**. Es el nivel que permite guardar cambios; cada uno necesita una cuenta de Claude.
-2. Al entrar, cada persona elige si es chofer (y cuál es su perfil) o de oficina.
-3. En **Choferes → Accesos a la app** aprobás o rechazás cada solicitud. Un chofer aprobado solo ve su app con sus pedidos.
+La app publicada en Claude guarda pedidos, choferes, vehículos en taller, despachos e inventario en una base de datos compartida, y todos ven los cambios al instante. Cada persona que la use tiene que estar invitada al link como **Editor** (botón Compartir) para poder guardar cambios; después entra con el usuario de su sector.
 
 Los avisos de pedido nuevo (sonido, vibración y contador en la pestaña) llegan mientras la app está abierta. No hay notificaciones push con el celular bloqueado.
 
-Abierta como archivo local (`index.html`), la app funciona en modo demo: todo queda en ese navegador. Para probar el circuito, abrí dos pestañas, una en **Pedidos** y otra en **App chofer**.
+Abierta como archivo local (`index.html`), la app funciona en modo demo: todo queda en ese navegador.
 
 ## Cargar inventario desde Excel
 
@@ -40,7 +63,7 @@ Antes de importar se muestra una vista previa con las filas que tienen errores, 
 
 ## Dónde se guardan los datos
 
-En la versión publicada, pedidos, choferes, accesos e inventario se guardan en la base de datos compartida del link. En el archivo local, todo se guarda en el navegador (`localStorage`). El tema elegido siempre se guarda en cada navegador.
+En la versión publicada, pedidos, choferes, vehículos, despachos e inventario se guardan en la base de datos compartida del link. En el archivo local, todo se guarda en el navegador (`localStorage`). El tema elegido siempre se guarda en cada navegador.
 
 ## Cómo usarla
 
@@ -50,4 +73,4 @@ Atajos: `/` enfoca el buscador · `Enter` abre el primer resultado · `Esc` limp
 
 ## Datos
 
-El movimiento de la flota en el mapa sigue siendo simulado hasta conectar un GPS. Los pedidos y choferes son reales en la versión publicada. Para conectarla a datos reales hay que reemplazar los arreglos `TRUCKS_DEF`, `orders` y `PRODUCTS_DEF` por llamadas a la API/GPS/sistema de stock de la empresa.
+El mapa no usa GPS: ubica cada camión según el estado de los pedidos de su chofer. Para conectarla a datos reales hay que reemplazar los arreglos `TRUCKS_DEF`, `orders` y `PRODUCTS_DEF` por llamadas a la API/GPS/sistema de stock de la empresa.
