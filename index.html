@@ -1,0 +1,1191 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Valsur Logística</title>
+<meta name="description" content="Panel de control de Valsur Logística: flota en vivo, estado de pedidos y buscador de mercadería en depósito.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef2f7; --card:#ffffff; --line:#e3e8ef; --text:#0f172a; --muted:#64748b; --soft:#f5f7fb;
+  --blue:#1f5eff; --blue-50:#eaf0ff; --green:#16a34a; --amber:#f59e0b; --red:#ef4444; --violet:#7c3aed; --teal:#0891b2; --gray:#64748b;
+  --radius:16px; --shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+input{font:inherit;color:inherit}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- Top bar ---------- */
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;padding:10px 20px;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3b7bff,#1f45d6);display:grid;place-items:center;box-shadow:0 4px 12px rgba(31,94,255,.35)}
+.brand small{display:block;font-weight:500;font-size:11px;color:var(--muted);letter-spacing:0}
+.tabs{display:flex;gap:4px;background:var(--soft);border:1px solid var(--line);padding:4px;border-radius:12px}
+.tab{padding:7px 14px;border-radius:9px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.tab.active{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(15,23,42,.1)}
+.gsearch{position:relative;flex:1;max-width:460px;margin-left:auto}
+.gsearch input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--line);border-radius:11px;background:var(--soft);outline:none}
+.gsearch input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px var(--blue-50)}
+.gsearch svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.gresults{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;display:none;max-height:420px;overflow:auto}
+.gresults.open{display:block}
+.gresults h6{margin:8px 8px 4px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.gitem{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:8px;border-radius:8px}
+.gitem:hover,.gitem.hl{background:var(--blue-50)}
+.gitem b{display:block;font-size:13px}
+.gitem span{font-size:12px;color:var(--muted)}
+.live{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--green);background:#ecfdf3;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.25}}
+.user{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.avatar{width:32px;height:32px;border-radius:50%;background:#dbe5ff;color:var(--blue);display:grid;place-items:center;font-weight:700;font-size:12px}
+.user b{display:block;font-size:13px}.user small{color:var(--muted);font-size:11px}
+
+main{padding:18px 20px 28px;max-width:1600px;margin:0 auto}
+.view{display:none}.view.active{display:block}
+.view-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.view-head h1{margin:0;font-size:22px;letter-spacing:-.02em}
+.view-head p{margin:4px 0 0;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 16px 10px}
+.card-h h3{margin:0;font-size:14px}
+.card-h .muted{font-size:12px}
+
+/* ---------- KPIs ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.kpi{padding:14px 16px;display:flex;gap:12px;align-items:center}
+.kpi-ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
+.kpi small{display:block;color:var(--muted);font-size:12px;font-weight:500}
+.kpi b{font-size:22px;letter-spacing:-.02em}
+.kpi em{font-style:normal;font-size:12px;font-weight:600;margin-left:6px}
+.kpi.clickable{cursor:pointer}
+
+/* ---------- Stage ---------- */
+.stage{position:relative;overflow:hidden;min-height:300px;background:radial-gradient(120% 90% at 50% 40%,#f9fbfe 0%,#e7edf5 70%,#dfe6f0 100%)}
+.stage canvas{display:block;width:100%;height:100%;outline:none}
+.labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.pin{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:5px;padding:4px 8px 4px 6px;border-radius:999px;background:#fff;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(15,23,42,.18);border:1.5px solid var(--c,#1f5eff);will-change:transform}
+.pin::after{content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--c,#1f5eff);border-bottom:0}
+.pin i{width:8px;height:8px;border-radius:50%;background:var(--c,#1f5eff)}
+.pin.sel{background:var(--c,#1f5eff);color:#fff;transform-origin:50% 100%}
+.pin.sel i{background:#fff}
+.pin.big{font-size:12px;padding:6px 10px 6px 8px;animation:pop .35s ease-out}
+@keyframes pop{from{opacity:0;margin-top:-10px}}
+.tag{position:absolute;left:0;top:0;font-size:11px;font-weight:600;color:#334155;background:rgba(255,255,255,.85);padding:3px 8px;border-radius:7px;white-space:nowrap;border:1px solid var(--line);display:flex;align-items:center;gap:6px}
+.tag i{width:8px;height:8px;border-radius:2px;background:var(--c)}
+.tag.row{font-size:13px;font-weight:800;color:var(--blue);background:#fff}
+.stage-tools{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:6px;z-index:2}
+.stage-tools button{width:34px;height:34px;border-radius:10px;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(15,23,42,.08);font-weight:700;font-size:16px;display:grid;place-items:center}
+.stage-tools button:hover{color:var(--blue)}
+.stage-hint{position:absolute;left:12px;top:12px;z-index:2;font-size:12px;color:var(--muted);background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:9px;padding:6px 10px}
+.legend{position:absolute;left:12px;bottom:12px;z-index:2;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 24px)}
+.legend span{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:999px;padding:4px 9px}
+.legend i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.webgl-fail{position:absolute;inset:0;display:none;place-items:center;text-align:center;padding:24px;color:var(--muted)}
+
+/* ---------- Jefe layout ---------- */
+.jefe-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;margin-bottom:14px}
+#stage-jefe{height:560px}
+.side{display:flex;flex-direction:column;height:560px;overflow:hidden}
+.side-sel{padding:14px 16px;border-bottom:1px solid var(--line)}
+.fleet-tabs{display:flex;gap:4px;padding:10px 12px 6px;flex-wrap:wrap}
+.chip{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--soft);border:1px solid var(--line);color:#334155;white-space:nowrap}
+.chip.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.fleet{overflow:auto;flex:1;padding:4px 8px 10px}
+.frow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;padding:9px 8px;border-radius:10px}
+.frow:hover{background:var(--soft)}
+.frow.sel{background:var(--blue-50)}
+.frow b{font-size:13px}.frow small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,#fff);color:var(--c)}
+.bar{height:5px;border-radius:9px;background:#edf1f6;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;border-radius:9px;background:var(--c,var(--blue));transition:width .6s}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,#fff);white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c)}
+.sel-head{display:flex;align-items:center;gap:10px}
+.sel-head .t-ic{width:42px;height:42px}
+.sel-head b{font-size:16px}
+.sel-head small{display:block;color:var(--muted);font-size:12px}
+.x{margin-left:auto;width:28px;height:28px;border-radius:8px;color:var(--muted);font-size:18px;line-height:1}
+.x:hover{background:var(--soft)}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.fact{background:var(--soft);border-radius:10px;padding:8px 10px}
+.fact small{display:block;font-size:11px;color:var(--muted)}
+.fact b{font-size:13px}
+.note{display:flex;gap:8px;align-items:flex-start;background:#fef2f2;color:#991b1b;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:500;margin-bottom:10px}
+.mini-title{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin:12px 0 6px}
+.dist{display:grid;gap:7px}
+.dist-row{display:grid;grid-template-columns:110px 1fr 28px;gap:8px;align-items:center;font-size:12px;font-weight:600}
+.hint{font-size:12px;color:var(--muted);background:var(--soft);border-radius:10px;padding:8px 10px;margin-top:12px}
+
+/* stepper */
+.stepper{display:grid;grid-template-columns:repeat(5,1fr);margin:6px 0 2px}
+.step{position:relative;text-align:center;font-size:10.5px;color:var(--muted);font-weight:600}
+.step::before{content:"";position:absolute;top:9px;left:-50%;right:50%;height:2px;background:#e2e8f0}
+.step:first-child::before{display:none}
+.step.done::before,.step.cur::before{background:var(--blue)}
+.step .dot{position:relative;z-index:1;width:20px;height:20px;border-radius:50%;margin:0 auto 4px;background:#fff;border:2px solid #cbd5e1;display:grid;place-items:center}
+.step.done .dot{background:var(--blue);border-color:var(--blue)}
+.step.done .dot::after{content:"";width:6px;height:3px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.step.cur .dot{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-50)}
+.step.cur .dot::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--blue);animation:blink 1.4s infinite}
+.step.cur{color:var(--blue)}
+.step em{display:block;font-style:normal;font-weight:500;font-size:10px;color:#94a3b8}
+.order-card{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}
+.order-card header{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}
+.order-card header b{font-size:13px}
+
+/* bottom */
+.bottom-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.pipeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;padding:0 16px 16px}
+.pstage{text-align:left;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--soft);transition:.15s}
+.pstage:hover{border-color:#c7d4ea}
+.pstage.active{background:var(--blue-50);border-color:var(--blue)}
+.pstage small{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-weight:600}
+.pstage small i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.pstage b{display:block;font-size:26px;letter-spacing:-.02em;margin:4px 0 2px}
+.table-wrap{overflow:auto;max-height:440px;padding:0 8px 8px}
+thead th{position:sticky;top:0;background:#fff;z-index:1}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;font-weight:700;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid #f0f3f7;font-size:13px;white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--soft)}
+tbody tr.sel{background:var(--blue-50)}
+.mini-steps{display:flex;gap:3px;align-items:center}
+.mini-steps i{width:16px;height:5px;border-radius:3px;background:#e2e8f0}
+.mini-steps i.on{background:var(--blue)}
+.late{color:var(--red);font-weight:700;font-size:11px;margin-left:6px}
+
+/* ---------- Depósito ---------- */
+.dep-grid{display:grid;grid-template-columns:380px minmax(0,1fr);gap:14px}
+.dep-panel{display:flex;flex-direction:column;height:640px;overflow:hidden}
+.bigsearch{padding:16px 16px 10px}
+.bigsearch label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px}
+.bigsearch .box{position:relative}
+.bigsearch input{width:100%;padding:12px 40px 12px 40px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:15px;outline:none}
+.bigsearch input:focus{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-50)}
+.bigsearch .box>svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.bigsearch .clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:8px;color:var(--muted);display:none;font-size:18px}
+.bigsearch .clear.on{display:block}
+.bigsearch kbd{font-family:inherit;font-size:11px;background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+.cats{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 10px}
+.res-meta{padding:2px 16px 8px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+.results{overflow:auto;flex:1;padding:0 8px 10px}
+.prod{display:block;width:100%;text-align:left;padding:10px;border-radius:12px;border:1px solid transparent}
+.prod:hover{background:var(--soft)}
+.prod.sel{background:var(--blue-50);border-color:#c9d8ff}
+.prod-top{display:flex;gap:10px;align-items:flex-start}
+.cat-ic{width:36px;height:36px;border-radius:10px;flex:none;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--c);background:color-mix(in srgb,var(--c) 14%,#fff)}
+.prod b{font-size:13.5px;display:block}
+.prod small{font-size:12px;color:var(--muted)}
+.prod .qty{margin-left:auto;text-align:right;font-weight:700;font-size:13px;white-space:nowrap}
+.prod .qty small{display:block;font-weight:500}
+.locs{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 0 46px}
+.loc{font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:7px;background:#fff;border:1px solid #d6e0f0;color:var(--blue);font-variant-numeric:tabular-nums}
+.loc:hover,.loc.sel{background:var(--blue);color:#fff;border-color:var(--blue)}
+.low{color:var(--red);font-size:11px;font-weight:700}
+mark{background:#fff3b0;color:inherit;border-radius:3px;padding:0 1px}
+#stage-dep{height:640px}
+.pdetail{position:absolute;left:12px;bottom:12px;z-index:3;width:min(360px,calc(100% - 24px));background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(15,23,42,.16);padding:14px;display:none}
+.pdetail.open{display:block;animation:pop .25s ease-out}
+.where{display:flex;gap:6px;margin:10px 0}
+.where div{flex:1;background:var(--blue-50);border-radius:10px;padding:8px;text-align:center}
+.where small{display:block;font-size:10.5px;color:var(--muted);font-weight:600}
+.where b{font-size:18px;color:var(--blue)}
+.lots{width:100%;border-collapse:collapse;min-width:0}
+.lots td,.lots th{padding:6px 4px;font-size:12px}
+.lots tr{cursor:pointer}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;font-weight:600;font-size:12.5px;background:var(--blue);color:#fff}
+.btn.ghost{background:var(--soft);color:#334155;border:1px solid var(--line)}
+.empty{padding:30px 16px;text-align:center;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;font-size:13px;opacity:0;transition:.25s;pointer-events:none;z-index:99}
+.toast.on{opacity:1;transform:translateX(-50%)}
+footer{text-align:center;color:#94a3b8;font-size:12px;padding:0 0 20px}
+
+@media (max-width:1180px){
+  .jefe-grid,.dep-grid{grid-template-columns:minmax(0,1fr)}
+  .side{height:auto;max-height:none}
+  .fleet{max-height:360px}
+  .dep-panel{height:auto}
+  .results{max-height:420px}
+  .user div{display:none}
+}
+@media (max-width:820px){
+  .topbar{flex-wrap:wrap;padding:10px 16px;gap:10px}
+  .gsearch{order:3;max-width:none;flex-basis:100%}
+  .live{display:none}
+  main{padding:14px 16px 24px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi{padding:12px}
+  .kpi b{font-size:18px}
+  .kpi-ic{display:none}
+  #stage-jefe,#stage-dep{height:400px}
+  .pipeline{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pdetail{left:8px;bottom:8px;width:calc(100% - 16px);max-height:62%;overflow:auto;padding:12px}
+  .where b{font-size:15px}
+  .tab span{display:none}
+  .stage-hint{display:none}
+}
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5l8 14 8-14"/></svg></div>
+    <div>Valsur<small>Logística</small></div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-view="jefe" role="tab">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      <span>Panel Jefe</span></button>
+    <button class="tab" data-view="deposito" role="tab">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/><path d="M7 21v-8h10v8M7 17h10"/></svg>
+      <span>Depósito</span></button>
+  </nav>
+  <div class="gsearch">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="gsearch" type="search" placeholder="Buscar vehículo, chofer, pedido o producto…" autocomplete="off">
+    <div class="gresults" id="gresults"></div>
+  </div>
+  <div class="live"><i></i>En vivo · <span id="clock" class="num">--:--</span></div>
+  <div class="user"><div class="avatar">VS</div><div><b>Jefe de operaciones</b><small>Centro de distribución</small></div></div>
+</header>
+
+<main>
+  <!-- ================= PANEL JEFE ================= -->
+  <section class="view active" id="view-jefe">
+    <div class="view-head">
+      <div><h1>Panel general</h1><p>Ubicación de la flota y avance de los pedidos en tiempo real.</p></div>
+    </div>
+    <div class="kpis" id="kpis-jefe"></div>
+    <div class="jefe-grid">
+      <div class="card stage" id="stage-jefe">
+        <div class="stage-hint">Arrastrá para rotar · rueda para acercar · tocá un vehículo</div>
+        <div class="stage-tools"><button data-z="in" title="Acercar">+</button><button data-z="out" title="Alejar">−</button><button data-z="reset" title="Vista general">⟲</button></div>
+        <div class="legend" id="legend-jefe"></div>
+        <div class="webgl-fail">No se pudo cargar la vista 3D. Revisá tu conexión a internet y recargá la página.</div>
+      </div>
+      <aside class="card side">
+        <div class="side-sel" id="side-sel"></div>
+        <div class="fleet-tabs" id="fleet-tabs"></div>
+        <div class="fleet" id="fleet"></div>
+      </aside>
+    </div>
+    <div class="bottom-grid">
+      <div class="card">
+        <div class="card-h"><h3>Estado de los pedidos</h3><span class="muted">Tocá una etapa para filtrar la tabla</span></div>
+        <div class="pipeline" id="pipeline"></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pedido</th><th>Cliente</th><th>Destino</th><th>Vehículo</th><th>Etapa</th><th>Progreso</th><th>Actualizado</th></tr></thead>
+            <tbody id="orders"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DEPÓSITO ================= -->
+  <section class="view" id="view-deposito">
+    <div class="view-head">
+      <div><h1>Depósito central</h1><p>Encontrá cualquier mercadería y su ubicación exacta: pasillo, posición y nivel.</p></div>
+    </div>
+    <div class="kpis" id="kpis-dep"></div>
+    <div class="dep-grid">
+      <aside class="card dep-panel">
+        <div class="bigsearch">
+          <label for="dsearch">Buscar mercadería <span class="muted" style="font-weight:500">· atajo <kbd>/</kbd></span></label>
+          <div class="box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="dsearch" type="text" placeholder="Nombre, código, lote o ubicación (ej. B-04)" autocomplete="off">
+            <button class="clear" id="dclear" title="Limpiar">×</button>
+          </div>
+        </div>
+        <div class="cats" id="cats"></div>
+        <div class="res-meta"><span id="res-count"></span><span>Enter abre el primero</span></div>
+        <div class="results" id="results"></div>
+      </aside>
+      <div class="card stage" id="stage-dep">
+        <div class="stage-hint">Pasillos A–F · posiciones 01–10 · niveles 1–4</div>
+        <div class="stage-tools"><button data-z="in" title="Acercar">+</button><button data-z="out" title="Alejar">−</button><button data-z="reset" title="Vista general">⟲</button></div>
+        <div class="pdetail" id="pdetail"></div>
+        <div class="webgl-fail">No se pudo cargar la vista 3D. Revisá tu conexión a internet y recargá la página.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>Valsur Logística · Datos de demostración simulados</footer>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* =========================================================
+   Utilidades
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let seed = 20261013;
+const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const pick = a => a[Math.floor(rnd() * a.length)];
+const ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+const hhmm = d => d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+const fmt = n => n.toLocaleString('es-AR');
+const ago = d => { const s = Math.max(0, (Date.now() - d) / 1000); return s < 60 ? 'recién' : s < 3600 ? `hace ${Math.floor(s / 60)} min` : `hace ${Math.floor(s / 3600)} h`; };
+// Actualiza el DOM en el lugar (sin reemplazar nodos) para que los clics no se pierdan durante el refresco.
+function morph(a, b) {
+  if (a.nodeType !== b.nodeType || a.nodeName !== b.nodeName) { a.replaceWith(b.cloneNode(true)); return; }
+  if (a.nodeType === 3) { if (a.nodeValue !== b.nodeValue) a.nodeValue = b.nodeValue; return; }
+  if (a.nodeType !== 1) return;
+  for (const { name } of [...a.attributes]) if (!b.hasAttribute(name)) a.removeAttribute(name);
+  for (const { name, value } of b.attributes) if (a.getAttribute(name) !== value) a.setAttribute(name, value);
+  const ac = [...a.childNodes], bc = [...b.childNodes];
+  bc.forEach((n, i) => ac[i] ? morph(ac[i], n) : a.appendChild(n.cloneNode(true)));
+  ac.slice(bc.length).forEach(n => n.remove());
+}
+function setHTML(el, html) {
+  const t = document.createElement(el.tagName === 'TBODY' ? 'table' : 'div');
+  t.innerHTML = el.tagName === 'TBODY' ? '<tbody>' + html + '</tbody>' : html;
+  const next = el.cloneNode(false); next.append(...(el.tagName === 'TBODY' ? t.firstChild : t).childNodes);
+  morph(el, next);
+}
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 1800); }
+function highlight(text, q) {
+  const safe = esc(text); if (!q) return safe;
+  const n = norm(text); let out = '', i = 0;
+  const toks = norm(q).split(/\s+/).filter(Boolean);
+  const marks = new Array(text.length).fill(false);
+  toks.forEach(t => { let p = n.indexOf(t); while (p >= 0) { for (let k = p; k < p + t.length; k++) marks[k] = true; p = n.indexOf(t, p + 1); } });
+  for (; i < text.length; i++) {
+    const ch = esc(text[i]);
+    if (marks[i] && !marks[i - 1]) out += '<mark>';
+    out += ch;
+    if (marks[i] && !marks[i + 1]) out += '</mark>';
+  }
+  return out;
+}
+const ICON = {
+  truck: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h11v10H2zM13 9h4l4 4v3h-8z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>',
+  box: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>',
+  order: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>',
+  check: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>',
+  alert: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></svg>',
+  grid: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>',
+};
+
+/* =========================================================
+   Datos: destinos, flota y pedidos
+   ========================================================= */
+const STATUS = {
+  carga:      { label: 'Cargando',    color: '#7c3aed' },
+  ida:        { label: 'En ruta',     color: '#1f5eff' },
+  descarga:   { label: 'Descargando', color: '#f59e0b' },
+  vuelta:     { label: 'Regresando',  color: '#0891b2' },
+  incidencia: { label: 'Incidencia',  color: '#ef4444' },
+  taller:     { label: 'En taller',   color: '#64748b' },
+};
+const STAGES = [
+  { label: 'Recibido',       color: '#94a3b8' },
+  { label: 'En preparación', color: '#7c3aed' },
+  { label: 'Cargado',        color: '#0891b2' },
+  { label: 'En tránsito',    color: '#1f5eff' },
+  { label: 'Entregado',      color: '#16a34a' },
+];
+// b = [x, z, ancho, prof, alto]; path = recorrido desde la salida del depósito
+const DESTS = [
+  { key: 'norte',  name: 'Supermercados del Norte', city: 'Zona Norte',         b: [-28, -26, 6, 5, 3.2],  color: 0x22c55e, path: [[0, 11], [-22, 11], [-22, -24]] },
+  { key: 'centro', name: 'Farmacias Centro',        city: 'Microcentro',        b: [0, -27, 7, 4.5, 3.8],  color: 0xec4899, path: [[0, 11], [22, 11], [22, -22], [3, -22]] },
+  { key: 'sur',    name: 'Ferretería Sur',          city: 'Zona Sur',           b: [6, 25, 5, 5, 2.6],     color: 0xf97316, path: [[0, 11], [0, 24]] },
+  { key: 'este',   name: 'Distribuidora Este',      city: 'Parque Industrial',  b: [28.5, -6, 6, 7, 3.4],  color: 0x8b5cf6, path: [[0, 11], [22, 11], [22, -6]] },
+  { key: 'puerto', name: 'Puerto Valsur',           city: 'Terminal Portuaria', b: [-27, 17.5, 7, 5, 3],   color: 0x0ea5e9, path: [[0, 11], [-26, 11]] },
+  { key: 'frigo',  name: 'Frigorífico Pampa',       city: 'Ruta 3 km 12',       b: [27, 17.5, 6, 5, 3.2],  color: 0x14b8a6, path: [[0, 11], [26, 11]] },
+];
+const destBy = Object.fromEntries(DESTS.map(d => [d.key, d]));
+const DOCKS = [-6.6, -4.4, -2.2, 0, 2.2, 4.4, 6.6];
+
+const TRUCKS_DEF = [
+  ['AF 214 KD', 'Martín Gómez',    'Scania R450',          'norte',  'carga',      0,    0],
+  ['AE 873 JL', 'Lucía Fernández', 'Mercedes-Benz Actros', 'centro', 'ida',        .35,  1],
+  ['AG 105 PR', 'Diego Sosa',      'Volvo FH 460',         'este',   'ida',        .7,   2],
+  ['AD 552 TB', 'Carla Benítez',   'Iveco Tector',         'sur',    'descarga',   1,    3],
+  ['AF 690 MX', 'Javier Ruiz',     'Scania G410',          'puerto', 'vuelta',     .5,   4],
+  ['AH 031 QS', 'Sofía Romero',    'Ford Cargo 1723',      'frigo',  'ida',        .15,  5],
+  ['AE 447 CN', 'Pablo Medina',    'Mercedes-Benz Atego',  'norte',  'vuelta',     .25,  6],
+  ['AG 918 LW', 'Andrea Castro',   'Volvo FM 380',         'centro', 'incidencia', .58,  3],
+  ['AC 276 HV', 'Nicolás Herrera', 'Iveco Daily',          null,     'taller',     0,    0],
+];
+
+function makePath(pts) {
+  const segs = []; let total = 0;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [x1, z1] = pts[i], [x2, z2] = pts[i + 1];
+    const len = Math.hypot(x2 - x1, z2 - z1); if (len < .01) continue;
+    segs.push({ x1, z1, dx: (x2 - x1) / len, dz: (z2 - z1) / len, len, start: total }); total += len;
+  }
+  return {
+    total,
+    at(d) {
+      d = Math.max(0, Math.min(total, d));
+      let idx = segs.length - 1;
+      for (let i = 0; i < segs.length; i++) if (d <= segs[i].start + segs[i].len) { idx = i; break; }
+      const s = segs[idx], k = d - s.start;
+      return { x: s.x1 + s.dx * k, z: s.z1 + s.dz * k, dx: s.dx, dz: s.dz, seg: idx };
+    }
+  };
+}
+
+const trucks = TRUCKS_DEF.map(([plate, driver, model, dest, phase, prog, dock], i) => {
+  const t = { id: 'T' + i, plate, driver, model, dest, phase, dock, timer: 6 + rnd() * 8, speed: 3.6 + rnd() * 1.4, orders: [], fuel: ri(38, 96), kg: 0, heading: 0 };
+  if (dest) {
+    const dx = DOCKS[dock];
+    t.path = makePath([[dx, 5.7], [dx, 7.9], [0, 9.4], ...destBy[dest].path]);
+    t.dist = prog * t.path.total;
+  }
+  if (phase === 'incidencia') t.note = 'Neumático pinchado en Av. Costanera · asistencia en camino (ETA 25 min)';
+  if (phase === 'taller') t.note = 'Service de 60.000 km · disponible mañana 8:00';
+  return t;
+});
+const truckBy = id => trucks.find(t => t.id === id);
+
+const orders = [];
+let orderSeq = 24810;
+const kpi = { deliveredBase: 142, onTimeBase: 137 };
+function newOrder(destKey, stage = 0, minsAgo = 0) {
+  const d = destBy[destKey];
+  const o = {
+    id: 'VS-' + (orderSeq++), dest: destKey, client: d.name, items: ri(4, 60), kg: ri(120, 2400) * 1,
+    stage, truck: null, late: false, times: [], created: new Date(Date.now() - minsAgo * 60000),
+  };
+  for (let s = 0; s <= stage; s++) o.times[s] = new Date(Date.now() - (minsAgo - s * Math.min(12, minsAgo / 5)) * 60000);
+  orders.unshift(o);
+  return o;
+}
+function setStage(o, s) { if (o.stage === s) return; o.stage = s; o.times[s] = new Date(); }
+function assignOrders(t) {
+  let pend = orders.filter(o => !o.truck && o.dest === t.dest && o.stage < 2).slice(0, 2);
+  if (!pend.length) pend = [newOrder(t.dest, 1, 6)];
+  pend.forEach(o => { o.truck = t.id; setStage(o, 1); });
+  t.orders = pend.map(o => o.id);
+}
+// estado inicial coherente
+[...DESTS, ...DESTS].forEach((d, i) => newOrder(d.key, 4, 300 - i * 18).delivered = true);
+trucks.forEach(t => {
+  if (!t.dest) return;
+  if (t.phase === 'carga') { assignOrders(t); }
+  if (['ida', 'descarga', 'incidencia'].includes(t.phase)) {
+    const n = ri(1, 3); t.orders = [];
+    for (let k = 0; k < n; k++) { const o = newOrder(t.dest, 3, ri(40, 120)); o.truck = t.id; t.orders.push(o.id); if (t.phase === 'incidencia') o.late = true; }
+  }
+});
+for (let k = 0; k < 7; k++) newOrder(pick(DESTS).key, k < 3 ? 1 : 0, ri(3, 25));
+trucks.forEach(t => t.kg = t.orders.reduce((a, id) => a + orders.find(o => o.id === id).kg, 0));
+
+/* =========================================================
+   Motor 3D compartido
+   ========================================================= */
+const matCache = new Map();
+const M = (c, extra) => { const k = c + JSON.stringify(extra || {}); if (!matCache.has(k)) matCache.set(k, new THREE.MeshLambertMaterial({ color: c, ...extra })); return matCache.get(k); };
+function box(w, h, d, mat, x = 0, y = 0, z = 0, parent) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), typeof mat === 'number' ? M(mat) : mat);
+  m.position.set(x, y + h / 2, z); m.castShadow = true; m.receiveShadow = true;
+  parent && parent.add(m); return m;
+}
+
+function createStage(host, { viewSize, camDir, shadowSize }) {
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  host.prepend(renderer.domElement);
+  const labelLayer = document.createElement('div'); labelLayer.className = 'labels'; host.appendChild(labelLayer);
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 600);
+  const home = camDir.clone().normalize().multiplyScalar(120);
+  camera.position.copy(home);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  Object.assign(controls, { enableDamping: true, dampingFactor: .08, minZoom: .6, maxZoom: 5, minPolarAngle: .3, maxPolarAngle: 1.2, screenSpacePanning: false, zoomSpeed: 1.2 });
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xb8c6da, 1.9));
+  const sun = new THREE.DirectionalLight(0xffffff, 2.1);
+  sun.position.set(30, 60, 18); sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left: -shadowSize, right: shadowSize, top: shadowSize, bottom: -shadowSize, near: 1, far: 200 });
+  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
+  scene.add(sun);
+  const S = { host, renderer, scene, camera, controls, labelLayer, labels: [], w: 1, h: 1, goal: null, follow: null };
+  const resize = () => {
+    S.w = host.clientWidth || 1; S.h = host.clientHeight || 1;
+    renderer.setSize(S.w, S.h, false);
+    const a = S.w / S.h, vs = viewSize * (a < 1 ? 1.25 : 1);
+    Object.assign(camera, { left: -vs * a / 2, right: vs * a / 2, top: vs / 2, bottom: -vs / 2 });
+    camera.updateProjectionMatrix();
+  };
+  new ResizeObserver(resize).observe(host); resize();
+  controls.addEventListener('start', () => { S.goal = null; S.follow = null; });
+  S.addLabel = (el, target, offY = 0) => { labelLayer.appendChild(el); const l = { el, target, offY }; S.labels.push(l); return l; };
+  S.removeLabel = l => { l.el.remove(); S.labels = S.labels.filter(x => x !== l); };
+  S.focus = (target, zoom) => { S.goal = { target: target.clone(), zoom }; };
+  S.zoomBy = f => { S.goal = { target: controls.target.clone(), zoom: THREE.MathUtils.clamp(camera.zoom * f, controls.minZoom, controls.maxZoom) }; };
+  S.reset = () => { S.follow = null; S.goal = { target: new THREE.Vector3(), zoom: 1, home: true }; };
+  host.querySelectorAll('[data-z]').forEach(b => b.onclick = () => ({ in: () => S.zoomBy(1.4), out: () => S.zoomBy(1 / 1.4), reset: () => S.reset() })[b.dataset.z]());
+  const v = new THREE.Vector3();
+  S.update = () => {
+    if (S.follow) S.goal = { target: S.follow.position.clone(), zoom: S.goal?.zoom ?? camera.zoom };
+    if (S.goal) {
+      const g = S.goal, delta = v.copy(g.target).sub(controls.target).multiplyScalar(.08);
+      controls.target.add(delta); camera.position.add(delta);
+      if (g.home) camera.position.lerp(v.copy(home).add(controls.target), .08);
+      if (g.zoom) { camera.zoom += (g.zoom - camera.zoom) * .08; camera.updateProjectionMatrix(); }
+      if (!S.follow && controls.target.distanceTo(g.target) < .02 && Math.abs(camera.zoom - (g.zoom || camera.zoom)) < .005) S.goal = null;
+    }
+    controls.update();
+    renderer.render(scene, camera);
+    for (const l of S.labels) {
+      if (l.target.isObject3D) l.target.getWorldPosition(v); else v.copy(l.target);
+      v.y += l.offY; v.project(camera);
+      const x = (v.x * .5 + .5) * S.w, y = (-v.y * .5 + .5) * S.h;
+      const vis = v.z < 1 && x > -40 && x < S.w + 40 && y > -20 && y < S.h + 40;
+      l.el.style.display = vis ? '' : 'none';
+      if (vis) l.el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-100%)`;
+    }
+  };
+  return S;
+}
+
+/* =========================================================
+   Escena: mapa de la flota (Panel Jefe)
+   ========================================================= */
+let J, D;
+const ROADS = [[-31, 11, 31, 11], [-22, -28, -22, 11], [22, -28, 22, 11], [-22, -22, 22, -22], [0, 11, 0, 28]];
+function buildJefeScene() {
+  J = createStage($('#stage-jefe'), { viewSize: 52, camDir: new THREE.Vector3(1, 1.05, 1), shadowSize: 46 });
+  const s = J.scene;
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(44, 64), M(0xe3ebe2));
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; s.add(ground);
+
+  // calles con línea central
+  const dashGeo = new THREE.BoxGeometry(1, .02, .14); const dashes = [];
+  ROADS.forEach(([x1, z1, x2, z2]) => {
+    const horiz = z1 === z2, len = horiz ? Math.abs(x2 - x1) + 3 : Math.abs(z2 - z1) + 3;
+    const r = new THREE.Mesh(new THREE.BoxGeometry(horiz ? len : 3, .04, horiz ? 3 : len), M(0xc4cdd9));
+    r.position.set((x1 + x2) / 2, .02, (z1 + z2) / 2); r.receiveShadow = true; s.add(r);
+    const n = Math.floor(len / 2.2);
+    for (let i = 1; i < n; i++) {
+      const k = i / n; const x = x1 + (x2 - x1) * k, z = z1 + (z2 - z1) * k;
+      dashes.push([x, z, horiz]);
+    }
+  });
+  const dm = new THREE.InstancedMesh(dashGeo, M(0xffffff), dashes.length); const o3 = new THREE.Object3D();
+  dashes.forEach(([x, z, h], i) => { o3.position.set(x, .05, z); o3.rotation.y = h ? 0 : Math.PI / 2; o3.updateMatrix(); dm.setMatrixAt(i, o3.matrix); });
+  s.add(dm);
+
+  // playón del depósito
+  const pad = box(24, .06, 17, 0xeef2f6, 2.5, 0, 1); pad.castShadow = false; s.add(pad);
+
+  // edificio del depósito
+  const dep = new THREE.Group(); s.add(dep);
+  box(16, 5, 8, 0xf8fafc, 0, 0, -1, dep);
+  box(16.15, .7, 8.15, 0x1f5eff, 0, 4.1, -1, dep);
+  box(16.3, .2, 8.3, 0xe2e8f0, 0, 5, -1, dep);
+  // logo en el techo
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const cx = cv.getContext('2d');
+  cx.fillStyle = '#f8fafc'; cx.fillRect(0, 0, 1024, 512);
+  cx.fillStyle = '#1f5eff'; cx.font = '800 190px Inter, Arial'; cx.textAlign = 'center'; cx.fillText('VALSUR', 512, 260);
+  cx.font = '600 72px Inter, Arial'; cx.fillStyle = '#334155'; cx.fillText('L O G Í S T I C A', 512, 370);
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+  const roof = new THREE.Mesh(new THREE.PlaneGeometry(14, 7), new THREE.MeshLambertMaterial({ map: tex }));
+  roof.rotation.x = -Math.PI / 2; roof.position.set(0, 5.21, -1); roof.receiveShadow = true; dep.add(roof);
+  // andenes y portones
+  box(16, .5, .4, 0x94a3b8, 0, 0, 3.2, dep);
+  DOCKS.forEach(x => { box(1.7, 2.4, .08, 0x334155, x, .5, 3.02, dep); box(1.7, .25, .1, 0xf59e0b, x, 2.9, 3.04, dep); });
+  // ventanas
+  for (let i = 0; i < 5; i++) box(.08, .9, 1.1, 0x9cc0ff, 8.02, 2.6, -4 + i * 1.5, dep);
+  // vallado del playón
+  [[-9.6, 6.2, .08, 6.4], [14.6, 1, .08, 17], [-6, 9.4, 7.2, .08], [9.3, 9.4, 10.6, .08]].forEach(([x, z, w, d]) => box(w, .9, d, M(0x94a3b8, { transparent: true, opacity: .55 }), x, 0, z, s));
+  // pallets y cajas al costado
+  for (let i = 0; i < 6; i++) {
+    const x = -9 + (i % 3) * 1.3, z = -6.6 + Math.floor(i / 3) * 1.3;
+    box(1.1, .15, 1.1, 0xc8a26b, x, 0, z, s); box(.95, .7, .95, i % 2 ? 0x2f6bff : 0xd9b27c, x, .15, z, s);
+  }
+  for (let i = 0; i < 4; i++) { box(1.1, .15, 1.1, 0xc8a26b, 10.5 + (i % 2) * 1.3, 0, 4.2 + Math.floor(i / 2) * 1.3, s); box(.95, .6, .95, 0xd9b27c, 10.5 + (i % 2) * 1.3, .15, 4.2 + Math.floor(i / 2) * 1.3, s); }
+  const fl = forklift(); fl.position.set(12.5, 0, 7.4); fl.rotation.y = 2.4; s.add(fl);
+
+  // clientes
+  DESTS.forEach(d => {
+    const [x, z, w, dd, h] = d.b; const g = new THREE.Group(); s.add(g);
+    box(w, h, dd, 0xffffff, x, 0, z, g);
+    box(w + .1, .45, dd + .1, d.color, x, h - .6, z, g);
+    box(w + .25, .15, dd + .25, 0xe2e8f0, x, h, z, g);
+    box(w + 2, .05, dd + 2, 0xeef2f6, x, 0, z, g).castShadow = false;
+    const el = document.createElement('div'); el.className = 'tag';
+    el.style.setProperty('--c', '#' + d.color.toString(16).padStart(6, '0'));
+    el.innerHTML = `<i></i>${esc(d.name)}`;
+    J.addLabel(el, new THREE.Vector3(x, h + .3, z), 0);
+  });
+
+  // árboles
+  const freeAt = (x, z) => {
+    if (Math.hypot(x, z) > 41) return false;
+    if (x > -11 && x < 16 && z > -9 && z < 11) return false;
+    for (const [x1, z1, x2, z2] of ROADS) {
+      const nx = Math.max(Math.min(x1, x2), Math.min(Math.max(x1, x2), x)), nz = Math.max(Math.min(z1, z2), Math.min(Math.max(z1, z2), z));
+      if (Math.hypot(x - nx, z - nz) < 2.8) return false;
+    }
+    for (const d of DESTS) { const [bx, bz, w, dd] = d.b; if (Math.abs(x - bx) < w / 2 + 2 && Math.abs(z - bz) < dd / 2 + 2) return false; }
+    return true;
+  };
+  const trunkGeo = new THREE.CylinderGeometry(.12, .16, .7, 6), crownGeo = new THREE.IcosahedronGeometry(.8, 0);
+  let placed = 0;
+  for (let tries = 0; tries < 900 && placed < 85; tries++) {
+    const x = (rnd() * 2 - 1) * 40, z = (rnd() * 2 - 1) * 40; if (!freeAt(x, z)) continue;
+    const sc = .7 + rnd() * .7;
+    const tr = new THREE.Mesh(trunkGeo, M(0x8b6b4a)); tr.position.set(x, .35 * sc, z); tr.scale.setScalar(sc); tr.castShadow = true; s.add(tr);
+    const cr = new THREE.Mesh(crownGeo, M(rnd() < .5 ? 0x7cc27a : 0x9ad08a)); cr.position.set(x, 1.15 * sc, z); cr.scale.setScalar(sc); cr.rotation.y = rnd() * 3; cr.castShadow = true; s.add(cr);
+    placed++;
+  }
+
+  // camiones
+  const ring = new THREE.Mesh(new THREE.RingGeometry(2.7, 3.05, 48), new THREE.MeshBasicMaterial({ color: 0x1f5eff, transparent: true, opacity: .8 }));
+  ring.rotation.x = -Math.PI / 2; ring.position.y = .08; ring.visible = false; s.add(ring); J.ring = ring;
+  trucks.forEach(t => {
+    t.obj = truckModel(t.phase === 'taller' ? 0x94a3b8 : 0x1f5eff);
+    s.add(t.obj);
+    if (t.phase === 'taller') { t.obj.position.set(12, 0, -2); t.obj.rotation.y = Math.PI / 2; t.heading = Math.PI / 2; }
+    const el = document.createElement('div'); el.className = 'pin';
+    el.onclick = e => { e.stopPropagation(); selectTruck(t.id, true); };
+    t.pin = el; J.addLabel(el, t.obj, 2.6);
+    poseTruck(t, 1);
+  });
+  // clic sobre el modelo 3D
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); let down = null;
+  J.renderer.domElement.addEventListener('pointerdown', e => down = [e.clientX, e.clientY]);
+  J.renderer.domElement.addEventListener('pointerup', e => {
+    if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
+    const r = J.renderer.domElement.getBoundingClientRect();
+    ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
+    ray.setFromCamera(ndc, J.camera);
+    const hit = ray.intersectObjects(trucks.map(t => t.obj), true)[0];
+    if (hit) { let o = hit.object; while (o.parent && !o.userData.truck) o = o.parent; const t = trucks.find(t => t.obj === o); t && selectTruck(t.id, true); }
+  });
+}
+
+function truckModel(cabColor) {
+  const g = new THREE.Group(); g.userData.truck = true;
+  box(4.6, .22, 1.2, 0x334155, 0, .28, 0, g);                     // chasis
+  box(3.4, 1.5, 1.45, 0xffffff, -.65, .5, 0, g);                  // semirremolque
+  box(3.42, .2, 1.47, 0x1f5eff, -.65, .95, 0, g);                 // franja
+  box(1.2, 1.25, 1.4, cabColor, 1.75, .38, 0, g);                 // cabina
+  box(.06, .5, 1.2, 0x1e293b, 2.36, 1.0, 0, g);                   // parabrisas
+  box(.3, .25, 1.4, cabColor, 1.3, 1.63, 0, g);                   // deflector
+  const wg = new THREE.CylinderGeometry(.3, .3, .26, 12);
+  [-1.8, -1.15, 1.75].forEach(x => [-.62, .62].forEach(z => { const w = new THREE.Mesh(wg, M(0x111827)); w.rotation.x = Math.PI / 2; w.position.set(x, .3, z); w.castShadow = true; g.add(w); }));
+  return g;
+}
+function forklift() {
+  const g = new THREE.Group();
+  box(1.1, .55, .8, 0xfbbf24, 0, .2, 0, g);
+  box(.5, .55, .7, 0xf59e0b, -.25, .75, 0, g);
+  box(.08, 1.5, .5, 0x334155, .6, .1, 0, g);
+  box(.6, .05, .08, 0x334155, .9, .15, .18, g); box(.6, .05, .08, 0x334155, .9, .15, -.18, g);
+  const top = box(.6, .06, .8, 0x334155, -.1, 1.3, 0, g);
+  [[-.5, .32], [.4, .32], [-.5, -.32], [.4, -.32]].forEach(([x, z]) => { const w = new THREE.Mesh(new THREE.CylinderGeometry(.16, .16, .14, 10), M(0x111827)); w.rotation.x = Math.PI / 2; w.position.set(x, .16, z * 1.2); g.add(w); });
+  [[-.35, .32], [-.35, -.32], [.15, .32], [.15, -.32]].forEach(([x, z]) => box(.04, .6, .04, 0x334155, x, .75, z, g));
+  return g;
+}
+
+/* =========================================================
+   Simulación
+   ========================================================= */
+function poseTruck(t, snap = 0) {
+  if (!t.path) return;
+  const p = t.path.at(t.dist), back = t.phase === 'vuelta';
+  const tx = back ? -p.dx : p.dx, tz = back ? -p.dz : p.dz;
+  const off = .78 * Math.min(1, t.dist / 4, (t.path.total - t.dist) / 4);
+  t.obj.position.set(p.x - tz * off, 0, p.z + tx * off);
+  const fx = p.seg === 0 ? p.dx : tx, fz = p.seg === 0 ? p.dz : tz;
+  const target = Math.atan2(-fz, fx);
+  let diff = target - t.heading; diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+  t.heading += snap ? diff : diff * .15;
+  t.obj.rotation.y = t.heading;
+}
+function stepSim(dt) {
+  for (const t of trucks) {
+    switch (t.phase) {
+      case 'carga':
+        t.timer -= dt;
+        if (t.timer < 5) t.orders.forEach(id => setStage(orders.find(o => o.id === id), 2));
+        if (t.timer <= 0) { t.phase = 'ida'; t.dist = 0; t.orders.forEach(id => setStage(orders.find(o => o.id === id), 3)); t.fuel = Math.max(30, t.fuel - ri(1, 4)); }
+        break;
+      case 'ida':
+        t.dist += t.speed * dt;
+        if (t.dist >= t.path.total) { t.dist = t.path.total; t.phase = 'descarga'; t.timer = 7 + rnd() * 5; }
+        break;
+      case 'descarga':
+        t.timer -= dt;
+        if (t.timer <= 0) {
+          t.orders.forEach(id => { const o = orders.find(o => o.id === id); setStage(o, 4); o.delivered = true; kpi.deliveredBase++; if (!o.late) kpi.onTimeBase++; });
+          t.orders = []; t.kg = 0; t.phase = 'vuelta';
+        }
+        break;
+      case 'vuelta':
+        t.dist -= t.speed * 1.1 * dt;
+        if (t.dist <= 0) { t.dist = 0; t.phase = 'carga'; t.timer = 9 + rnd() * 6; assignOrders(t); t.kg = t.orders.reduce((a, id) => a + orders.find(o => o.id === id).kg, 0); if (t.fuel < 45) t.fuel = 100; }
+        break;
+    }
+    poseTruck(t);
+  }
+}
+let genT = 0;
+function stepOrders(dt) {
+  genT += dt;
+  if (genT > 7) { genT = 0; newOrder(pick(DESTS).key, 0); }
+  orders.forEach(o => { if (o.stage === 0 && !o.truck && Date.now() - o.times[0] > 9000) setStage(o, 1); });
+  const delivered = orders.filter(o => o.stage === 4);
+  if (delivered.length > 30) { const old = delivered[delivered.length - 1]; orders.splice(orders.indexOf(old), 1); }
+}
+
+/* =========================================================
+   UI Panel Jefe
+   ========================================================= */
+const st = { sel: null, selOrder: null, stageFilter: null, fleetFilter: 'todos' };
+const statusOf = t => STATUS[t.phase];
+function truckProgress(t) { if (!t.path) return 0; if (t.phase === 'carga') return 0; if (t.phase === 'descarga') return 100; const p = t.dist / t.path.total * 100; return Math.round(t.phase === 'vuelta' ? 100 - p : p); }
+function truckEta(t) {
+  if (t.phase === 'ida') return 'Llega ' + hhmm(new Date(Date.now() + (t.path.total - t.dist) / t.speed * 90000));
+  if (t.phase === 'vuelta') return 'Vuelve ' + hhmm(new Date(Date.now() + t.dist / t.speed * 80000));
+  if (t.phase === 'carga') return 'Sale ' + hhmm(new Date(Date.now() + t.timer * 60000));
+  if (t.phase === 'descarga') return 'Libera ' + hhmm(new Date(Date.now() + t.timer * 60000));
+  if (t.phase === 'incidencia') return 'Demorado';
+  return '—';
+}
+const truckSpeed = t => (t.phase === 'ida' || t.phase === 'vuelta') ? Math.round(58 + Math.sin(Date.now() / 3000 + t.dock) * 12) : 0;
+const where = t => t.dest ? ({ carga: 'Andén ' + (t.dock + 1), ida: '→ ' + destBy[t.dest].city, descarga: 'En ' + destBy[t.dest].name, vuelta: '← Depósito central', incidencia: 'Av. Costanera' })[t.phase] : 'Taller interno';
+
+function stepperHTML(o) {
+  return `<div class="stepper">${STAGES.map((s, i) => `<div class="step ${i < o.stage || o.stage === 4 ? 'done' : i === o.stage ? 'cur' : ''}"><div class="dot"></div>${s.label}<em>${o.times[i] ? hhmm(o.times[i]) : '—'}</em></div>`).join('')}</div>`;
+}
+function orderCard(o) {
+  return `<div class="order-card"><header><span><b>${o.id}</b> · ${esc(o.client)}</span>${o.late ? '<span class="late">DEMORADO</span>' : `<span class="muted">${o.items} bultos · ${fmt(o.kg)} kg</span>`}</header>${stepperHTML(o)}</div>`;
+}
+
+function renderKPIsJefe() {
+  const moving = trucks.filter(t => t.phase === 'ida' || t.phase === 'vuelta').length;
+  const active = orders.filter(o => o.stage < 4).length;
+  const alerts = trucks.filter(t => t.phase === 'incidencia').length + orders.filter(o => o.late && o.stage < 4).length;
+  const rate = (kpi.onTimeBase / kpi.deliveredBase * 100).toFixed(1);
+  const k = [
+    ['#1f5eff', ICON.truck, 'Vehículos en movimiento', `${moving}<span class="muted" style="font-size:14px;font-weight:600"> / ${trucks.length}</span>`, ''],
+    ['#7c3aed', ICON.order, 'Pedidos en curso', active, ''],
+    ['#16a34a', ICON.check, 'Entregados hoy', fmt(kpi.deliveredBase), `<em style="color:var(--green)">${rate}% a tiempo</em>`],
+    ['#ef4444', ICON.alert, 'Alertas activas', alerts, alerts ? '<em style="color:var(--red)">revisar</em>' : ''],
+  ];
+  setHTML($('#kpis-jefe'), k.map(([c, ic, l, v, x], i) => `<div class="card kpi ${i === 3 ? 'clickable' : ''}" ${i === 3 ? 'data-alert' : ''}><div class="kpi-ic" style="background:color-mix(in srgb,${c} 12%,#fff);color:${c}">${ic}</div><div><small>${l}</small><b class="num">${v}</b>${x}</div></div>`).join(''));
+}
+$('#kpis-jefe').onclick = e => { if (e.target.closest('[data-alert]')) { const t = trucks.find(t => t.phase === 'incidencia'); t && selectTruck(t.id, true); } };
+
+function renderSide() {
+  const box = $('#side-sel');
+  const t = st.sel && truckBy(st.sel);
+  if (t) {
+    const s = statusOf(t), prog = truckProgress(t);
+    const os = t.orders.map(id => orders.find(o => o.id === id)).filter(Boolean);
+    setHTML(box, `
+      <div class="sel-head"><div class="t-ic" style="--c:${s.color}">${ICON.truck}</div>
+        <div><b>${t.plate}</b><small>${t.model}</small></div>
+        <span class="pill" style="--c:${s.color};margin-left:auto">${s.label}</span>
+        <button class="x" data-close title="Cerrar">×</button></div>
+      <div class="facts">
+        <div class="fact"><small>Chofer</small><b>${t.driver}</b></div>
+        <div class="fact"><small>Ubicación</small><b>${esc(where(t))}</b></div>
+        <div class="fact"><small>Velocidad</small><b class="num">${truckSpeed(t)} km/h</b></div>
+        <div class="fact"><small>Estimado</small><b class="num">${truckEta(t)}</b></div>
+        <div class="fact"><small>Carga</small><b class="num">${fmt(t.kg)} kg</b></div>
+        <div class="fact"><small>Combustible</small><b class="num">${t.fuel}%</b></div>
+      </div>
+      ${t.note ? `<div class="note">${ICON.alert}<span>${esc(t.note)}</span></div>` : ''}
+      ${t.dest ? `<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600"><span>Recorrido</span><span class="num">${prog}%</span></div><div class="bar" style="--c:${s.color}"><i style="width:${prog}%"></i></div>` : ''}
+      <div class="mini-title">Pedidos a bordo (${os.length})</div>
+      ${os.length ? os.map(orderCard).join('') : '<div class="muted" style="font-size:12px">Sin pedidos asignados en este momento.</div>'}`);
+    return;
+  }
+  const o = st.selOrder && orders.find(o => o.id === st.selOrder);
+  if (o) {
+    setHTML(box, `<div class="sel-head"><div class="t-ic" style="--c:#7c3aed">${ICON.order}</div><div><b>${o.id}</b><small>${esc(o.client)}</small></div><button class="x" data-close>×</button></div>
+      <div class="facts"><div class="fact"><small>Destino</small><b>${destBy[o.dest].city}</b></div><div class="fact"><small>Bultos / peso</small><b>${o.items} · ${fmt(o.kg)} kg</b></div></div>
+      ${orderCard(o)}<div class="hint">${o.stage < 2 ? 'Esperando asignación a un vehículo. Se cargará en el próximo camión hacia ' + destBy[o.dest].city + '.' : 'Pedido finalizado.'}</div>`);
+    return;
+  }
+  const counts = Object.keys(STATUS).map(k => [k, trucks.filter(t => t.phase === k).length]);
+  setHTML(box, `<div class="card-h" style="padding:0 0 4px"><h3>Resumen de la flota</h3><span class="muted">${trucks.length} vehículos</span></div>
+    <div class="dist">${counts.map(([k, n]) => `<div class="dist-row"><span class="pill" style="--c:${STATUS[k].color}">${STATUS[k].label}</span><div class="bar" style="--c:${STATUS[k].color};margin:0"><i style="width:${n / trucks.length * 100}%"></i></div><b class="num" style="text-align:right">${n}</b></div>`).join('')}</div>
+    <div class="hint">Tocá un vehículo en el mapa o en la lista para seguirlo y ver sus pedidos.</div>`);
+}
+$('#side-sel').onclick = e => { if (e.target.closest('[data-close]')) { st.selOrder = null; selectTruck(null); } };
+
+const FLEET_FILTERS = { todos: ['Todos', () => true], ruta: ['En ruta', t => ['ida', 'vuelta', 'descarga'].includes(t.phase)], deposito: ['En depósito', t => ['carga', 'taller'].includes(t.phase)], alertas: ['Alertas', t => t.phase === 'incidencia'] };
+function renderFleet() {
+  setHTML($('#fleet-tabs'), Object.entries(FLEET_FILTERS).map(([k, [l, f]]) => `<button class="chip ${st.fleetFilter === k ? 'active' : ''}" data-f="${k}">${l} · ${trucks.filter(f).length}</button>`).join(''));
+  const list = trucks.filter(FLEET_FILTERS[st.fleetFilter][1]);
+  setHTML($('#fleet'), list.map(t => {
+    const s = statusOf(t), p = truckProgress(t);
+    return `<button class="frow ${st.sel === t.id ? 'sel' : ''}" data-id="${t.id}">
+      <div class="t-ic" style="--c:${s.color}">${ICON.truck}</div>
+      <div style="min-width:0"><b>${t.plate}</b> <span class="muted" style="font-size:12px">· ${t.driver}</span><small>${esc(where(t))}</small>
+        ${t.dest ? `<div class="bar" style="--c:${s.color}"><i style="width:${p}%"></i></div>` : ''}</div>
+      <div style="text-align:right"><span class="pill" style="--c:${s.color}">${s.label}</span><small class="num" style="margin-top:4px">${truckEta(t)}</small></div></button>`;
+  }).join('') || '<div class="empty">No hay vehículos en este estado.</div>');
+}
+$('#fleet-tabs').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { st.fleetFilter = b.dataset.f; renderFleet(); } };
+$('#fleet').onclick = e => { const b = e.target.closest('[data-id]'); if (b) selectTruck(b.dataset.id, true); };
+
+function renderPipeline() {
+  const n = STAGES.map((_, i) => orders.filter(o => o.stage === i).length);
+  n[4] = kpi.deliveredBase;
+  const max = Math.max(...n.slice(0, 4), 1);
+  setHTML($('#pipeline'), STAGES.map((s, i) => `<button class="pstage ${st.stageFilter === i ? 'active' : ''}" data-s="${i}" style="--c:${s.color}">
+    <small><i></i>${s.label}</small><b class="num">${fmt(n[i])}</b>
+    <div class="bar" style="--c:${s.color}"><i style="width:${i === 4 ? 100 : n[i] / max * 100}%"></i></div></button>`).join(''));
+}
+$('#pipeline').onclick = e => { const b = e.target.closest('[data-s]'); if (!b) return; const s = +b.dataset.s; st.stageFilter = st.stageFilter === s ? null : s; renderPipeline(); renderOrders(); };
+
+function renderOrders() {
+  const list = orders.filter(o => st.stageFilter == null || o.stage === st.stageFilter)
+    .sort((a, b) => (a.stage === 4) - (b.stage === 4) || b.times[b.stage] - a.times[a.stage]).slice(0, 40);
+  setHTML($('#orders'), list.map(o => {
+    const t = o.truck && truckBy(o.truck), s = STAGES[o.stage];
+    return `<tr data-o="${o.id}" class="${st.selOrder === o.id ? 'sel' : ''}">
+      <td><b>${o.id}</b>${o.late && o.stage < 4 ? '<span class="late">DEMORADO</span>' : ''}</td><td>${esc(o.client)}</td><td class="muted">${destBy[o.dest].city}</td>
+      <td>${t ? `<b>${t.plate}</b>` : '<span class="muted">Sin asignar</span>'}</td>
+      <td><span class="pill" style="--c:${s.color}">${s.label}</span></td>
+      <td><div class="mini-steps">${STAGES.map((_, i) => `<i class="${i <= o.stage ? 'on' : ''}"></i>`).join('')}</div></td>
+      <td class="muted num">${ago(o.times[o.stage])}</td></tr>`;
+  }).join('') || '<tr><td colspan="7" class="empty">No hay pedidos en esta etapa.</td></tr>');
+}
+$('#orders').onclick = e => { const r = e.target.closest('[data-o]'); r && selectOrder(r.dataset.o); };
+
+function renderLegend() {
+  $('#legend-jefe').innerHTML = Object.values(STATUS).map(s => `<span style="--c:${s.color}"><i></i>${s.label}</span>`).join('');
+}
+function updatePins() {
+  trucks.forEach(t => {
+    const s = statusOf(t);
+    const html = `<i></i>${t.plate}`;
+    if (t.pin.innerHTML !== html) t.pin.innerHTML = html;
+    t.pin.style.setProperty('--c', s.color);
+    t.pin.classList.toggle('sel', st.sel === t.id);
+    t.pin.style.zIndex = st.sel === t.id ? 5 : 1;
+  });
+}
+function selectTruck(id, focus) {
+  st.sel = id;
+  if (id) st.selOrder = null;
+  const t = id && truckBy(id);
+  J.ring.visible = !!t;
+  if (t && focus) { J.follow = t.obj; J.goal = { target: t.obj.position.clone(), zoom: Math.max(J.camera.zoom, 1.7) }; }
+  if (!t) J.follow = null;
+  renderAllJefe();
+}
+function selectOrder(id) {
+  const o = orders.find(o => o.id === id);
+  if (!o) return;
+  if (o.truck && o.stage < 4) { selectTruck(o.truck, true); st.selOrder = id; }
+  else { st.sel = null; J.ring.visible = false; J.follow = null; st.selOrder = id; }
+  renderAllJefe();
+}
+function renderAllJefe() { renderKPIsJefe(); renderSide(); renderFleet(); renderPipeline(); renderOrders(); updatePins(); }
+
+/* =========================================================
+   Depósito: inventario y escena
+   ========================================================= */
+const CATS = {
+  Alimentos:  { color: '#e0a44a', box: 0xd9b27c, rows: ['A', 'B'], ab: 'AL' },
+  Bebidas:    { color: '#1f5eff', box: 0x5b8cff, rows: ['C'],      ab: 'BE' },
+  Limpieza:   { color: '#0d9488', box: 0x2dd4bf, rows: ['D'],      ab: 'LI' },
+  Higiene:    { color: '#a855f7', box: 0xc4a1f7, rows: ['D', 'E'], ab: 'HI' },
+  Ferretería: { color: '#475569', box: 0x94a3b8, rows: ['E'],      ab: 'FE' },
+  Automotor:  { color: '#ea580c', box: 0xfb923c, rows: ['F'],      ab: 'AU' },
+};
+const PRODUCTS_DEF = {
+  Alimentos: ['Aceite de girasol 1,5 L', 'Harina 000 1 kg', 'Yerba mate 1 kg', 'Arroz largo fino 1 kg', 'Fideos tirabuzón 500 g', 'Azúcar 1 kg', 'Leche larga vida 1 L', 'Dulce de leche 400 g', 'Tomate triturado 520 g', 'Galletitas surtidas 400 g', 'Café molido 500 g', 'Atún al natural 170 g', 'Polenta instantánea 500 g', 'Mermelada de durazno 454 g'],
+  Bebidas: ['Agua mineral 2 L', 'Gaseosa cola 2,25 L', 'Jugo de naranja 1 L', 'Vino tinto Malbec 750 ml', 'Cerveza rubia lata 473 ml', 'Agua saborizada pomelo 1,5 L', 'Soda en sifón 2 L'],
+  Limpieza: ['Lavandina 2 L', 'Detergente limón 750 ml', 'Jabón en polvo 3 kg', 'Suavizante 900 ml', 'Limpiador multiuso 900 ml', 'Bolsas de residuos x30', 'Esponja doble faz x3'],
+  Higiene: ['Papel higiénico x4', 'Shampoo 400 ml', 'Pañales talle G x36', 'Jabón de tocador x3', 'Pasta dental 90 g', 'Desodorante aerosol 150 ml', 'Toallitas húmedas x50'],
+  Ferretería: ['Pintura látex blanca 20 L', 'Tornillos autoperforantes x100', 'Cinta aisladora 20 m', 'Lámpara LED 12 W', 'Cable unipolar 2,5 mm 100 m', 'Guantes de trabajo nitrilo', 'Silicona transparente 280 ml'],
+  Automotor: ['Aceite de motor 5W-30 4 L', 'Neumático 195/65 R15', 'Líquido refrigerante 1 L', 'Batería 12 V 65 Ah', 'Filtro de aire', 'Lubricante en aerosol 300 ml', 'Escobillas limpiaparabrisas'],
+};
+const ROWS = ['A', 'B', 'C', 'D', 'E', 'F'], BAYS = 10, LEVELS = 4;
+const rowZ = i => -11 + i * 4.4, bayX = j => -8.1 + j * 1.8, SHELF_Y = [.12, 1.1, 2.08, 3.06];
+const free = [];
+ROWS.forEach((r, i) => { for (let j = 0; j < BAYS; j++) for (let l = 0; l < LEVELS; l++) free.push({ row: r, ri: i, bay: j, lvl: l }); });
+const codeOf = b => `${b.row}-${String(b.bay + 1).padStart(2, '0')}-${b.lvl + 1}`;
+function takeBin(rows) {
+  let cand = free.filter(b => rows.includes(b.row));
+  if (!cand.length) cand = free;
+  const b = cand[Math.floor(rnd() * cand.length)];
+  free.splice(free.indexOf(b), 1); return b;
+}
+const products = [];
+const placements = [];
+Object.entries(PRODUCTS_DEF).forEach(([cat, names]) => names.forEach((name, i) => {
+  const c = CATS[cat];
+  const p = { id: 'P' + products.length, sku: `${c.ab}-${1000 + i * 7 + ri(1, 6)}`, name, cat, min: ri(3, 8) * 10, places: [] };
+  const n = 1 + (rnd() < .55) + (rnd() < .2);
+  for (let k = 0; k < n; k++) {
+    const b = takeBin(c.rows);
+    const pl = { ...b, code: codeOf(b), product: p, qty: ri(18, 260), lote: 'L' + ri(10000, 99999),
+      venc: ['Alimentos', 'Bebidas', 'Higiene', 'Limpieza'].includes(cat) ? new Date(2026 + ri(0, 1), ri(0, 11), ri(1, 28)) : null };
+    p.places.push(pl); placements.push(pl);
+  }
+  products.push(p);
+}));
+// algunos con stock bajo para que las alertas sean realistas
+products.filter((_, i) => i % 9 === 4).forEach(p => p.places.forEach(pl => pl.qty = ri(3, 12)));
+products.forEach(p => { p.total = p.places.reduce((a, pl) => a + pl.qty, 0); p.low = p.total < p.min; p.hay = norm([p.name, p.sku, p.cat, ...p.places.flatMap(pl => [pl.code, pl.lote, 'pasillo ' + pl.row])].join(' ')); });
+products.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+
+const ds = { cat: 'Todas', q: '', sel: null, selPlace: null, pins: [] };
+let forkPath = [], fork;
+function buildDepScene() {
+  D = createStage($('#stage-dep'), { viewSize: 34, camDir: new THREE.Vector3(1.05, 1.2, .9), shadowSize: 24 });
+  const s = D.scene;
+  box(28, .2, 33, 0xeef2f6, 0, -.2, 0, s).castShadow = false;
+  // muros en corte
+  box(28, 5, .3, 0xf8fafc, 0, 0, -16.6, s); box(28.02, .5, .32, 0x1f5eff, 0, 4.1, -16.6, s);
+  box(.3, 5, 33, 0xf8fafc, -14, 0, 0, s); box(.32, .5, 33.02, 0x1f5eff, -14, 4.1, 0, s);
+  [-9, -3, 3, 9].forEach(z => box(.1, 3, 2.6, 0x475569, -13.83, 0, z, s));
+  // marcas de piso
+  ROWS.forEach((_, i) => [-.85, .85].forEach(dz => { box(19, .01, .08, 0xfacc15, 0, 0, rowZ(i) + dz, s).castShadow = false; }));
+  box(.08, .01, 30, 0xfacc15, 10.4, 0, 0, s).castShadow = false;
+
+  // estanterías (instanced)
+  const up = [], beams = [], decks = [];
+  ROWS.forEach((_, i) => {
+    const z = rowZ(i);
+    for (let j = 0; j <= BAYS; j++) [-.55, .55].forEach(dz => up.push([-9 + j * 1.8, 1.95, z + dz]));
+    for (let j = 0; j < BAYS; j++) SHELF_Y.forEach(y => { decks.push([bayX(j), y, z]); if (y > .5) [-.55, .55].forEach(dz => beams.push([bayX(j), y - .03, z + dz])); });
+  });
+  const inst = (geo, mat, arr) => { const m = new THREE.InstancedMesh(geo, mat, arr.length); const o = new THREE.Object3D(); arr.forEach(([x, y, z], i) => { o.position.set(x, y, z); o.updateMatrix(); m.setMatrixAt(i, o.matrix); }); m.castShadow = m.receiveShadow = true; s.add(m); };
+  inst(new THREE.BoxGeometry(.09, 3.9, .09), M(0x2f5bd3), up);
+  inst(new THREE.BoxGeometry(1.78, .1, .07), M(0xf59e0b), beams);
+  inst(new THREE.BoxGeometry(1.74, .04, 1.08), M(0xd5dbe3), decks);
+  ROWS.forEach((r, i) => {
+    const el = document.createElement('div'); el.className = 'tag row'; el.textContent = 'Pasillo ' + r;
+    D.addLabel(el, new THREE.Vector3(-9.8, 4.2, rowZ(i)), 0);
+  });
+
+  // mercadería
+  const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+  placements.forEach(pl => {
+    const g = new THREE.Group(); const x = bayX(pl.bay), y = SHELF_Y[pl.lvl] + .02, z = rowZ(pl.ri);
+    const pal = new THREE.Mesh(boxGeo, new THREE.MeshLambertMaterial({ color: 0xc8a26b })); pal.scale.set(1.3, .12, .95); pal.position.set(0, .06, 0);
+    const h = .45 + rnd() * .3;
+    const crate = new THREE.Mesh(boxGeo, new THREE.MeshLambertMaterial({ color: CATS[pl.product.cat].box })); crate.scale.set(1.18, h, .86); crate.position.set(0, .12 + h / 2, 0);
+    [pal, crate].forEach(m => { m.castShadow = m.receiveShadow = true; g.add(m); });
+    g.position.set(x, y, z); s.add(g);
+    pl.obj = g; pl.mats = [pal.material, crate.material]; pl.top = new THREE.Vector3(x, y + .12 + h + .1, z);
+  });
+  fork = forklift(); fork.position.set(11.6, 0, 14); fork.rotation.y = Math.PI; s.add(fork);
+}
+function stepFork(dt) {
+  if (!forkPath.length) return;
+  const [tx, tz] = forkPath[0], p = fork.position;
+  const dx = tx - p.x, dz = tz - p.z, d = Math.hypot(dx, dz), sp = 7 * dt;
+  if (d < sp) { p.x = tx; p.z = tz; forkPath.shift(); return; }
+  p.x += dx / d * sp; p.z += dz / d * sp;
+  const target = Math.atan2(-dz, dx); let diff = Math.atan2(Math.sin(target - fork.rotation.y), Math.cos(target - fork.rotation.y)); fork.rotation.y += diff * .25;
+}
+function sendFork(pl) {
+  const aisle = rowZ(pl.ri) + 2.2;
+  const p = fork.position, curAisle = Math.abs(p.x - 11.6) < .2 ? null : p.z;
+  forkPath = [...(curAisle != null ? [[11.6, curAisle]] : []), [11.6, aisle], [bayX(pl.bay), aisle]];
+}
+function applyDepHighlight() {
+  ds.pins.forEach(l => D.removeLabel(l)); ds.pins = [];
+  const sel = ds.sel ? (ds.selPlace ? [ds.selPlace] : ds.sel.places) : [];
+  const any = sel.length > 0;
+  placements.forEach(pl => {
+    const on = sel.includes(pl);
+    pl.mats.forEach((m, i) => {
+      m.transparent = any && !on; m.opacity = any && !on ? .16 : 1;
+      m.emissive.setHex(on ? 0x1f5eff : 0x000000); m.emissiveIntensity = on ? (i ? .55 : .3) : 0;
+      m.needsUpdate = true;
+    });
+    pl.obj.scale.setScalar(on ? 1.06 : 1);
+  });
+  sel.forEach(pl => {
+    const el = document.createElement('div'); el.className = 'pin sel big'; el.style.setProperty('--c', '#1f5eff');
+    el.innerHTML = `<i></i>${pl.code}`; el.onclick = () => selectPlace(pl);
+    ds.pins.push(D.addLabel(el, pl.top, .25));
+  });
+  if (any) {
+    const c = new THREE.Vector3(); sel.forEach(pl => c.add(pl.obj.position)); c.divideScalar(sel.length);
+    const spread = Math.max(...sel.map(pl => pl.obj.position.distanceTo(c)), 0);
+    D.focus(c, THREE.MathUtils.clamp(2.4 - spread / 7, 1.05, 2.4));
+    sendFork(ds.selPlace || sel[0]);
+  }
+}
+
+/* ---------- UI Depósito ---------- */
+function renderKPIsDep() {
+  const used = placements.length, total = ROWS.length * BAYS * LEVELS;
+  const units = products.reduce((a, p) => a + p.total, 0), low = products.filter(p => p.low).length;
+  const k = [
+    ['#1f5eff', ICON.grid, 'Posiciones ocupadas', `${used}<span class="muted" style="font-size:14px;font-weight:600"> / ${total}</span>`, `<em class="muted">${Math.round(used / total * 100)}%</em>`],
+    ['#7c3aed', ICON.box, 'Productos (SKU)', products.length, ''],
+    ['#16a34a', ICON.check, 'Unidades en stock', fmt(units), ''],
+    ['#ef4444', ICON.alert, 'Stock bajo', low, '<em style="color:var(--red)">ver</em>'],
+  ];
+  $('#kpis-dep').innerHTML = k.map(([c, ic, l, v, x], i) => `<div class="card kpi ${i === 3 ? 'clickable' : ''}" ${i === 3 ? 'data-low' : ''}><div class="kpi-ic" style="background:color-mix(in srgb,${c} 12%,#fff);color:${c}">${ic}</div><div><small>${l}</small><b class="num">${v}</b>${x}</div></div>`).join('');
+}
+$('#kpis-dep').onclick = e => { if (e.target.closest('[data-low]')) { ds.cat = 'Stock bajo'; renderCats(); renderResults(); } };
+function renderCats() {
+  const list = ['Todas', ...Object.keys(CATS), 'Stock bajo'];
+  $('#cats').innerHTML = list.map(c => `<button class="chip ${ds.cat === c ? 'active' : ''}" data-c="${c}">${c}</button>`).join('');
+}
+$('#cats').onclick = e => { const b = e.target.closest('[data-c]'); if (b) { ds.cat = b.dataset.c; renderCats(); renderResults(); } };
+function filtered() {
+  const toks = norm(ds.q).split(/\s+/).filter(Boolean);
+  return products.filter(p => (ds.cat === 'Todas' || (ds.cat === 'Stock bajo' ? p.low : p.cat === ds.cat)) && toks.every(t => p.hay.includes(t)));
+}
+function renderResults() {
+  const list = filtered();
+  $('#res-count').textContent = `${list.length} producto${list.length === 1 ? '' : 's'}`;
+  $('#results').innerHTML = list.map(p => {
+    const c = CATS[p.cat];
+    return `<div class="prod ${ds.sel === p ? 'sel' : ''}" data-p="${p.id}" role="button" tabindex="0">
+      <div class="prod-top"><div class="cat-ic" style="--c:${c.color}">${c.ab}</div>
+        <div style="min-width:0"><b>${highlight(p.name, ds.q)}</b><small>${highlight(p.sku, ds.q)} · ${p.cat}</small></div>
+        <div class="qty num">${fmt(p.total)}<small>${p.low ? '<span class="low">STOCK BAJO</span>' : 'unidades'}</small></div></div>
+      <div class="locs">${p.places.map(pl => `<button class="loc ${ds.selPlace === pl ? 'sel' : ''}" data-pl="${p.id}|${pl.code}" title="Pasillo ${pl.row} · Posición ${pl.code.slice(2, 4)} · Nivel ${pl.lvl + 1}">${highlight(pl.code, ds.q)}</button>`).join('')}</div></div>`;
+  }).join('') || `<div class="empty">No encontramos “${esc(ds.q)}”.<br>Probá con otro nombre, código o ubicación.</div>`;
+}
+$('#results').onclick = e => {
+  const l = e.target.closest('[data-pl]');
+  if (l) { const [pid, code] = l.dataset.pl.split('|'); const p = products.find(p => p.id === pid); selectProduct(p, p.places.find(pl => pl.code === code)); return; }
+  const r = e.target.closest('[data-p]'); r && selectProduct(products.find(p => p.id === r.dataset.p));
+};
+$('#results').onkeydown = e => { if (e.key === 'Enter') { const r = e.target.closest('[data-p]'); r && selectProduct(products.find(p => p.id === r.dataset.p)); } };
+function renderDetail() {
+  const box = $('#pdetail'), p = ds.sel;
+  if (!p) { box.classList.remove('open'); box.innerHTML = ''; return; }
+  const pl = ds.selPlace || p.places[0], c = CATS[p.cat];
+  box.innerHTML = `
+    <div class="sel-head"><div class="cat-ic" style="--c:${c.color}">${c.ab}</div><div style="min-width:0"><b style="font-size:14px">${esc(p.name)}</b><small>${p.sku} · ${p.cat}</small></div><button class="x" data-close title="Cerrar">×</button></div>
+    <div class="where"><div><small>Pasillo</small><b>${pl.row}</b></div><div><small>Posición</small><b>${pl.code.slice(2, 4)}</b></div><div><small>Nivel</small><b>${pl.lvl + 1}</b></div></div>
+    <table class="lots"><thead><tr><th>Ubicación</th><th>Lote</th><th>Vence</th><th style="text-align:right">Cant.</th></tr></thead><tbody>
+    ${p.places.map(x => `<tr data-code="${x.code}" style="${x === pl ? 'background:var(--blue-50)' : ''}"><td><b style="color:var(--blue)">${x.code}</b></td><td>${x.lote}</td><td class="muted">${x.venc ? x.venc.toLocaleDateString('es-AR', { month: 'short', year: 'numeric' }) : '—'}</td><td class="num" style="text-align:right;font-weight:700">${x.qty}</td></tr>`).join('')}
+    </tbody></table>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px;flex-wrap:wrap">
+      <span style="font-size:12px">Total <b class="num">${fmt(p.total)}</b> · mín. ${p.min} ${p.low ? '<span class="low">· REPONER</span>' : ''}</span>
+      <span style="display:flex;gap:6px">${p.places.length > 1 ? '<button class="btn ghost" data-all>Ver todas</button>' : ''}<button class="btn" data-copy>Copiar ubicación</button></span>
+    </div>`;
+  box.classList.add('open');
+}
+$('#pdetail').onclick = e => {
+  const p = ds.sel; if (!p) return;
+  if (e.target.closest('[data-close]')) return selectProduct(null);
+  if (e.target.closest('[data-all]')) return selectProduct(p);
+  if (e.target.closest('[data-copy]')) { const pl = ds.selPlace || p.places[0]; const txt = `${p.name} — Pasillo ${pl.row}, posición ${pl.code.slice(2, 4)}, nivel ${pl.lvl + 1} (${pl.code})`; navigator.clipboard?.writeText(txt).catch(() => {}); return toast('Ubicación copiada: ' + pl.code); }
+  const r = e.target.closest('[data-code]'); if (r) selectPlace(p.places.find(x => x.code === r.dataset.code));
+};
+function selectProduct(p, pl = null) {
+  ds.sel = p; ds.selPlace = pl || (p && p.places.length === 1 ? p.places[0] : null);
+  renderResults(); renderDetail(); applyDepHighlight();
+  if (!p) D.reset();
+  else if (innerWidth < 1180) $('#stage-dep').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function selectPlace(pl) { selectProduct(pl.product, pl); }
+
+const dsearch = $('#dsearch');
+dsearch.oninput = () => { ds.q = dsearch.value.trim(); $('#dclear').classList.toggle('on', !!ds.q); renderResults(); };
+dsearch.onkeydown = e => { if (e.key === 'Enter') { const f = filtered()[0]; f && selectProduct(f); } if (e.key === 'Escape') { dsearch.value = ''; dsearch.oninput(); } };
+$('#dclear').onclick = () => { dsearch.value = ''; dsearch.oninput(); dsearch.focus(); };
+
+/* =========================================================
+   Navegación y buscador global
+   ========================================================= */
+function go(view) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + view));
+  st.view = view;
+  if (location.hash !== '#' + view) history.replaceState(null, '', '#' + view);
+}
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => go(t.dataset.view));
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && !/input|textarea/i.test(document.activeElement.tagName)) { e.preventDefault(); if (st.view === 'deposito') dsearch.focus(); else $('#gsearch').focus(); }
+});
+
+const gs = $('#gsearch'), gr = $('#gresults'); let gItems = [], gIdx = 0;
+function runGlobal() {
+  const q = gs.value.trim(); const toks = norm(q).split(/\s+/).filter(Boolean);
+  if (!toks.length) { gr.classList.remove('open'); return; }
+  const m = s => toks.every(t => norm(s).includes(t));
+  const T = trucks.filter(t => m(`${t.plate} ${t.driver} ${t.model} ${STATUS[t.phase].label}`)).slice(0, 4).map(t => ({ g: 'Vehículos', ic: ICON.truck, c: STATUS[t.phase].color, t: t.plate, s: `${t.driver} · ${STATUS[t.phase].label}`, run: () => { go('jefe'); selectTruck(t.id, true); } }));
+  const O = orders.filter(o => m(`${o.id} ${o.client} ${destBy[o.dest].city}`)).slice(0, 4).map(o => ({ g: 'Pedidos', ic: ICON.order, c: STAGES[o.stage].color, t: o.id, s: `${o.client} · ${STAGES[o.stage].label}`, run: () => { go('jefe'); selectOrder(o.id); } }));
+  const P = products.filter(p => toks.every(t => p.hay.includes(t))).slice(0, 5).map(p => ({ g: 'Mercadería', ic: ICON.box, c: CATS[p.cat].color, t: p.name, s: `${p.sku} · ${p.places.map(x => x.code).join(', ')}`, run: () => { go('deposito'); selectProduct(p); } }));
+  gItems = [...T, ...O, ...P]; gIdx = 0;
+  let last = '';
+  gr.innerHTML = gItems.map((it, i) => { const h = it.g !== last ? `<h6>${it.g}</h6>` : ''; last = it.g; return h + `<button class="gitem ${i === 0 ? 'hl' : ''}" data-i="${i}"><span class="t-ic" style="--c:${it.c}">${it.ic}</span><div><b>${highlight(it.t, q)}</b><span>${highlight(it.s, q)}</span></div></button>`; }).join('') || '<div class="empty">Sin resultados</div>';
+  gr.classList.add('open');
+}
+gs.oninput = runGlobal;
+gs.onfocus = runGlobal;
+gs.onkeydown = e => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); gIdx = (gIdx + (e.key === 'ArrowDown' ? 1 : -1) + gItems.length) % gItems.length; gr.querySelectorAll('.gitem').forEach((b, i) => b.classList.toggle('hl', i === gIdx)); }
+  if (e.key === 'Enter' && gItems[gIdx]) { gItems[gIdx].run(); gr.classList.remove('open'); gs.blur(); }
+  if (e.key === 'Escape') { gr.classList.remove('open'); gs.blur(); }
+};
+gr.onmousedown = e => { const b = e.target.closest('[data-i]'); if (b) { e.preventDefault(); gItems[+b.dataset.i].run(); gr.classList.remove('open'); gs.blur(); } };
+gs.onblur = () => setTimeout(() => gr.classList.remove('open'), 120);
+
+/* =========================================================
+   Arranque
+   ========================================================= */
+renderLegend(); renderCats(); renderResults(); renderKPIsDep();
+try {
+  buildJefeScene(); buildDepScene();
+} catch (err) {
+  console.error(err);
+  document.querySelectorAll('.webgl-fail').forEach(x => x.style.display = 'grid');
+}
+st.view = 'jefe';
+go(location.hash === '#deposito' ? 'deposito' : 'jefe');
+renderAllJefe();
+setInterval(() => { $('#clock').textContent = hhmm(new Date()); renderAllJefe(); }, 1000);
+$('#clock').textContent = hhmm(new Date());
+
+const clock = new THREE.Clock();
+function loop() {
+  const dt = Math.min(clock.getDelta(), .1);
+  if (J) {
+    stepSim(dt); stepOrders(dt); updatePins();
+    const t = st.sel && truckBy(st.sel);
+    if (t) { J.ring.position.x = t.obj.position.x; J.ring.position.z = t.obj.position.z; J.ring.scale.setScalar(1 + Math.sin(performance.now() / 300) * .05); }
+  }
+  if (D) stepFork(dt);
+  if (st.view === 'jefe' && J) J.update();
+  if (st.view === 'deposito' && D) D.update();
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+<script>
+// Si el módulo 3D no puede cargarse (sin internet), se avisa en lugar de dejar el panel vacío.
+window.addEventListener('error', e => { if (/three|import/i.test(String(e.message))) document.querySelectorAll('.webgl-fail').forEach(x => x.style.display = 'grid'); }, true);
+</script>
+</body>
+</html>
