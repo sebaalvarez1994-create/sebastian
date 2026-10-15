@@ -42,6 +42,19 @@ El usuario **jefe** edita la flota desde **Panel general → Flota → Editar fl
 
 Arriba del mapa hay dos pestañas: **Mapa ilustrativo** (el mapa 3D) y **Mapa real (GPS)**. La página publicada en Claude no puede mostrar mapas de calles ni conectarse al servidor del GPS, así que el mapa real lista cada vehículo con su estado, chofer y destino, y un botón **Ver en vivo** que abre el seguimiento en la plataforma del proveedor de GPS. Para activarlo, en **Editar flota** se pega el link de seguimiento de cada vehículo (el link para compartir ubicación que da el proveedor) y, opcionalmente, el nombre del proveedor y el link de su plataforma.
 
+## Estructura del depósito
+
+En **Depósito → Editar estructura** (usuarios jefe y deposito) se abre un plano visto desde arriba, donde cada cuadro de la grilla es 1 metro:
+
+- **Agregar** pasillos, zonas de descarga, de despacho u otras (recepción, cuarentena, oficina).
+- **Mover** cualquier elemento arrastrándolo; las zonas se agrandan desde su esquina.
+- **Editar** al tocar un elemento: letra, cantidad de posiciones y niveles y orientación de un pasillo; tipo, nombre y medidas de una zona. También se cambia el tamaño del galpón.
+- **Deshacer** con el botón o Ctrl+Z.
+
+El editor no deja guardar si dos pasillos se superponen, si un pasillo pisa una zona o si algo queda fuera del galpón. Tampoco deja eliminar ni achicar un pasillo por debajo de la mercadería que tiene guardada. Si un pasillo cambia de letra, los códigos de ubicación de su mercadería se actualizan solos (por ejemplo, B-04-2 pasa a K-04-2).
+
+En el mapa 3D, al tocar un pasillo (o su etiqueta) se ve la lista de lo que hay en él, con ubicación, producto, cantidad y aviso de vencimiento; al tocar una caja se abre ese producto.
+
 ## Despachos del depósito
 
 En **Depósito**, al elegir un producto aparece **Despachar**: se elige la ubicación, la cantidad y, opcionalmente, el pedido al que va. El stock se descuenta al instante (si la posición queda vacía, se libera) y el botón **Despachos** muestra el registro de salidas con fecha, cantidad, destino y quién lo hizo.

@@ -427,6 +427,54 @@ body.single-view .tabs{display:none}
 .flt-table td,.flt-table th{padding:8px 6px;font-size:12.5px}
 .flt-table td:last-child{text-align:right;white-space:nowrap}
 .gps-ok{color:var(--green);font-weight:700}
+/* pasillo elegido */
+.tag.clickable{pointer-events:auto;cursor:pointer}
+.tag.clickable:hover{background:var(--blue);color:#fff}
+.aisle-list{max-height:260px;overflow:auto;margin-top:6px}
+.aisle-list tr:hover{background:var(--soft)}
+.aisle-list td{white-space:normal;vertical-align:top}
+.aisle-list td:first-child{white-space:nowrap}
+.aisle-list tr{cursor:pointer}
+/* editor de estructura */
+.lay-ed{position:fixed;inset:0;z-index:95;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.lay-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--line)}
+.lay-title{min-width:0}
+.lay-title b{display:block;font-size:16px}
+.lay-title small{color:var(--muted);font-size:12px}
+.lay-tools{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.lay-save{display:flex;gap:6px}
+.lay-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 320px}
+.lay-canvas{position:relative;min-height:0;padding:16px;overflow:hidden}
+#lay-svg{width:100%;height:100%;display:block;touch-action:none;user-select:none}
+.lay-warn{position:absolute;left:50%;top:22px;transform:translateX(-50%);background:var(--red-50);color:var(--red-ink);font-weight:600;font-size:13px;padding:8px 12px;border-radius:10px;box-shadow:var(--shadow);max-width:calc(100% - 40px)}
+.lay-props{background:var(--card);border-left:1px solid var(--line);padding:16px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.lay-props h3{margin:0;font-size:15px}
+.lay-props p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.5}
+.lay-props .seg2{display:flex;gap:6px}
+.lay-props .seg2 button{flex:1;padding:8px;border-radius:9px;border:1px solid var(--line);background:var(--soft);font-weight:600;font-size:12.5px}
+.lay-props .seg2 button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.lay-props .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lay-props .stat{background:var(--soft);border-radius:10px;padding:8px 10px;font-size:12.5px}
+.lay-legend{display:flex;flex-direction:column;gap:6px;font-size:12.5px}
+.lay-legend span{display:flex;gap:8px;align-items:center}
+.lay-legend i{width:12px;height:12px;border-radius:3px;background:var(--c)}
+.g-floor{fill:var(--card);stroke:var(--track2);stroke-width:.08}
+.g-grid{stroke:var(--line);stroke-width:.03}
+.g-grid5{stroke:var(--track);stroke-width:.06}
+.g-wall{stroke:var(--blue);stroke-width:.35;stroke-linecap:square}
+.g-door{stroke:var(--text2);stroke-width:.5}
+.g-aisle rect.body{fill:color-mix(in srgb,var(--blue) 16%,var(--card));stroke:var(--blue);stroke-width:.08;cursor:grab}
+.g-aisle line{stroke:var(--blue);stroke-width:.04;opacity:.5;pointer-events:none}
+.g-aisle text,.g-zone text{font-family:Inter,system-ui,sans-serif;font-weight:800;pointer-events:none;fill:var(--text)}
+.g-zone rect.body{fill:color-mix(in srgb,var(--c) 18%,transparent);stroke:var(--c);stroke-width:.1;stroke-dasharray:.4 .25;cursor:grab}
+.g-sel rect.body{stroke-width:.2;stroke-dasharray:none;filter:drop-shadow(0 0 .25px var(--blue))}
+.g-bad rect.body{stroke:var(--red)!important;fill:color-mix(in srgb,var(--red) 20%,var(--card))!important}
+.g-handle{fill:var(--card);stroke:var(--blue);stroke-width:.12;cursor:nwse-resize}
+@media (max-width:820px){
+  .lay-body{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(300px,55vh) auto;overflow:auto}
+  .lay-props{border-left:0;border-top:1px solid var(--line)}
+  .lay-tools{margin-left:0}
+}
 /* despachos */
 .desp-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
 .desp-row:last-child{border:0}
@@ -588,6 +636,7 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
     <div class="view-head">
       <div><h1>Depósito central</h1><p>Encontrá cualquier mercadería y su ubicación exacta: pasillo, posición y nivel.</p></div>
       <div class="head-actions">
+        <button class="btn ghost" id="lay-edit" data-perm="editLayout" title="Agregar o mover pasillos y zonas">Editar estructura</button>
         <button class="btn ghost" id="desp-list" title="Ver la mercadería que salió">Despachos<b class="tab-badge" id="desp-count" style="background:var(--blue)" hidden></b></button>
         <span class="head-actions" data-perm="inventoryFiles" style="width:auto">
         <button class="btn ghost" id="xls-template" title="Descargar un Excel de ejemplo con el formato correcto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Plantilla</button>
@@ -612,7 +661,7 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
         <div class="results" id="results"></div>
       </aside>
       <div class="card stage" id="stage-dep">
-        <div class="stage-hint">Pasillos A–F · posiciones 01–10 · niveles 1–4</div>
+        <div class="stage-hint">Tocá un pasillo para ver su mercadería</div>
         <div class="stage-tools"><button data-z="in" title="Acercar">+</button><button data-z="out" title="Alejar">−</button><button data-z="reset" title="Vista general">⟲</button></div>
         <div class="pdetail" id="pdetail"></div>
         <div class="webgl-fail">No se pudo cargar la vista 3D. Revisá tu conexión a internet y recargá la página.</div>
@@ -676,6 +725,23 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
 </main>
 <footer>Valsur Logística · El mapa ubica cada camión según los pedidos de su chofer</footer>
 <div class="toast" id="toast"></div>
+<div class="lay-ed" id="lay-ed" hidden>
+  <div class="lay-bar">
+    <div class="lay-title"><b>Estructura del depósito</b><small>Arrastrá los pasillos y zonas para moverlos · tocá uno para editarlo</small></div>
+    <div class="lay-tools">
+      <button class="btn ghost" data-add="pasillo">+ Pasillo</button>
+      <button class="btn ghost" data-add="descarga">+ Zona de descarga</button>
+      <button class="btn ghost" data-add="carga">+ Zona de despacho</button>
+      <button class="btn ghost" data-add="otra">+ Otra zona</button>
+      <button class="btn ghost" id="lay-undo" title="Deshacer (Ctrl+Z)">Deshacer</button>
+    </div>
+    <div class="lay-save"><button class="btn ghost" id="lay-cancel">Cancelar</button><button class="btn" id="lay-ok">Guardar cambios</button></div>
+  </div>
+  <div class="lay-body">
+    <div class="lay-canvas"><svg id="lay-svg" aria-label="Plano del depósito"></svg><div class="lay-warn" id="lay-warn" hidden></div></div>
+    <aside class="lay-props" id="lay-props"></aside>
+  </div>
+</div>
 <div class="modal-bg" id="modal" hidden><div class="modal card" role="dialog" aria-modal="true" id="modal-body"></div></div>
 
 <script type="module">
@@ -804,17 +870,18 @@ function createStage(host, { viewSize, camDir, shadowSize }) {
   Object.assign(sun.shadow.camera, { left: -shadowSize, right: shadowSize, top: shadowSize, bottom: -shadowSize, near: 1, far: 200 });
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
   scene.add(sun);
-  const S = { host, renderer, scene, camera, controls, labelLayer, labels: [], w: 1, h: 1, goal: null, follow: null, hemi, sun };
+  const S = { host, renderer, scene, camera, controls, labelLayer, labels: [], w: 1, h: 1, goal: null, follow: null, hemi, sun, viewSize };
   S.applyTheme = () => { const d = isDark(); hemi.intensity = d ? 1.25 : 1.9; sun.intensity = d ? 1.6 : 2.1; hemi.groundColor.setHex(d ? 0x223047 : 0xb8c6da); };
   S.applyTheme();
   const resize = () => {
     S.w = host.clientWidth || 1; S.h = host.clientHeight || 1;
     renderer.setSize(S.w, S.h, false);
-    const a = S.w / S.h, vs = viewSize * (a < 1 ? 1.25 : 1);
+    const a = S.w / S.h, vs = S.viewSize * (a < 1 ? 1.25 : 1);
     Object.assign(camera, { left: -vs * a / 2, right: vs * a / 2, top: vs / 2, bottom: -vs / 2 });
     camera.updateProjectionMatrix();
   };
   new ResizeObserver(resize).observe(host); resize();
+  S.setViewSize = v => { S.viewSize = v; resize(); };
   controls.addEventListener('start', () => { S.goal = null; S.follow = null; });
   S.addLabel = (el, target, offY = 0) => { labelLayer.appendChild(el); const l = { el, target, offY }; S.labels.push(l); return l; };
   S.removeLabel = l => { l.el.remove(); S.labels = S.labels.filter(x => x !== l); };
@@ -1247,11 +1314,57 @@ const PRODUCTS_DEF = {
   Ferretería: ['Pintura látex blanca 20 L', 'Tornillos autoperforantes x100', 'Cinta aisladora 20 m', 'Lámpara LED 12 W', 'Cable unipolar 2,5 mm 100 m', 'Guantes de trabajo nitrilo', 'Silicona transparente 280 ml'],
   Automotor: ['Aceite de motor 5W-30 4 L', 'Neumático 195/65 R15', 'Líquido refrigerante 1 L', 'Batería 12 V 65 Ah', 'Filtro de aire', 'Lubricante en aerosol 300 ml', 'Escobillas limpiaparabrisas'],
 };
-const ROWS = ['A', 'B', 'C', 'D', 'E', 'F'], BAYS = 10, LEVELS = 4;
-const rowZ = i => -11 + i * 4.4, bayX = j => -8.1 + j * 1.8, SHELF_Y = [.12, 1.1, 2.08, 3.06];
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+};
+// Estructura del depósito: tamaño del galpón, pasillos (estanterías) y zonas. Se edita en "Editar estructura".
+const BAY_W = 1.8, LVL_H = .98, SHELF_Y = l => .12 + l * LVL_H;
+const ZONE_T = {
+  descarga:   { label: 'Zona de descarga', color: '#f59e0b' },
+  carga:      { label: 'Zona de despacho', color: '#16a34a' },
+  recepcion:  { label: 'Recepción',        color: '#0ea5e9' },
+  cuarentena: { label: 'Cuarentena',       color: '#ef4444' },
+  oficina:    { label: 'Oficina',          color: '#64748b' },
+  otra:       { label: 'Otra zona',        color: '#8b5cf6' },
+};
+const DEFAULT_LAYOUT = {
+  ancho: 28, largo: 33,
+  pasillos: 'ABCDEF'.split('').map((l, i) => ({ id: 'p' + l, letra: l, x: 0, z: -11 + i * 4.4, pos: 10, niv: 4, vert: false })),
+  zonas: [
+    { id: 'z1', tipo: 'descarga', nombre: 'Descarga de camiones', x: -11.5, z: 0, w: 3, d: 20 },
+    { id: 'z2', tipo: 'carga', nombre: 'Despacho', x: 11.75, z: -10, w: 3.5, d: 8 },
+  ],
+};
+const clampN = (v, a, b, d) => { v = +v; return Number.isFinite(v) ? Math.min(b, Math.max(a, v)) : d; };
+function normalizeLayout(L) {
+  L = L && typeof L === 'object' ? L : DEFAULT_LAYOUT;
+  const seen = new Set();
+  return {
+    ancho: clampN(L.ancho, 10, 80, 28), largo: clampN(L.largo, 10, 80, 33),
+    pasillos: (L.pasillos || []).map((a, i) => ({ id: String(a.id || 'p' + i), letra: String(a.letra || '').toUpperCase().slice(0, 1), x: clampN(a.x, -40, 40, 0), z: clampN(a.z, -40, 40, 0), pos: Math.round(clampN(a.pos, 1, 30, 10)), niv: Math.round(clampN(a.niv, 1, 6, 4)), vert: !!a.vert }))
+      .filter(a => /^[A-Z]$/.test(a.letra) && !seen.has(a.letra) && seen.add(a.letra)),
+    zonas: (L.zonas || []).map((z, i) => ({ id: String(z.id || 'z' + i), tipo: ZONE_T[z.tipo] ? z.tipo : 'otra', nombre: String(z.nombre || '').slice(0, 40), x: clampN(z.x, -40, 40, 0), z: clampN(z.z, -40, 40, 0), w: clampN(z.w, 1, 60, 4), d: clampN(z.d, 1, 60, 4) })),
+  };
+}
+let LAYOUT = normalizeLayout(store.get('valsur.layout') || DEFAULT_LAYOUT);
+let ROWS = [], AISLE = {}, ALL_BINS = [];
 const codeOf = b => `${b.row}-${String(b.bay + 1).padStart(2, '0')}-${b.lvl + 1}`;
-const ALL_BINS = [];
-ROWS.forEach((r, i) => { for (let j = 0; j < BAYS; j++) for (let l = 0; l < LEVELS; l++) { const b = { row: r, ri: i, bay: j, lvl: l }; b.code = codeOf(b); ALL_BINS.push(b); } });
+function rebuildBins() {
+  ROWS = LAYOUT.pasillos.map(a => a.letra).sort();
+  AISLE = Object.fromEntries(LAYOUT.pasillos.map(a => [a.letra, a]));
+  ALL_BINS = [];
+  LAYOUT.pasillos.forEach(a => { for (let j = 0; j < a.pos; j++) for (let l = 0; l < a.niv; l++) { const b = { row: a.letra, bay: j, lvl: l }; b.code = codeOf(b); ALL_BINS.push(b); } });
+}
+// Posición en el mapa de una ubicación (pasillo, posición, nivel)
+function binPos(row, bay, lvl) {
+  const a = AISLE[row], off = (bay - (a.pos - 1) / 2) * BAY_W;
+  return { x: a.vert ? a.x : a.x + off, y: SHELF_Y(lvl), z: a.vert ? a.z + off : a.z };
+}
+// Rectángulo que ocupa cada elemento en planta (centro y medidas en metros)
+const aisleRect = a => { const len = a.pos * BAY_W + .2, dep = 1.2; return { x: a.x, z: a.z, w: a.vert ? dep : len, d: a.vert ? len : dep }; };
+rebuildBins();
 const binByCode = code => ALL_BINS.find(b => b.code === code);
 let free = [], products = [], placements = [], pidSeq = 0;
 const resetBins = () => { free = ALL_BINS.slice(); };
@@ -1294,16 +1407,11 @@ function seedDemoInventory() {
   products.filter((_, i) => i % 9 === 4).forEach(p => p.places.forEach(pl => pl.qty = ri(3, 12)));
   finalizeInventory();
 }
-const store = {
-  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
-  del(k) { try { localStorage.removeItem(k); } catch (e) {} },
-};
 const invItems = () => products.map(p => ({ name: p.name, sku: p.sku, cat: p.cat, min: p.min, places: p.places.map(pl => ({ code: pl.code, qty: pl.qty, lote: pl.lote, venc: ymd(pl.venc) })) }));
-let lastInvJSON = '';
+let lastInvJSON = '', rawInv = null;
 // En la versión publicada el inventario se comparte entre todas las computadoras de la oficina.
 function saveInventory() {
-  const items = invItems(); lastInvJSON = JSON.stringify(items);
+  const items = invItems(); lastInvJSON = JSON.stringify(items); rawInv = items;
   if (sync.cloud) return dbWrite(() => sync.db.doc('inventario/actual').set({ items, updatedAt: Date.now() }));
   store.set('valsur.inv', items);
 }
@@ -1320,38 +1428,86 @@ function loadInventory(data = store.get('valsur.inv')) {
 let invFromFile = loadInventory();
 if (!invFromFile) seedDemoInventory();
 
-const ds = { cat: 'Todas', q: '', sel: null, selPlace: null, pins: [] };
+const ds = { cat: 'Todas', q: '', sel: null, selPlace: null, pins: [], aisle: null };
 let forkPath = [], fork;
 function buildDepScene() {
   D = createStage($('#stage-dep'), { viewSize: 34, camDir: new THREE.Vector3(1.05, 1.2, .9), shadowSize: 24 });
-  const s = D.scene;
-  box(28, .2, 33, 0xeef2f6, 0, -.2, 0, s).castShadow = false;
-  // muros en corte
-  box(28, 5, .3, 0xf8fafc, 0, 0, -16.6, s); box(28.02, .5, .32, 0x1f5eff, 0, 4.1, -16.6, s);
-  box(.3, 5, 33, 0xf8fafc, -14, 0, 0, s); box(.32, .5, 33.02, 0x1f5eff, -14, 4.1, 0, s);
-  [-9, -3, 3, 9].forEach(z => box(.1, 3, 2.6, 0x475569, -13.83, 0, z, s));
-  // marcas de piso
-  ROWS.forEach((_, i) => [-.85, .85].forEach(dz => { box(19, .01, .08, 0xfacc15, 0, 0, rowZ(i) + dz, s).castShadow = false; }));
-  box(.08, .01, 30, 0xfacc15, 10.4, 0, 0, s).castShadow = false;
-
-  // estanterías (instanced)
-  const up = [], beams = [], decks = [];
-  ROWS.forEach((_, i) => {
-    const z = rowZ(i);
-    for (let j = 0; j <= BAYS; j++) [-.55, .55].forEach(dz => up.push([-9 + j * 1.8, 1.95, z + dz]));
-    for (let j = 0; j < BAYS; j++) SHELF_Y.forEach(y => { decks.push([bayX(j), y, z]); if (y > .5) [-.55, .55].forEach(dz => beams.push([bayX(j), y - .03, z + dz])); });
+  fork = forklift(); D.scene.add(fork);
+  buildLayout();
+  buildInventoryMeshes();
+  // clic: sobre una caja abre el producto; sobre un pasillo, su contenido
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); let down = null;
+  const el = D.renderer.domElement;
+  el.addEventListener('pointerdown', e => down = [e.clientX, e.clientY]);
+  el.addEventListener('pointerup', e => {
+    if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
+    const r = el.getBoundingClientRect();
+    ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
+    ray.setFromCamera(ndc, D.camera);
+    const hits = ray.intersectObjects([...placements.map(p => p.obj).filter(Boolean), ...(D.hitBoxes || [])], true);
+    const box = hits.find(h => { let o = h.object; while (o && !o.userData.pl) o = o.parent; return o; });
+    if (box) { let o = box.object; while (!o.userData.pl) o = o.parent; return selectPlace(o.userData.pl); }
+    const aisle = hits.find(h => h.object.userData.aisle);
+    if (aisle) selectAisle(aisle.object.userData.aisle);
   });
-  const inst = (geo, mat, arr) => { const m = new THREE.InstancedMesh(geo, mat, arr.length); const o = new THREE.Object3D(); arr.forEach(([x, y, z], i) => { o.position.set(x, y, z); o.updateMatrix(); m.setMatrixAt(i, o.matrix); }); m.castShadow = m.receiveShadow = true; s.add(m); };
-  inst(new THREE.BoxGeometry(.09, 3.9, .09), M(0x2f5bd3), up);
+}
+// (Re)arma piso, paredes, estanterías, zonas y etiquetas según LAYOUT
+function buildLayout() {
+  if (D.lay) { D.scene.remove(D.lay); D.lay.traverse(o => { o.geometry?.dispose?.(); }); }
+  (D.layLabels || []).forEach(l => D.removeLabel(l));
+  const g = new THREE.Group(); D.lay = g; D.layLabels = []; D.hitBoxes = []; D.scene.add(g);
+  const W = LAYOUT.ancho, L = LAYOUT.largo;
+  box(W, .2, L, 0xeef2f6, 0, -.2, 0, g).castShadow = false;
+  box(W, 5, .3, 0xf8fafc, 0, 0, -L / 2 - .15, g); box(W + .02, .5, .32, 0x1f5eff, 0, 4.1, -L / 2 - .15, g);
+  box(.3, 5, L, 0xf8fafc, -W / 2 - .15, 0, 0, g); box(.32, .5, L + .02, 0x1f5eff, -W / 2 - .15, 4.1, 0, g);
+  const nDoors = Math.max(1, Math.floor(L / 7));
+  for (let i = 0; i < nDoors; i++) box(.1, 3, 2.6, 0x475569, -W / 2 + .02, 0, -L / 2 + (i + .5) * L / nDoors, g);
+  // zonas marcadas en el piso
+  LAYOUT.zonas.forEach(z => {
+    const c = parseInt(ZONE_T[z.tipo].color.slice(1), 16);
+    const fill = new THREE.Mesh(new THREE.BoxGeometry(z.w, .02, z.d), new THREE.MeshLambertMaterial({ color: c, transparent: true, opacity: .22 }));
+    fill.position.set(z.x, .01, z.z); fill.receiveShadow = true; g.add(fill);
+    [[z.w, .1, 0, -z.d / 2], [z.w, .1, 0, z.d / 2], [.1, z.d, -z.w / 2, 0], [.1, z.d, z.w / 2, 0]].forEach(([w, d, dx, dz]) => box(w, .03, d, c, z.x + dx, 0, z.z + dz, g).castShadow = false);
+    const el = document.createElement('div'); el.className = 'tag'; el.style.setProperty('--c', ZONE_T[z.tipo].color);
+    el.innerHTML = `<i></i>${esc(z.nombre || ZONE_T[z.tipo].label)}`;
+    D.layLabels.push(D.addLabel(el, new THREE.Vector3(z.x, .3, z.z), 0));
+  });
+  // estanterías
+  const up = [], beams = [], decks = [], lines = [];
+  LAYOUT.pasillos.forEach(a => {
+    const rot = a.vert ? Math.PI / 2 : 0, along = (o, side) => a.vert ? [a.x + side, a.z + o] : [a.x + o, a.z + side];
+    for (let j = 0; j <= a.pos; j++) [-.55, .55].forEach(sd => { const [x, z] = along((j - a.pos / 2) * BAY_W, sd); up.push([x, a.niv * LVL_H / 2, z, 0, a.niv * LVL_H - .02]); });
+    for (let j = 0; j < a.pos; j++) for (let l = 0; l < a.niv; l++) {
+      const o = (j - (a.pos - 1) / 2) * BAY_W, y = SHELF_Y(l), [x, z] = along(o, 0);
+      decks.push([x, y, z, rot]);
+      if (y > .5) [-.55, .55].forEach(sd => { const [bx, bz] = along(o, sd); beams.push([bx, y - .03, bz, rot]); });
+    }
+    [-.85, .85].forEach(sd => { const [x, z] = along(0, sd); lines.push([x, .005, z, rot, a.pos * BAY_W + .6]); });
+    const hit = new THREE.Mesh(new THREE.BoxGeometry(a.pos * BAY_W + .3, a.niv * LVL_H + .4, 1.4), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
+    hit.position.set(a.x, (a.niv * LVL_H + .4) / 2, a.z); hit.rotation.y = rot; hit.userData.aisle = a.letra; g.add(hit); D.hitBoxes.push(hit);
+    const lab = document.createElement('div'); lab.className = 'tag row clickable'; lab.textContent = 'Pasillo ' + a.letra;
+    lab.onclick = () => selectAisle(a.letra);
+    const [lx, lz] = along(-(a.pos * BAY_W) / 2 - .9, 0);
+    D.layLabels.push(D.addLabel(lab, new THREE.Vector3(lx, a.niv * LVL_H + .3, lz), 0));
+  });
+  const o = new THREE.Object3D();
+  const inst = (geo, mat, arr, scaleY) => {
+    if (!arr.length) return;
+    const m = new THREE.InstancedMesh(geo, mat, arr.length);
+    arr.forEach(([x, y, z, r, len], i) => { o.position.set(x, y, z); o.rotation.set(0, r || 0, 0); o.scale.set(scaleY ? 1 : (len || 1), scaleY ? (len || 1) : 1, 1); o.updateMatrix(); m.setMatrixAt(i, o.matrix); });
+    m.castShadow = m.receiveShadow = true; g.add(m);
+  };
+  inst(new THREE.BoxGeometry(.09, 1, .09), M(0x2f5bd3), up, true);
   inst(new THREE.BoxGeometry(1.78, .1, .07), M(0xf59e0b), beams);
   inst(new THREE.BoxGeometry(1.74, .04, 1.08), M(0xd5dbe3), decks);
-  ROWS.forEach((r, i) => {
-    const el = document.createElement('div'); el.className = 'tag row'; el.textContent = 'Pasillo ' + r;
-    D.addLabel(el, new THREE.Vector3(-9.8, 4.2, rowZ(i)), 0);
-  });
-
-  buildInventoryMeshes();
-  fork = forklift(); fork.position.set(11.6, 0, 14); fork.rotation.y = Math.PI; s.add(fork);
+  inst(new THREE.BoxGeometry(1, .01, .08), M(0xfacc15), lines);
+  // marca del pasillo elegido
+  D.aisleMark = new THREE.Mesh(new THREE.BoxGeometry(1, .02, 1), new THREE.MeshBasicMaterial({ color: 0x1f5eff, transparent: true, opacity: .25 }));
+  D.aisleMark.visible = false; g.add(D.aisleMark);
+  fork.position.set(W / 2 - 2.4, 0, L / 2 - 2.5); fork.rotation.y = Math.PI; forkPath = [];
+  const big = Math.max(W, L);
+  D.setViewSize(big * 1.05);
+  Object.assign(D.sun.shadow.camera, { left: -big * .75, right: big * .75, top: big * .75, bottom: -big * .75 }); D.sun.shadow.camera.updateProjectionMatrix();
 }
 const boxGeo = new THREE.BoxGeometry(1, 1, 1);
 const palletMat = () => new THREE.MeshLambertMaterial({ color: 0xc8a26b });
@@ -1359,9 +1515,11 @@ function buildInventoryMeshes() {
   D.scene.children.filter(o => o.userData.inv).forEach(o => { D.scene.remove(o); o.traverse(m => m.material?.dispose?.()); });
   placements.forEach(pl => {
     const g = new THREE.Group(); g.userData.inv = true;
-    const x = bayX(pl.bay), y = SHELF_Y[pl.lvl] + .02, z = rowZ(pl.ri);
+    const bp = binPos(pl.row, pl.bay, pl.lvl), x = bp.x, y = bp.y + .02, z = bp.z;
     const pal = new THREE.Mesh(boxGeo, palletMat()); pal.scale.set(1.3, .12, .95); pal.position.set(0, .06, 0);
-    const h = .45 + ((pl.bay * 7 + pl.lvl * 13 + pl.ri * 5) % 10) * .03;
+    const h = .45 + ((pl.bay * 7 + pl.lvl * 13 + pl.row.charCodeAt(0) * 5) % 10) * .03;
+    if (AISLE[pl.row].vert) g.rotation.y = Math.PI / 2;
+    g.userData.pl = pl;
     const crate = new THREE.Mesh(boxGeo, new THREE.MeshLambertMaterial({ color: CATS[pl.product.cat].box })); crate.scale.set(1.18, h, .86); crate.position.set(0, .12 + h / 2, 0);
     [pal, crate].forEach(m => { m.castShadow = m.receiveShadow = true; g.add(m); });
     g.position.set(x, y, z); D.scene.add(g);
@@ -1377,13 +1535,19 @@ function stepFork(dt) {
   const target = Math.atan2(-dz, dx); let diff = Math.atan2(Math.sin(target - fork.rotation.y), Math.cos(target - fork.rotation.y)); fork.rotation.y += diff * .25;
 }
 function sendFork(pl) {
-  const aisle = rowZ(pl.ri) + 2.2;
-  const p = fork.position, curAisle = Math.abs(p.x - 11.6) < .2 ? null : p.z;
-  forkPath = [...(curAisle != null ? [[11.6, curAisle]] : []), [11.6, aisle], [bayX(pl.bay), aisle]];
+  const a = AISLE[pl.row], bp = binPos(pl.row, pl.bay, pl.lvl);
+  forkPath = [a.vert ? [bp.x + 1.7, bp.z] : [bp.x, bp.z + 1.7]];
 }
 function applyDepHighlight() {
   ds.pins.forEach(l => D.removeLabel(l)); ds.pins = [];
-  const sel = ds.sel ? (ds.selPlace ? [ds.selPlace] : ds.sel.places) : [];
+  const inAisle = !ds.sel && ds.aisle ? placements.filter(pl => pl.row === ds.aisle) : null;
+  const sel = ds.sel ? (ds.selPlace ? [ds.selPlace] : ds.sel.places) : inAisle || [];
+  const a = !ds.sel && ds.aisle && AISLE[ds.aisle];
+  D.aisleMark.visible = !!a;
+  if (a) {
+    const r = aisleRect(a); D.aisleMark.scale.set(r.w + 1.2, 1, r.d + 1.2); D.aisleMark.position.set(a.x, .02, a.z);
+    D.focus(new THREE.Vector3(a.x, 1, a.z), THREE.MathUtils.clamp(34 / (a.pos * BAY_W + 8), 1.1, 2.4) * (D.viewSize / 34));
+  }
   const any = sel.length > 0;
   placements.forEach(pl => {
     const on = sel.includes(pl);
@@ -1394,12 +1558,12 @@ function applyDepHighlight() {
     });
     pl.obj.scale.setScalar(on ? 1.06 : 1);
   });
-  sel.forEach(pl => {
+  if (!inAisle) sel.forEach(pl => {
     const el = document.createElement('div'); el.className = 'pin sel big'; el.style.setProperty('--c', '#1f5eff');
     el.innerHTML = `<i></i>${pl.code}`; el.onclick = () => selectPlace(pl);
     ds.pins.push(D.addLabel(el, pl.top, .25));
   });
-  if (any) {
+  if (any && !inAisle) {
     const c = new THREE.Vector3(); sel.forEach(pl => c.add(pl.obj.position)); c.divideScalar(sel.length);
     const spread = Math.max(...sel.map(pl => pl.obj.position.distanceTo(c)), 0);
     D.focus(c, THREE.MathUtils.clamp(2.4 - spread / 7, 1.05, 2.4));
@@ -1409,7 +1573,7 @@ function applyDepHighlight() {
 
 /* ---------- UI Depósito ---------- */
 function renderKPIsDep() {
-  const used = placements.length, total = ROWS.length * BAYS * LEVELS;
+  const used = placements.length, total = ALL_BINS.length;
   const units = products.reduce((a, p) => a + p.total, 0), low = products.filter(p => p.low).length;
   const k = [
     ['#1f5eff', ICON.grid, 'Posiciones ocupadas', `${used}<span class="muted" style="font-size:14px;font-weight:600"> / ${total}</span>`, `<em class="muted">${Math.round(used / total * 100)}%</em>`],
@@ -1453,8 +1617,19 @@ function vencCell(d) {
   const s = docState(ymd(d));
   return `<span class="num">${fmtDate(d)}</span>${s.k === 'ok' ? '' : ` <span class="vb" style="--c:${s.c}">${s.k === 'bad' ? 'Vencido' : s.label}</span>`}`;
 }
+function renderAisleDetail(box) {
+  const a = AISLE[ds.aisle], list = placements.filter(pl => pl.row === a.letra).sort((x, y) => x.bay - y.bay || x.lvl - y.lvl);
+  const tot = a.pos * a.niv, units = list.reduce((s, pl) => s + pl.qty, 0);
+  box.innerHTML = `<div class="sel-head"><div class="cat-ic" style="--c:var(--blue)">${a.letra}</div><div style="min-width:0"><b style="font-size:14px">Pasillo ${a.letra}</b><small>${a.pos} posiciones × ${a.niv} niveles · ${a.vert ? 'vertical' : 'horizontal'}</small></div><button class="x" data-close title="Cerrar">×</button></div>
+    <div class="where"><div><small>Ocupadas</small><b>${list.length}/${tot}</b></div><div><small>Productos</small><b>${new Set(list.map(pl => pl.product)).size}</b></div><div><small>Unidades</small><b>${fmt(units)}</b></div></div>
+    ${list.length ? `<div class="aisle-list"><table class="lots"><thead><tr><th>Ubicación</th><th>Producto</th><th style="text-align:right">Cant.</th></tr></thead><tbody>
+      ${list.map(pl => `<tr data-pl="${pl.code}"><td><b style="color:var(--blue)">${pl.code}</b></td><td>${esc(pl.product.name)}${pl.venc && docState(ymd(pl.venc)).k !== 'ok' ? ` <span class="vb" style="--c:${docState(ymd(pl.venc)).c}">${docState(ymd(pl.venc)).k === 'bad' ? 'Vencido' : 'Vence pronto'}</span>` : ''}</td><td class="num" style="text-align:right;font-weight:700">${fmt(pl.qty)}</td></tr>`).join('')}
+    </tbody></table></div>` : '<div class="empty" style="padding:16px">Este pasillo está vacío.</div>'}`;
+  box.classList.add('open');
+}
 function renderDetail() {
   const box = $('#pdetail'), p = ds.sel;
+  if (!p && ds.aisle && AISLE[ds.aisle]) return renderAisleDetail(box);
   if (!p) { box.classList.remove('open'); box.innerHTML = ''; return; }
   const pl = ds.selPlace || p.places[0], c = CATS[p.cat];
   box.innerHTML = `
@@ -1470,6 +1645,11 @@ function renderDetail() {
   box.classList.add('open');
 }
 $('#pdetail').onclick = e => {
+  if (!ds.sel && ds.aisle) {
+    if (e.target.closest('[data-close]')) { ds.aisle = null; renderDetail(); applyDepHighlight(); D.reset(); return; }
+    const r = e.target.closest('[data-pl]'); if (r) { const pl = placements.find(x => x.code === r.dataset.pl); pl && selectPlace(pl); }
+    return;
+  }
   const p = ds.sel; if (!p) return;
   if (e.target.closest('[data-close]')) return selectProduct(null);
   if (e.target.closest('[data-all]')) return selectProduct(p);
@@ -1478,12 +1658,19 @@ $('#pdetail').onclick = e => {
   const r = e.target.closest('[data-code]'); if (r) selectPlace(p.places.find(x => x.code === r.dataset.code));
 };
 function selectProduct(p, pl = null) {
+  ds.aisle = null;
   ds.sel = p; ds.selPlace = pl || (p && p.places.length === 1 ? p.places[0] : null);
   renderResults(); renderDetail(); applyDepHighlight();
   if (!p) D.reset();
   else if (innerWidth < 1180) $('#stage-dep').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 function selectPlace(pl) { selectProduct(pl.product, pl); }
+function selectAisle(letra) {
+  if (!AISLE[letra]) return;
+  ds.sel = null; ds.selPlace = null; ds.aisle = letra;
+  renderResults(); renderDetail(); applyDepHighlight();
+  if (innerWidth < 1180) $('#stage-dep').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 
 const dsearch = $('#dsearch');
 dsearch.oninput = () => { ds.q = dsearch.value.trim(); $('#dclear').classList.toggle('on', !!ds.q); renderResults(); };
@@ -1545,8 +1732,8 @@ function parseZone(v) {
   const k = t.match(/^([A-Z])\s*[-\/\s]?\s*(\d{1,2})?\s*[-\/\s]?\s*(\d)?$/);
   if (!k || !ROWS.includes(k[1])) return null;
   const bay = k[2] ? +k[2] - 1 : null, lvl = k[3] ? +k[3] - 1 : null;
-  if (bay != null && (bay < 0 || bay >= BAYS)) return null;
-  if (lvl != null && (lvl < 0 || lvl >= LEVELS)) return null;
+  if (bay != null && (bay < 0 || bay >= AISLE[k[1]].pos)) return null;
+  if (lvl != null && (lvl < 0 || lvl >= AISLE[k[1]].niv)) return null;
   return { row: k[1], bay, lvl, label: k[1] + (bay != null ? '-' + String(bay + 1).padStart(2, '0') : '') + (lvl != null ? '-' + (lvl + 1) : '') };
 }
 async function readInventoryFile(file) {
@@ -1593,7 +1780,7 @@ function applyImport(rows, mode) {
   return warns;
 }
 function refreshInventory() {
-  ds.sel = null; ds.selPlace = null;
+  ds.sel = null; ds.selPlace = null; if (ds.aisle && !AISLE[ds.aisle]) ds.aisle = null;
   if (D) { buildInventoryMeshes(); applyDepHighlight(); D.reset(); }
   renderCats(); renderResults(); renderDetail(); renderKPIsDep();
 }
@@ -1894,7 +2081,7 @@ const session = store.get('valsur.session');
 const me = { user: USERS[session?.user] ? session.user : null, role: USERS[session?.user]?.role || null };
 const allowedViews = () => ROLE_VIEWS[me.role] || [];
 const can = what => ({
-  editDrivers: me.role === 'jefe', inventoryFiles: me.role === 'jefe', despachar: me.role === 'jefe' || me.role === 'deposito',
+  editDrivers: me.role === 'jefe', inventoryFiles: me.role === 'jefe', despachar: me.role === 'jefe' || me.role === 'deposito', editLayout: me.role === 'jefe' || me.role === 'deposito',
   search: me.role === 'jefe', officeAlerts: me.role === 'jefe' || me.role === 'pedidos',
 })[what];
 function applyRole() {
@@ -2324,7 +2511,12 @@ async function initData() {
         const items = snap.exists ? snap.data().items : null;
         if (!Array.isArray(items) || snap.metadata.hasPendingWrites) return;
         const j = JSON.stringify(items); if (j === lastInvJSON) return;
-        lastInvJSON = j; loadInventory(items); refreshInventory();
+        lastInvJSON = j; rawInv = items; loadInventory(items); refreshInventory();
+      }, e => console.error(e));
+      sync.db.doc('deposito/layout').onSnapshot(snap => {
+        const L = snap.exists ? snap.data().layout : null;
+        if (!L || snap.metadata.hasPendingWrites || JSON.stringify(normalizeLayout(L)) === JSON.stringify(LAYOUT)) return;
+        applyLayout(L);
       }, e => console.error(e));
       return;
     }
@@ -2521,6 +2713,225 @@ $('#gps-panel').onclick = e => {
   const c = e.target.closest('[data-t]');
   if (c && e.target.closest('[data-sel]')) { st.sel = c.dataset.t; renderAllJefe(); $('#side-sel').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
 };
+
+/* =========================================================
+   Editor de la estructura del depósito
+   ========================================================= */
+// Aplica una estructura nueva: reubica el inventario por código y rearma el mapa 3D.
+function applyLayout(L) {
+  const items = rawInv || invItems();
+  LAYOUT = normalizeLayout(L); rebuildBins();
+  loadInventory(items);
+  if (D) buildLayout();
+  refreshInventory();
+}
+async function saveLayout() {
+  if (sync.cloud) return dbWrite(() => sync.db.doc('deposito/layout').set({ layout: LAYOUT, updatedAt: Date.now() }));
+  store.set('valsur.layout', LAYOUT); return true;
+}
+const ed = { L: null, sel: null, undo: [], drag: null, dirty: false, origLetter: {} };
+const clone = o => JSON.parse(JSON.stringify(o));
+const snap5 = v => Math.round(v * 2) / 2;
+const elRect = el => el.letra ? aisleRect(el) : { x: el.x, z: el.z, w: el.w, d: el.d };
+const overlap = (a, b) => Math.abs(a.x - b.x) * 2 < a.w + b.w - .02 && Math.abs(a.z - b.z) * 2 < a.d + b.d - .02;
+const edItems = () => [...ed.L.zonas, ...ed.L.pasillos];
+const edFind = id => edItems().find(x => x.id === id);
+// Ocupación por pasillo (según la letra que tenía al abrir el editor)
+function occupied(a) {
+  const old = ed.origLetter[a.id]; if (!old) return { n: 0, maxBay: -1, maxLvl: -1 };
+  const ps = placements.filter(pl => pl.row === old);
+  return { n: ps.length, maxBay: Math.max(-1, ...ps.map(pl => pl.bay)), maxLvl: Math.max(-1, ...ps.map(pl => pl.lvl)) };
+}
+function problems() {
+  const out = [], L = ed.L;
+  L.pasillos.forEach((a, i) => {
+    const r = aisleRect(a);
+    if (Math.abs(r.x) + r.w / 2 > L.ancho / 2 + .01 || Math.abs(r.z) + r.d / 2 > L.largo / 2 + .01) out.push([a.id, `El pasillo ${a.letra} queda fuera del depósito`]);
+    L.pasillos.slice(i + 1).forEach(b => { if (overlap(r, aisleRect(b))) out.push([a.id, `Los pasillos ${a.letra} y ${b.letra} se superponen`], [b.id, '']); });
+    L.zonas.forEach(z => { if (overlap(r, elRect(z))) out.push([a.id, `El pasillo ${a.letra} pisa la zona “${z.nombre || ZONE_T[z.tipo].label}”`], [z.id, '']); });
+  });
+  L.zonas.forEach(z => { if (Math.abs(z.x) + z.w / 2 > L.ancho / 2 + .01 || Math.abs(z.z) + z.d / 2 > L.largo / 2 + .01) out.push([z.id, `La zona “${z.nombre || ZONE_T[z.tipo].label}” queda fuera del depósito`]); });
+  return out;
+}
+function pushUndo() { ed.undo.push(JSON.stringify(ed.L)); if (ed.undo.length > 60) ed.undo.shift(); ed.dirty = true; }
+function openLayoutEditor() {
+  ed.L = clone(LAYOUT); ed.sel = null; ed.undo = []; ed.dirty = false;
+  ed.origLetter = Object.fromEntries(LAYOUT.pasillos.map(a => [a.id, a.letra]));
+  $('#lay-ed').hidden = false; document.body.style.overflow = 'hidden';
+  renderEd(); renderProps();
+}
+function closeLayoutEditor() { $('#lay-ed').hidden = true; document.body.style.overflow = ''; }
+function renderEd() {
+  const L = ed.L, W = L.ancho, H = L.largo, svg = $('#lay-svg'), pad = 1.6;
+  svg.setAttribute('viewBox', `${-W / 2 - pad} ${-H / 2 - pad} ${W + pad * 2} ${H + pad * 2}`);
+  const bad = new Map(problems().map(([id, m]) => [id, m]));
+  let g = `<rect class="g-floor" x="${-W / 2}" y="${-H / 2}" width="${W}" height="${H}" rx=".2"/>`;
+  for (let x = Math.ceil(-W / 2); x <= W / 2; x++) g += `<line class="${x % 5 ? 'g-grid' : 'g-grid5'}" x1="${x}" y1="${-H / 2}" x2="${x}" y2="${H / 2}"/>`;
+  for (let z = Math.ceil(-H / 2); z <= H / 2; z++) g += `<line class="${z % 5 ? 'g-grid' : 'g-grid5'}" x1="${-W / 2}" y1="${z}" x2="${W / 2}" y2="${z}"/>`;
+  g += `<line class="g-wall" x1="${-W / 2}" y1="${-H / 2}" x2="${W / 2}" y2="${-H / 2}"/><line class="g-wall" x1="${-W / 2}" y1="${-H / 2}" x2="${-W / 2}" y2="${H / 2}"/>`;
+  const nDoors = Math.max(1, Math.floor(H / 7));
+  for (let i = 0; i < nDoors; i++) { const z = -H / 2 + (i + .5) * H / nDoors; g += `<line class="g-door" x1="${-W / 2 - .3}" y1="${z - 1.3}" x2="${-W / 2 - .3}" y2="${z + 1.3}"/>`; }
+  g += `<text x="${-W / 2 - .7}" y="${-H / 2 - .5}" style="font:600 .7px Inter,sans-serif;fill:var(--muted)">Portones →</text>`;
+  L.zonas.forEach(z => {
+    const c = ZONE_T[z.tipo].color, sel = ed.sel === z.id;
+    g += `<g class="g-zone ${sel ? 'g-sel' : ''} ${bad.has(z.id) ? 'g-bad' : ''}" data-id="${z.id}" style="--c:${c}">
+      <rect class="body" x="${z.x - z.w / 2}" y="${z.z - z.d / 2}" width="${z.w}" height="${z.d}" rx=".15"/>
+      <text x="${z.x}" y="${z.z}" text-anchor="middle" dominant-baseline="middle" style="font-size:${Math.min(.8, z.w / 6)}px">${esc(z.nombre || ZONE_T[z.tipo].label)}</text>
+      ${sel ? `<rect class="g-handle" data-h="1" x="${z.x + z.w / 2 - .45}" y="${z.z + z.d / 2 - .45}" width=".9" height=".9" rx=".15"/>` : ''}</g>`;
+  });
+  L.pasillos.forEach(a => {
+    const r = aisleRect(a), sel = ed.sel === a.id;
+    let ticks = '';
+    for (let j = 1; j < a.pos; j++) { const o = -a.pos * BAY_W / 2 + j * BAY_W; ticks += a.vert ? `<line x1="${a.x - .6}" y1="${a.z + o}" x2="${a.x + .6}" y2="${a.z + o}"/>` : `<line x1="${a.x + o}" y1="${a.z - .6}" x2="${a.x + o}" y2="${a.z + .6}"/>`; }
+    g += `<g class="g-aisle ${sel ? 'g-sel' : ''} ${bad.has(a.id) ? 'g-bad' : ''}" data-id="${a.id}">
+      <rect class="body" x="${r.x - r.w / 2}" y="${r.z - r.d / 2}" width="${r.w}" height="${r.d}" rx=".12"/>${ticks}
+      <text x="${a.vert ? a.x : a.x - r.w / 2 - .6}" y="${a.vert ? a.z - r.d / 2 - .6 : a.z}" text-anchor="middle" dominant-baseline="middle" style="font-size:1px;fill:var(--blue)">${a.letra}</text></g>`;
+  });
+  svg.innerHTML = g;
+  const msgs = [...bad.values()].filter(Boolean);
+  $('#lay-warn').hidden = !msgs.length; $('#lay-warn').textContent = msgs[0] ? msgs[0] + (msgs.length > 1 ? ` (y ${msgs.length - 1} más)` : '') : '';
+  $('#lay-ok').disabled = !!msgs.length;
+  $('#lay-undo').disabled = !ed.undo.length;
+}
+function renderProps() {
+  const box = $('#lay-props'), el = ed.sel && edFind(ed.sel), L = ed.L;
+  if (!el) {
+    box.innerHTML = `<h3>Depósito</h3><p>Tocá un pasillo o una zona para editarlo. Arrastralos para moverlos; cada cuadro de la grilla es 1 metro.</p>
+      <div class="row2"><label class="field" for="lp-w">Ancho (m)<input id="lp-w" type="number" min="10" max="80" step="1" value="${L.ancho}" data-f="ancho"></label>
+      <label class="field" for="lp-l">Largo (m)<input id="lp-l" type="number" min="10" max="80" step="1" value="${L.largo}" data-f="largo"></label></div>
+      <div class="stat">${L.pasillos.length} pasillos · ${L.pasillos.reduce((s, a) => s + a.pos * a.niv, 0)} ubicaciones · ${L.zonas.length} zonas</div>
+      <div class="lay-legend"><span style="--c:var(--blue)"><i></i>Pasillo (estantería)</span>${Object.values(ZONE_T).map(t => `<span style="--c:${t.color}"><i></i>${t.label}</span>`).join('')}</div>`;
+    return;
+  }
+  if (el.letra) {
+    const oc = occupied(el), used = new Set(L.pasillos.filter(a => a !== el).map(a => a.letra));
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').filter(l => !used.has(l));
+    box.innerHTML = `<h3>Pasillo ${el.letra}</h3>
+      <label class="field" for="lp-letra">Letra<select id="lp-letra" data-f="letra">${letters.map(l => `<option ${l === el.letra ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      <div class="row2"><label class="field" for="lp-pos">Posiciones<input id="lp-pos" type="number" min="${Math.max(1, oc.maxBay + 1)}" max="30" value="${el.pos}" data-f="pos"></label>
+      <label class="field" for="lp-niv">Niveles<input id="lp-niv" type="number" min="${Math.max(1, oc.maxLvl + 1)}" max="6" value="${el.niv}" data-f="niv"></label></div>
+      <div class="field">Orientación<div class="seg2"><button type="button" data-vert="0" class="${el.vert ? '' : 'on'}">Horizontal</button><button type="button" data-vert="1" class="${el.vert ? 'on' : ''}">Vertical</button></div></div>
+      <div class="stat">${el.pos * el.niv} ubicaciones · ${oc.n ? `<b>${oc.n} ocupadas</b>` : 'vacío'}${el.letra !== ed.origLetter[el.id] && ed.origLetter[el.id] ? `<br>Antes era el pasillo ${ed.origLetter[el.id]}: los códigos de ubicación se actualizan al guardar.` : ''}</div>
+      ${oc.n ? `<p>No se puede achicar por debajo de la mercadería guardada (posición ${oc.maxBay + 1}, nivel ${oc.maxLvl + 1}).</p>` : ''}
+      <div class="row2"><button class="btn ghost" data-act="dup">Duplicar</button><button class="btn ghost danger" data-act="del" ${oc.n ? 'disabled title="Tiene mercadería"' : ''}>Eliminar</button></div>
+      ${oc.n ? '<p>Para eliminarlo, primero despachá o reubicá su mercadería.</p>' : ''}`;
+  } else {
+    box.innerHTML = `<h3>${esc(el.nombre || ZONE_T[el.tipo].label)}</h3>
+      <label class="field" for="lp-tipo">Tipo<select id="lp-tipo" data-f="tipo">${Object.entries(ZONE_T).map(([k, t]) => `<option value="${k}" ${k === el.tipo ? 'selected' : ''}>${t.label}</option>`).join('')}</select></label>
+      <label class="field" for="lp-nom">Nombre<input id="lp-nom" maxlength="40" value="${esc(el.nombre)}" data-f="nombre" placeholder="${ZONE_T[el.tipo].label}"></label>
+      <div class="row2"><label class="field" for="lp-zw">Ancho (m)<input id="lp-zw" type="number" min="1" max="60" step=".5" value="${el.w}" data-f="w"></label>
+      <label class="field" for="lp-zd">Largo (m)<input id="lp-zd" type="number" min="1" max="60" step=".5" value="${el.d}" data-f="d"></label></div>
+      <p>También podés cambiar el tamaño arrastrando la esquina inferior derecha.</p>
+      <div class="row2"><button class="btn ghost" data-act="dup">Duplicar</button><button class="btn ghost danger" data-act="del">Eliminar</button></div>`;
+  }
+}
+// cambios desde el panel de propiedades
+$('#lay-props').addEventListener('focusin', e => { if (e.target.dataset.f) ed.preEdit = JSON.stringify(ed.L); });
+$('#lay-props').addEventListener('change', e => {
+  const f = e.target.dataset.f; if (!f) return;
+  if (ed.preEdit) { ed.undo.push(ed.preEdit); ed.preEdit = null; ed.dirty = true; } else pushUndo();
+  const el = ed.sel && edFind(ed.sel), t = e.target;
+  if (!el) { ed.L[f] = clampN(t.value, 10, 80, ed.L[f]); }
+  else if (f === 'letra' || f === 'tipo' || f === 'nombre') el[f] = f === 'nombre' ? t.value.trim().slice(0, 40) : t.value;
+  else { const min = +t.min || 1, max = +t.max || 60; el[f] = clampN(t.value, min, max, el[f]); if (f === 'pos' || f === 'niv') el[f] = Math.round(el[f]); }
+  renderEd(); renderProps();
+});
+$('#lay-props').addEventListener('click', e => {
+  const el = ed.sel && edFind(ed.sel); if (!el) return;
+  const v = e.target.closest('[data-vert]');
+  if (v) { pushUndo(); el.vert = v.dataset.vert === '1'; renderEd(); renderProps(); return; }
+  const a = e.target.closest('[data-act]'); if (!a || a.disabled) return;
+  pushUndo();
+  if (a.dataset.act === 'del') {
+    if (el.letra) ed.L.pasillos = ed.L.pasillos.filter(x => x !== el); else ed.L.zonas = ed.L.zonas.filter(x => x !== el);
+    ed.sel = null;
+  } else {
+    const c = clone(el); c.id = (el.letra ? 'p' : 'z') + Date.now().toString(36);
+    if (el.letra) { const used = new Set(ed.L.pasillos.map(x => x.letra)); c.letra = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find(l => !used.has(l)); if (!c.letra) return toast('Ya se usaron todas las letras'); }
+    placeFree(c, el.letra && !el.vert ? 0 : 1.6, el.letra && !el.vert ? 4.4 : 0);
+    (el.letra ? ed.L.pasillos : ed.L.zonas).push(c); ed.sel = c.id;
+  }
+  renderEd(); renderProps();
+});
+// busca un lugar libre cerca (para elementos nuevos o duplicados)
+function placeFree(el, dx = 0, dz = 4.4) {
+  const others = edItems().filter(x => x !== el), free = () => others.every(o => !overlap(elRect(el), elRect(o)));
+  const W = ed.L.ancho / 2, H = ed.L.largo / 2, r = elRect(el);
+  if (dx || dz) { el.x = snap5(el.x + dx); el.z = snap5(el.z + dz); }
+  if (free() && Math.abs(el.x) + r.w / 2 <= W && Math.abs(el.z) + r.d / 2 <= H) return;
+  for (let z = -H + r.d / 2; z <= H - r.d / 2; z += .5) for (let x = -W + r.w / 2; x <= W - r.w / 2; x += .5) { el.x = snap5(x); el.z = snap5(z); if (free()) return; }
+  el.x = 0; el.z = 0;
+}
+document.querySelectorAll('#lay-ed [data-add]').forEach(b => b.onclick = () => {
+  pushUndo();
+  const k = b.dataset.add, id = (k === 'pasillo' ? 'p' : 'z') + Date.now().toString(36);
+  let el;
+  if (k === 'pasillo') {
+    const used = new Set(ed.L.pasillos.map(x => x.letra)), letra = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find(l => !used.has(l));
+    if (!letra) return toast('Ya se usaron todas las letras');
+    el = { id, letra, x: 0, z: 0, pos: 8, niv: 4, vert: false }; ed.L.pasillos.push(el);
+  } else { el = { id, tipo: k, nombre: ZONE_T[k].label, x: 0, z: 0, w: 4, d: 4 }; ed.L.zonas.push(el); }
+  placeFree(el, 0, 0); ed.sel = id; renderEd(); renderProps();
+});
+// arrastrar para mover; la esquina de una zona cambia su tamaño
+const svgPoint = (svg, e) => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const p = pt.matrixTransform(svg.getScreenCTM().inverse()); return { x: p.x, z: p.y }; };
+$('#lay-svg').addEventListener('pointerdown', e => {
+  const svg = e.currentTarget, g = e.target.closest('[data-id]'), p = svgPoint(svg, e);
+  if (!g) { ed.sel = null; renderEd(); renderProps(); return; }
+  const el = edFind(g.dataset.id); if (!el) return;
+  const changed = ed.sel !== el.id; ed.sel = el.id;
+  ed.drag = { el, resize: !!e.target.dataset.h, ox: p.x - el.x, oz: p.z - el.z, before: JSON.stringify(ed.L), moved: false };
+  svg.setPointerCapture(e.pointerId);
+  if (changed) { renderEd(); renderProps(); }
+});
+$('#lay-svg').addEventListener('pointermove', e => {
+  const d = ed.drag; if (!d) return;
+  const p = svgPoint(e.currentTarget, e), el = d.el, W = ed.L.ancho / 2, H = ed.L.largo / 2;
+  if (d.resize) {
+    const x0 = el.x - el.w / 2, z0 = el.z - el.d / 2;
+    const w = Math.max(1, snap5(Math.min(W, p.x) - x0)), dd = Math.max(1, snap5(Math.min(H, p.z) - z0));
+    if (w === el.w && dd === el.d) return;
+    el.w = w; el.d = dd; el.x = x0 + w / 2; el.z = z0 + dd / 2;
+  } else {
+    const r = elRect(el);
+    const x = clampN(snap5(p.x - d.ox), -W + r.w / 2, W - r.w / 2, el.x), z = clampN(snap5(p.z - d.oz), -H + r.d / 2, H - r.d / 2, el.z);
+    if (x === el.x && z === el.z) return;
+    el.x = x; el.z = z;
+  }
+  d.moved = true; renderEd();
+});
+const endDrag = () => { const d = ed.drag; if (!d) return; ed.drag = null; if (d.moved) { ed.undo.push(d.before); ed.dirty = true; renderEd(); renderProps(); } };
+$('#lay-svg').addEventListener('pointerup', endDrag);
+$('#lay-svg').addEventListener('pointercancel', endDrag);
+$('#lay-undo').onclick = () => { const u = ed.undo.pop(); if (!u) return; ed.L = JSON.parse(u); if (ed.sel && !edFind(ed.sel)) ed.sel = null; renderEd(); renderProps(); };
+document.addEventListener('keydown', e => {
+  if ($('#lay-ed').hidden || /input|select|textarea/i.test(document.activeElement.tagName)) return;
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); $('#lay-undo').click(); return; }
+  const el = ed.sel && edFind(ed.sel); if (!el) return;
+  const mv = { ArrowLeft: [-.5, 0], ArrowRight: [.5, 0], ArrowUp: [0, -.5], ArrowDown: [0, .5] }[e.key];
+  if (mv) { e.preventDefault(); pushUndo(); el.x += mv[0]; el.z += mv[1]; renderEd(); }
+  if ((e.key === 'Delete' || e.key === 'Backspace') && !(el.letra && occupied(el).n)) { pushUndo(); if (el.letra) ed.L.pasillos = ed.L.pasillos.filter(x => x !== el); else ed.L.zonas = ed.L.zonas.filter(x => x !== el); ed.sel = null; renderEd(); renderProps(); }
+});
+$('#lay-cancel').onclick = () => {
+  if (!ed.dirty) return closeLayoutEditor();
+  confirmModal('Descartar cambios', 'Hay cambios en la estructura que no se guardaron.', 'Descartar', closeLayoutEditor);
+};
+$('#lay-ok').onclick = async () => {
+  if (problems().length) return toast('Corregí las superposiciones antes de guardar');
+  // pasillos que cambiaron de letra: se actualizan los códigos de la mercadería
+  const ren = {};
+  ed.L.pasillos.forEach(a => { const o = ed.origLetter[a.id]; if (o && o !== a.letra) ren[o] = a.letra; });
+  const renamed = Object.keys(ren).length;
+  if (renamed) placements.forEach(pl => { if (ren[pl.row]) { pl.row = ren[pl.row]; pl.code = codeOf(pl); } });
+  rawInv = invItems();
+  const L = ed.L;
+  applyLayout(L);
+  if (!await saveLayout()) return;
+  if (renamed) await saveInventory();
+  closeLayoutEditor();
+  toast('Estructura del depósito guardada');
+};
+$('#lay-edit').onclick = openLayoutEditor;
 
 /* =========================================================
    Navegación y buscador global
