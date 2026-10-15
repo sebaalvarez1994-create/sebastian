@@ -12,24 +12,24 @@
 :root{
   --bg:#eef2f7; --card:#ffffff; --line:#e3e8ef; --text:#0f172a; --muted:#64748b; --soft:#f5f7fb;
   --blue:#1f5eff; --blue-50:#eaf0ff; --green:#16a34a; --amber:#f59e0b; --red:#ef4444; --violet:#7c3aed; --teal:#0891b2; --gray:#64748b;
-  --text2:#334155; --muted2:#94a3b8; --line2:#f0f3f7; --track:#e2e8f0; --track2:#cbd5e1; --glass:rgba(255,255,255,.88);
+  --blue-d:#1f45d6; --text2:#334155; --muted2:#94a3b8; --line2:#f0f3f7; --track:#e2e8f0; --track2:#cbd5e1; --glass:rgba(255,255,255,.88);
   --blue-50:#eaf0ff; --green-50:#ecfdf3; --red-50:#fef2f2; --red-ink:#991b1b; --amber-50:#fffbeb; --amber-ink:#92400e; --loc-line:#d6e0f0; --mark:#fff3b0;
   --st1:#f9fbfe; --st2:#e7edf5; --st3:#dfe6f0; color-scheme:light;
   --radius:16px; --shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.06);
 }
 :root[data-theme="dark"]{
-  --bg:#0a101c; --card:#111a2a; --line:#22304a; --line2:#1a2538; --text:#e7edf7; --text2:#c3cee0; --muted:#8fa0ba; --muted2:#6b7d98; --soft:#16213a;
-  --blue:#5b8bff; --blue-50:#1a2a52; --green:#22c55e; --green-50:#0f2a1c; --red:#f87171; --red-50:#3a1518; --red-ink:#fecaca; --amber-50:#33240a; --amber-ink:#fcd34d;
-  --track:#26344d; --track2:#3a4a66; --glass:rgba(17,26,42,.88); --loc-line:#2c3e63; --mark:#5b4a12;
-  --st1:#1b2740; --st2:#121b2d; --st3:#0d1422; color-scheme:dark;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  --bg:#121212; --card:#1c1c1c; --line:#2e2e2e; --line2:#242424; --text:#ededed; --text2:#cfcfcf; --muted:#9e9e9e; --muted2:#757575; --soft:#252525;
+  --blue:#318ce7; --blue-d:#1f6fc4; --blue-50:#1b2a3a; --green:#22c55e; --green-50:#14261a; --red:#f87171; --red-50:#331a1a; --red-ink:#fecaca; --amber-50:#2e2512; --amber-ink:#fcd34d;
+  --track:#333333; --track2:#474747; --glass:rgba(28,28,28,.9); --loc-line:#2d4763; --mark:#4d4120;
+  --st1:#262626; --st2:#1a1a1a; --st3:#121212; color-scheme:dark;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.4);
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0a101c; --card:#111a2a; --line:#22304a; --line2:#1a2538; --text:#e7edf7; --text2:#c3cee0; --muted:#8fa0ba; --muted2:#6b7d98; --soft:#16213a;
-  --blue:#5b8bff; --blue-50:#1a2a52; --green:#22c55e; --green-50:#0f2a1c; --red:#f87171; --red-50:#3a1518; --red-ink:#fecaca; --amber-50:#33240a; --amber-ink:#fcd34d;
-  --track:#26344d; --track2:#3a4a66; --glass:rgba(17,26,42,.88); --loc-line:#2c3e63; --mark:#5b4a12;
-  --st1:#1b2740; --st2:#121b2d; --st3:#0d1422; color-scheme:dark;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  --bg:#121212; --card:#1c1c1c; --line:#2e2e2e; --line2:#242424; --text:#ededed; --text2:#cfcfcf; --muted:#9e9e9e; --muted2:#757575; --soft:#252525;
+  --blue:#318ce7; --blue-d:#1f6fc4; --blue-50:#1b2a3a; --green:#22c55e; --green-50:#14261a; --red:#f87171; --red-50:#331a1a; --red-ink:#fecaca; --amber-50:#2e2512; --amber-ink:#fcd34d;
+  --track:#333333; --track2:#474747; --glass:rgba(28,28,28,.9); --loc-line:#2d4763; --mark:#4d4120;
+  --st1:#262626; --st2:#1a1a1a; --st3:#121212; color-scheme:dark;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.4);
 }}
 .theme-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--soft);display:grid;place-items:center;color:var(--text2);flex:none}
 .theme-btn:hover{color:var(--blue)}
@@ -49,7 +49,7 @@ input{font:inherit;color:inherit}
 /* ---------- Top bar ---------- */
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;display:flex;align-items:center;gap:16px;padding:10px 20px;background:var(--glass);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
-.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3b7bff,#1f45d6);display:grid;place-items:center;box-shadow:0 4px 12px rgba(31,94,255,.35)}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,color-mix(in srgb,var(--blue) 80%,#fff),var(--blue-d));display:grid;place-items:center;box-shadow:0 4px 12px rgba(31,94,255,.35)}
 .brand small{display:block;font-weight:500;font-size:11px;color:var(--muted);letter-spacing:0}
 .tabs{display:flex;gap:4px;background:var(--soft);border:1px solid var(--line);padding:4px;border-radius:12px}
 .tab{padding:7px 14px;border-radius:9px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:7px;white-space:nowrap}
@@ -670,7 +670,7 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
         <button class="btn ghost" id="desp-list" title="Ver la mercadería que salió">Despachos<b class="tab-badge" id="desp-count" style="background:var(--blue)" hidden></b></button>
         <span class="head-actions" data-perm="inventoryFiles" style="width:auto">
         <button class="btn ghost" id="xls-template" title="Descargar un Excel de ejemplo con el formato correcto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Plantilla</button>
-        <button class="btn ghost" id="xls-export" title="Descargar el inventario actual en Excel"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Exportar</button>
+        <button class="btn ghost" id="xls-export" title="Inventario, despachos y vencimientos en Excel, para auditoría"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>Exportar registro</button>
         <label class="btn" title="Columnas: A Nombre · B Cantidad · C Vencimiento · D Zona"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0-4 4m4-4 4 4M5 20h14"/></svg>Importar Excel<input type="file" id="xls-file" accept=".xlsx,.xls,.csv" hidden></label>
         </span>
       </div>
@@ -706,7 +706,7 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
   <section class="view" id="view-pedidos">
     <div class="view-head">
       <div><h1>Pedidos</h1><p>Cargá los pedidos que entran, asignalos a un chofer y seguí cada entrega sin usar WhatsApp.</p></div>
-      <div class="head-actions"><button class="btn" id="p-new">+ Nuevo pedido</button></div>
+      <div class="head-actions"><span class="head-actions" data-perm="audit" style="width:auto"><button class="btn ghost" id="p-export">Exportar Excel</button><button class="btn ghost danger" id="p-purge">Borrar historial</button></span><button class="btn" id="p-new">+ Nuevo pedido</button></div>
     </div>
     <div class="kpis kpis-5" id="kpis-ped"></div>
     <div class="ped-grid">
@@ -850,7 +850,7 @@ const ICON = {
 const STATUS = {
   base:     { label: 'En base',    color: '#64748b' },
   asignado: { label: 'Preparando', color: '#7c3aed' },
-  ruta:     { label: 'En ruta',    color: '#1f5eff' },
+  ruta:     { label: 'En ruta',    color: 'var(--blue)' },
   demorado: { label: 'Demorado',   color: '#ef4444' },
   taller:   { label: 'En taller',  color: '#d97706' },
 };
@@ -876,7 +876,8 @@ const M = (c, extra) => {
   return matCache.get(k);
 };
 // Colores del suelo, calles y edificios para el tema oscuro (el resto mantiene su color).
-const DARK_TINT = { 0xe3ebe2: 0x1d2b2c, 0xc4cdd9: 0x2c3a52, 0xeef2f6: 0x1c2638, 0xf8fafc: 0xc9d3e1, 0xe2e8f0: 0x8592a8, 0xd5dbe3: 0x5d6b82, 0x94a3b8: 0x5b6a82, 0xffffff: 0xdde4ee };
+// Tema oscuro: suelo, calles y edificios en grises; lo azul pasa a azul Francia.
+const DARK_TINT = { 0xe3ebe2: 0x262626, 0xc4cdd9: 0x3d3d3d, 0xeef2f6: 0x2b2b2b, 0xf8fafc: 0xbdbdbd, 0xf1f5f9: 0xb5b5b5, 0xe2e8f0: 0x8a8a8a, 0xd5dbe3: 0x6b6b6b, 0x94a3b8: 0x6e6e6e, 0xffffff: 0xd9d9d9, 0x1f5eff: 0x318ce7, 0x2f5bd3: 0x2a78c9, 0x334155: 0x3a3a3a, 0x7cc27a: 0x5f8f5d, 0x9ad08a: 0x6f9a66, 0xd9c7b0: 0x5a5148 };
 const isDark = () => document.documentElement.dataset.theme === 'dark';
 function tintMat(m) { const b = m.userData.base; m.color.setHex(isDark() && DARK_TINT[b] != null ? DARK_TINT[b] : b); }
 function box(w, h, d, mat, x = 0, y = 0, z = 0, parent) {
@@ -905,7 +906,7 @@ function createStage(host, { viewSize, camDir, shadowSize }) {
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
   scene.add(sun);
   const S = { host, renderer, scene, camera, controls, labelLayer, labels: [], w: 1, h: 1, goal: null, follow: null, hemi, sun, viewSize };
-  S.applyTheme = () => { const d = isDark(); hemi.intensity = d ? 1.25 : 1.9; sun.intensity = d ? 1.6 : 2.1; hemi.groundColor.setHex(d ? 0x223047 : 0xb8c6da); };
+  S.applyTheme = () => { const d = isDark(); hemi.intensity = d ? 1.25 : 1.9; sun.intensity = d ? 1.6 : 2.1; hemi.groundColor.setHex(d ? 0x2b2b2b : 0xb8c6da); };
   S.applyTheme();
   const resize = () => {
     S.w = host.clientWidth || 1; S.h = host.clientHeight || 1;
@@ -1199,7 +1200,7 @@ function renderKPIsJefe() {
   const hoy = pedidos.filter(p => p.estado === 'entregado' && isToday(p.entregadoAt)).length;
   const alerts = trucks.filter(t => t.state === 'demorado').length + pedidos.filter(p => p.estado === 'rechazado').length;
   const k = [
-    ['#1f5eff', ICON.truck, 'Vehículos en ruta', `${moving}<span class="muted" style="font-size:14px;font-weight:600"> / ${trucks.length}</span>`, ''],
+    ['var(--blue)', ICON.truck, 'Vehículos en ruta', `${moving}<span class="muted" style="font-size:14px;font-weight:600"> / ${trucks.length}</span>`, ''],
     ['#7c3aed', ICON.order, 'Pedidos en curso', active, sinAsig ? `<em style="color:var(--amber)">${sinAsig} sin asignar</em>` : ''],
     ['#16a34a', ICON.check, 'Entregados hoy', hoy, ''],
     ['#ef4444', ICON.alert, 'Alertas activas', alerts, alerts ? '<em style="color:var(--red)">revisar</em>' : ''],
@@ -1333,7 +1334,7 @@ function renderAllJefe() { computeFleet(); renderGps(); renderKPIsJefe(); render
    ========================================================= */
 const CATS = {
   Alimentos:  { color: '#e0a44a', box: 0xd9b27c, rows: ['A', 'B'], ab: 'AL' },
-  Bebidas:    { color: '#1f5eff', box: 0x5b8cff, rows: ['C'],      ab: 'BE' },
+  Bebidas:    { color: 'var(--blue)', box: 0x5b8cff, rows: ['C'],      ab: 'BE' },
   Limpieza:   { color: '#0d9488', box: 0x2dd4bf, rows: ['D'],      ab: 'LI' },
   Higiene:    { color: '#a855f7', box: 0xc4a1f7, rows: ['D', 'E'], ab: 'HI' },
   Ferretería: { color: '#475569', box: 0x94a3b8, rows: ['E'],      ab: 'FE' },
@@ -1615,7 +1616,7 @@ function applyDepHighlight() {
     pl.obj.scale.setScalar(on ? 1.06 : 1);
   });
   if (!inAisle) sel.forEach(pl => {
-    const el = document.createElement('div'); el.className = 'pin sel big'; el.style.setProperty('--c', '#1f5eff');
+    const el = document.createElement('div'); el.className = 'pin sel big'; el.style.setProperty('--c', 'var(--blue)');
     el.innerHTML = `<i></i>${pl.code}`; el.onclick = () => selectPlace(pl);
     ds.pins.push(D.addLabel(el, pl.top, .25));
   });
@@ -1632,7 +1633,7 @@ function renderKPIsDep() {
   const used = placements.filter(here).length, total = ALL_BINS.filter(b => b.map === curMap).length || 1;
   const units = products.reduce((a, p) => a + p.total, 0), low = products.filter(p => p.low).length;
   const k = [
-    ['#1f5eff', ICON.grid, 'Posiciones ocupadas', `${used}<span class="muted" style="font-size:14px;font-weight:600"> / ${total}</span>`, `<em class="muted">${Math.round(used / total * 100)}%</em>`],
+    ['var(--blue)', ICON.grid, 'Posiciones ocupadas', `${used}<span class="muted" style="font-size:14px;font-weight:600"> / ${total}</span>`, `<em class="muted">${Math.round(used / total * 100)}%</em>`],
     ['#7c3aed', ICON.box, 'Productos (SKU)', products.length, ''],
     ['#16a34a', ICON.check, 'Unidades en stock', fmt(units), ''],
     ['#ef4444', ICON.alert, 'Stock bajo', low, '<em style="color:var(--red)">ver</em>'],
@@ -1901,17 +1902,7 @@ $('#xls-template').onclick = async () => {
     await saveWorkbook(X, wb, 'plantilla-inventario-valsur.xlsx');
   } catch (err) { toast(err.message); }
 };
-$('#xls-export').onclick = async () => {
-  try {
-    const X = await loadXLSX();
-    const data = [['Nombre', 'Cantidad', 'Fecha de vencimiento', 'Zona', 'Código', 'Categoría', 'Lote']];
-    products.forEach(p => p.places.forEach(pl => data.push([p.name, pl.qty, pl.venc || '', pl.code, p.sku, p.cat, pl.lote])));
-    const ws = X.utils.aoa_to_sheet(data, { cellDates: true, dateNF: 'dd/mm/yyyy' });
-    ws['!cols'] = [{ wch: 32 }, { wch: 10 }, { wch: 20 }, { wch: 10 }, { wch: 10 }, { wch: 12 }, { wch: 9 }];
-    const wb = X.utils.book_new(); X.utils.book_append_sheet(wb, ws, 'Inventario');
-    await saveWorkbook(X, wb, `inventario-valsur-${ymd(new Date())}.xlsx`);
-  } catch (err) { toast(err.message); }
-};
+$('#xls-export').onclick = () => exportAudit('deposito');
 
 /* =========================================================
    Choferes
@@ -1969,7 +1960,7 @@ const DRV_FILTERS = { todos: ['Todos', () => true], ok: ['Al día', d => driverS
 function renderDriverKPIs() {
   const all = drivers.flatMap(d => DOCS.map(([k]) => docState(d.docs[k]).k));
   const k = [
-    ['#1f5eff', ICON.user, 'Choferes', drivers.length, ''],
+    ['var(--blue)', ICON.user, 'Choferes', drivers.length, ''],
     ['#ef4444', ICON.alert, 'Documentos vencidos', all.filter(x => x === 'bad').length, ''],
     ['#f59e0b', ICON.alert, 'Vencen en 30 días', all.filter(x => x === 'warn').length, ''],
     ['#16a34a', ICON.truck, 'Con vehículo asignado', drivers.filter(d => d.vehicle).length, `<em class="muted">de ${trucks.length}</em>`],
@@ -2145,7 +2136,7 @@ const session = store.get('valsur.session');
 const me = { user: USERS[session?.user] ? session.user : null, role: USERS[session?.user]?.role || null };
 const allowedViews = () => ROLE_VIEWS[me.role] || [];
 const can = what => ({
-  editDrivers: me.role === 'jefe', inventoryFiles: me.role === 'jefe', despachar: me.role === 'jefe' || me.role === 'deposito', editLayout: me.role === 'jefe' || me.role === 'deposito',
+  editDrivers: me.role === 'jefe', audit: me.role === 'jefe', inventoryFiles: me.role === 'jefe', despachar: me.role === 'jefe' || me.role === 'deposito', editLayout: me.role === 'jefe' || me.role === 'deposito',
   search: me.role === 'jefe', officeAlerts: me.role === 'jefe' || me.role === 'pedidos',
 })[what];
 function applyRole() {
@@ -2192,7 +2183,7 @@ const OST = {
   nuevo:     { label: 'Sin asignar',  color: '#94a3b8' },
   enviado:   { label: 'Enviado',      color: '#7c3aed' },
   aceptado:  { label: 'Aceptado',     color: '#0891b2' },
-  en_camino: { label: 'En camino',    color: '#1f5eff' },
+  en_camino: { label: 'En camino',    color: 'var(--blue)' },
   entregado: { label: 'Entregado',    color: '#16a34a' },
   problema:  { label: 'Con problema', color: '#ef4444' },
   rechazado: { label: 'Rechazado',    color: '#f59e0b' },
@@ -2230,7 +2221,7 @@ function renderPedidosKPIs() {
   const k = [
     ['#94a3b8', ICON.order, 'Sin asignar', c(P_FILTERS.sinasignar[1]), 'sinasignar'],
     ['#7c3aed', ICON.order, 'Esperando al chofer', c(P_FILTERS.enviados[1]), 'enviados'],
-    ['#1f5eff', ICON.truck, 'En curso', c(P_FILTERS.curso[1]), 'curso'],
+    ['var(--blue)', ICON.truck, 'En curso', c(P_FILTERS.curso[1]), 'curso'],
     ['#16a34a', ICON.check, 'Entregados hoy', c(p => p.estado === 'entregado' && isToday(p.entregadoAt)), 'entregados'],
     ['#ef4444', ICON.alert, 'Con problemas', c(P_FILTERS.problemas[1]), 'problemas'],
   ];
@@ -2265,12 +2256,14 @@ function openPedido(id) {
   if (innerWidth < 1180) setTimeout(() => $('#p-detail').scrollIntoView({ behavior: 'smooth' }), 50);
 }
 function selectPedido(id) {
-  pv.sel = id; renderPedidos(); mountChat(id, $('#pd-chat'), 'oficina');
+  pv.sel = id; pv.seenSel = DATA.pedidos.has(id); renderPedidos(); mountChat(id, $('#pd-chat'), 'oficina');
   if (innerWidth < 1180 && id) $('#p-detail').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function renderPedidoDetail() {
   const p = pv.sel && DATA.pedidos.get(pv.sel);
   if (!p) {
+    // un pedido recién creado puede tardar un instante en llegar desde la base: se mantiene el chat abierto
+    if (pv.sel) { setHTML($('#pd-body'), '<div class="empty" style="padding:40px 20px">Cargando el pedido…</div>'); return; }
     setHTML($('#pd-body'), `<div class="empty" style="padding:60px 20px">${ICON.order}<br><b>Elegí un pedido</b><br>para ver el detalle, asignarlo a un chofer y escribirle.</div>`);
     if (pv.chatFor) mountChat(null, $('#pd-chat'));
     return;
@@ -2539,7 +2532,7 @@ function updateBadges() {
 
 /* ---------- Conexión de datos ---------- */
 onData('drivers', () => { drivers = [...DATA.drivers.values()]; if (me.role) applyRole(); renderDrivers(); renderAllJefe(); renderPedidos(); renderDriverApp(); });
-onData('pedidos', () => { pedidos = [...DATA.pedidos.values()].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)); renderPedidos(); renderDriverApp(); renderAllJefe(); notifyChanges(); updateBadges(); });
+onData('pedidos', () => { if (pv.sel && sync.cloud && pv.seenSel && !DATA.pedidos.has(pv.sel)) { pv.sel = null; pv.seenSel = false; mountChat(null, $('#pd-chat')); } if (pv.sel && DATA.pedidos.has(pv.sel)) pv.seenSel = true; pedidos = [...DATA.pedidos.values()].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)); renderPedidos(); renderDriverApp(); renderAllJefe(); notifyChanges(); updateBadges(); });
 onData('vehiculos', () => renderAllJefe());
 onData('flota', () => { syncTrucks(); renderAllJefe(); renderGps(); renderDrivers(); });
 onData('config', () => renderGps());
@@ -2609,7 +2602,8 @@ $('#desp-list').onclick = () => {
     <div style="margin-top:10px">${list.map(m => `<div class="desp-row"><time>${new Date(m.at).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</time>
       <div style="min-width:0"><b>${esc(m.producto)} · ${fmt(m.qty)} u.</b><small>${esc(m.destino || 'Sin destino')}${m.nota ? ' · ' + esc(m.nota) : ''}${m.usuario ? ' · por ' + esc(USERS[m.usuario]?.label || m.usuario) : ''}</small></div>
       <span class="loc">${esc(m.code)}</span></div>`).join('') || '<div class="empty">Todavía no hay despachos.</div>'}</div>
-    <div class="modal-actions"><button class="btn" data-cancel>Cerrar</button></div>`);
+    <div class="modal-actions">${can('audit') && DATA.movimientos.size ? '<button class="btn ghost danger" data-purge style="margin-right:auto">Borrar historial</button>' : ''}<button class="btn" data-cancel>Cerrar</button></div>`,
+    root => root.querySelector('[data-purge]')?.addEventListener('click', () => purgeHistory('despachos')));
 };
 function despachar(p, pl0) {
   const places = p.places;
@@ -3199,6 +3193,124 @@ $('#lay-ok').onclick = async () => {
   toast(`Mapa “${LAYOUT.nombre}” guardado`);
 };
 $('#lay-edit').onclick = openLayoutEditor;
+
+/* =========================================================
+   Auditoría: exportar a Excel y borrar historial (solo jefe)
+   ========================================================= */
+const dt = ts => ts ? new Date(ts) : '';
+const inRange = (ts, from, to) => (!from || ts >= from) && (!to || ts <= to);
+function rangeFields(idp) {
+  return `<div class="form-grid" style="margin-top:12px"><label class="field" for="${idp}-from">Desde (opcional)<input id="${idp}-from" name="from" type="date"></label>
+    <label class="field" for="${idp}-to">Hasta (opcional)<input id="${idp}-to" name="to" type="date"></label></div>`;
+}
+const readRange = f => ({ from: f.from.value ? fromYmd(f.from.value).getTime() : null, to: f.to.value ? fromYmd(f.to.value).getTime() + 864e5 - 1 : null });
+function sheet(X, rows, widths) {
+  const ws = X.utils.aoa_to_sheet(rows, { cellDates: true, dateNF: 'dd/mm/yyyy hh:mm' });
+  ws['!cols'] = widths.map(w => ({ wch: w }));
+  if (rows.length > 1) ws['!autofilter'] = { ref: X.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: rows.length - 1, c: rows[0].length - 1 } }) };
+  return ws;
+}
+async function allMessages(list) {
+  const out = [];
+  if (sync.cloud) {
+    for (const p of list) {
+      try { (await sync.db.collection(`pedidos/${p.id}/mensajes`).orderBy('at').limit(1000).get()).docs.forEach(d => out.push([p, d.data()])); } catch (e) { console.error(e); }
+    }
+  } else { const all = store.get('valsur.msgs') || {}; list.forEach(p => (all[p.id] || []).forEach(m => out.push([p, m]))); }
+  return out;
+}
+function exportAudit(kind) {
+  const isP = kind === 'pedidos';
+  openModal(`<form id="aud-form" novalidate><h2>${isP ? 'Exportar registro de pedidos' : 'Exportar registro del depósito'}</h2>
+    <p class="muted" style="margin:0">${isP ? 'Un Excel con los pedidos, el historial de cada cambio de estado y los mensajes con los choferes.' : 'Un Excel con el inventario actual por ubicación, los despachos, los vencimientos y los mapas.'} Filtrá por fecha o dejalo vacío para exportar todo.</p>
+    ${rangeFields('ae')}
+    <p class="muted" style="font-size:12px">${isP ? 'Las fechas filtran por el día en que se creó el pedido.' : 'Las fechas filtran los despachos; el inventario es siempre el actual.'}</p>
+    <div class="modal-actions"><button type="button" class="btn ghost" data-cancel>Cancelar</button><button class="btn">Descargar Excel</button></div></form>`, root => {
+    const f = root.querySelector('form');
+    f.onsubmit = async e => {
+      e.preventDefault();
+      const { from, to } = readRange(f), btn = f.querySelector('button.btn:not(.ghost)');
+      btn.disabled = true; btn.textContent = 'Preparando…';
+      try {
+        const X = await loadXLSX(), wb = X.utils.book_new(), stamp = ymd(new Date());
+        if (isP) {
+          const list = pedidos.filter(p => inRange(p.createdAt || 0, from, to)).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+          const drv = id => driverById(id)?.name || '';
+          X.utils.book_append_sheet(wb, sheet(X, [['Número', 'Estado', 'Prioridad', 'Cliente', 'Contacto', 'Teléfono', 'Dirección', 'Localidad', 'Fecha de entrega', 'Horario', 'Bultos', 'Peso (kg)', 'Chofer', 'Vehículo', 'Creado', 'Última actualización', 'Entregado', 'Recibió', 'Observaciones de entrega', 'Motivo (rechazo o problema)', 'Indicaciones', 'Mensaje original'],
+            ...list.map(p => { const d = driverById(p.driverId || p.rechazadoPor); return [p.num, OST[p.estado]?.label || p.estado, p.prioridad === 'urgente' ? 'Urgente' : 'Normal', p.cliente, p.contacto || '', p.telefono || '', p.direccion || '', p.localidad || '', p.fecha ? fromYmd(p.fecha) : '', p.ventana || '', p.bultos === '' ? '' : +p.bultos || 0, p.peso === '' ? '' : +p.peso || 0, d?.name || '', d?.vehicle || '', dt(p.createdAt), dt(p.updatedAt), dt(p.entregadoAt), p.recibio || '', p.obs || '', p.motivo || '', p.notas || '', p.origen || '']; })],
+            [11, 13, 9, 26, 18, 14, 28, 16, 14, 12, 7, 9, 18, 11, 16, 16, 16, 18, 22, 26, 30, 40]), 'Pedidos');
+          X.utils.book_append_sheet(wb, sheet(X, [['Número', 'Cliente', 'Fecha y hora', 'Estado', 'Quién', 'Detalle'],
+            ...list.flatMap(p => (p.hist || []).map(h => [p.num, p.cliente, dt(h.at), OST[h.e]?.label || h.e, h.by === 'chofer' ? 'Chofer' + (drv(p.driverId || p.rechazadoPor) ? ' (' + drv(p.driverId || p.rechazadoPor) + ')' : '') : 'Oficina', h.nota || '']))],
+            [11, 26, 17, 14, 24, 40]), 'Historial');
+          const msgs = await allMessages(list);
+          X.utils.book_append_sheet(wb, sheet(X, [['Número', 'Cliente', 'Fecha y hora', 'De', 'Mensaje'], ...msgs.map(([p, m]) => [p.num, p.cliente, dt(m.at), m.de === 'chofer' ? 'Chofer' : 'Oficina', m.texto])], [11, 26, 17, 9, 60]), 'Mensajes');
+          await saveWorkbook(X, wb, `registro-pedidos-valsur-${stamp}.xlsx`);
+        } else {
+          X.utils.book_append_sheet(wb, sheet(X, [['Nombre', 'Cantidad', 'Fecha de vencimiento', 'Zona', 'Mapa', 'SKU', 'Categoría', 'Lote', 'Estado de vencimiento'],
+            ...products.flatMap(p => p.places.map(pl => [p.name, pl.qty, pl.venc || '', pl.code, mapById(pl.map)?.nombre || '', p.sku, p.cat, pl.lote, pl.venc ? vstate(pl).label : '']))],
+            [32, 10, 18, 10, 18, 10, 12, 9, 22]), 'Inventario');
+          const movs = [...DATA.movimientos.values()].filter(m => inRange(m.at, from, to)).sort((a, b) => a.at - b.at);
+          X.utils.book_append_sheet(wb, sheet(X, [['Fecha y hora', 'Producto', 'SKU', 'Ubicación', 'Cantidad', 'Destino / pedido', 'Observación', 'Usuario'],
+            ...movs.map(m => [dt(m.at), m.producto, m.sku || '', m.code, m.qty, m.destino || '', m.nota || '', USERS[m.usuario]?.label || m.usuario || ''])],
+            [17, 30, 10, 22, 9, 30, 24, 10]), 'Despachos');
+          X.utils.book_append_sheet(wb, sheet(X, [['Producto', 'Mapa', 'Ubicación', 'Lote', 'Cantidad', 'Vence', 'Estado', 'Avisa (días antes)'],
+            ...placements.filter(pl => pl.venc).sort((a, b) => a.venc - b.venc).map(pl => [pl.product.name, mapById(pl.map)?.nombre || '', pl.code, pl.lote, pl.qty, pl.venc, vstate(pl).label, alertDays(pl.product)])],
+            [30, 18, 10, 9, 9, 12, 22, 12]), 'Vencimientos');
+          X.utils.book_append_sheet(wb, sheet(X, [['Mapa', 'Pasillos', 'Ubicaciones', 'Ocupadas', 'Zonas', 'Medidas (m)'],
+            ...MAPS.map(m => { const tot = m.pasillos.reduce((a, x) => a + x.pos * x.niv, 0); return [m.nombre, m.pasillos.map(a => a.letra + (a.nombre ? ' (' + a.nombre + ')' : '')).join(', '), tot, placements.filter(pl => pl.map === m.id).length, m.zonas.map(z => z.nombre || ZONE_T[z.tipo].label).join(', '), `${m.ancho} × ${m.largo}`]; })],
+            [22, 40, 12, 10, 40, 12]), 'Mapas');
+          await saveWorkbook(X, wb, `registro-deposito-valsur-${stamp}.xlsx`);
+        }
+        closeModal();
+      } catch (err) { console.error(err); toast(err.message || 'No se pudo generar el Excel'); btn.disabled = false; btn.textContent = 'Descargar Excel'; }
+    };
+  });
+}
+// Borra varios documentos: en la base compartida de a uno; en el modo demo, de una vez.
+async function removeMany(name, ids, onStep) {
+  if (!sync.cloud) { ids.forEach(id => DATA[name].delete(id)); saveLocal(name); emitData(name); return ids.length; }
+  let n = 0;
+  for (const id of ids) {
+    try { await sync.db.collection(name).doc(id).delete(); n++; onStep?.(n); } catch (e) { console.error(e); }
+  }
+  return n;
+}
+async function deleteMessages(ids) {
+  if (!sync.cloud) { const all = store.get('valsur.msgs') || {}; ids.forEach(id => delete all[id]); store.set('valsur.msgs', all); return; }
+  for (const id of ids) {
+    try { const docs = (await sync.db.collection(`pedidos/${id}/mensajes`).limit(1000).get()).docs; for (const d of docs) await sync.db.collection(`pedidos/${id}/mensajes`).doc(d.id).delete(); } catch (e) { console.error(e); }
+  }
+}
+function purgeHistory(kind) {
+  const isP = kind === 'pedidos';
+  const pool = isP ? pedidos.filter(p => ['entregado', 'cancelado'].includes(p.estado)) : [...DATA.movimientos.values()];
+  const tsOf = x => isP ? (x.entregadoAt || x.updatedAt || x.createdAt || 0) : x.at;
+  openModal(`<form id="purge-form" novalidate><h2>${isP ? 'Borrar historial de pedidos' : 'Borrar historial de despachos'}</h2>
+    <p class="muted" style="margin:0">${isP ? 'Se borran los pedidos <b>entregados y cancelados</b>, con su historial y sus mensajes. Los pedidos en curso no se tocan.' : 'Se borra el registro de salidas del depósito. El stock no cambia.'} Esta acción no se puede deshacer.</p>
+    ${rangeFields('pg')}
+    <p class="muted" style="font-size:12px">Sin fechas se borra todo el historial (${pool.length} ${isP ? 'pedidos' : 'despachos'}).</p>
+    <div class="note" id="pg-count" style="margin-top:6px"></div>
+    <label class="switch" style="margin-top:8px"><input type="checkbox" name="ok">Ya exporté el registro a Excel (o no necesito una copia)</label>
+    <div class="modal-actions"><button type="button" class="btn ghost" data-export style="margin-right:auto">Exportar primero</button><button type="button" class="btn ghost" data-cancel>Cancelar</button><button class="btn red" disabled>Borrar</button></div></form>`, root => {
+    const f = root.querySelector('form'), btn = f.querySelector('button.red');
+    const sel = () => { const { from, to } = readRange(f); return pool.filter(x => inRange(tsOf(x), from, to)); };
+    const upd = () => { const n = sel().length; root.querySelector('#pg-count').innerHTML = `${ICON.alert}<span>Se van a borrar <b>${n}</b> ${isP ? 'pedido' : 'despacho'}${n === 1 ? '' : 's'}.</span>`; btn.textContent = `Borrar ${n}`; btn.disabled = !n || !f.ok.checked; };
+    f.addEventListener('input', upd); f.addEventListener('change', upd); upd();
+    root.querySelector('[data-export]').onclick = () => exportAudit(isP ? 'pedidos' : 'deposito');
+    f.onsubmit = async e => {
+      e.preventDefault(); const list = sel(); if (!list.length || !f.ok.checked) return;
+      btn.disabled = true; btn.textContent = 'Borrando…';
+      const ids = list.map(x => x.id);
+      if (isP) await deleteMessages(ids);
+      const n = await removeMany(isP ? 'pedidos' : 'movimientos', ids, k => { btn.textContent = `Borrando… ${k}/${ids.length}`; });
+      if (isP && pv.sel && ids.includes(pv.sel)) { pv.sel = null; mountChat(null, $('#pd-chat')); renderPedidos(); }
+      closeModal();
+      toast(`Se borraron ${n} ${isP ? 'pedidos' : 'despachos'} del historial`);
+    };
+  });
+}
+$('#p-export').onclick = () => exportAudit('pedidos');
+$('#p-purge').onclick = () => purgeHistory('pedidos');
 
 /* =========================================================
    Navegación y buscador global

@@ -1,6 +1,6 @@
 # Valsur Logística — Panel de control
 
-Aplicación web de una sola página (`index.html`) con tema claro / oscuro (botón ☀/☾ arriba a la derecha).
+Aplicación web de una sola página (`index.html`) con tema claro / oscuro (botón ☀/☾ arriba a la derecha). El tema oscuro es en escala de grises con detalles en azul Francia.
 
 **Versión publicada (para usar con los choferes):** https://claude.ai/artifact/VibC5LgNLhEa3ynt5cwoYb
 
@@ -41,6 +41,12 @@ El Panel Jefe muestra un mapa simbólico: la base Valsur, el taller mecánico, c
 El usuario **jefe** edita la flota desde **Panel general → Flota → Editar flota** (o desde el panel de cada vehículo): agrega, modifica o quita vehículos (patente, modelo, tipo, año, capacidad, notas). Si cambia una patente, el chofer asignado sigue vinculado; si quita un vehículo, su chofer queda sin vehículo asignado.
 
 Arriba del mapa hay dos pestañas: **Mapa ilustrativo** (el mapa 3D) y **Mapa real (GPS)**. La página publicada en Claude no puede mostrar mapas de calles ni conectarse al servidor del GPS, así que el mapa real lista cada vehículo con su estado, chofer y destino, y un botón **Ver en vivo** que abre el seguimiento en la plataforma del proveedor de GPS. Para activarlo, en **Editar flota** se pega el link de seguimiento de cada vehículo (el link para compartir ubicación que da el proveedor) y, opcionalmente, el nombre del proveedor y el link de su plataforma.
+
+## Auditoría (usuario jefe)
+
+- **Pedidos → Exportar Excel**: un archivo con tres hojas: *Pedidos* (todos los datos de cada pedido), *Historial* (cada cambio de estado con fecha, hora y quién lo hizo) y *Mensajes* (la conversación con el chofer de cada pedido). Se puede filtrar por fecha de creación.
+- **Depósito → Exportar registro**: un archivo con *Inventario* (por ubicación, con las mismas columnas que la importación), *Despachos*, *Vencimientos* y *Mapas*. Los despachos se pueden filtrar por fecha.
+- **Borrar historial**: en Pedidos borra los pedidos entregados y cancelados (con su historial y mensajes; los pedidos en curso no se tocan); en Depósito → Despachos borra el registro de salidas (el stock no cambia). Se puede limitar a un rango de fechas, pide confirmar que ya se exportó y ofrece exportar primero.
 
 ## Varios mapas de depósito
 
