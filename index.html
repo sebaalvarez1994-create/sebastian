@@ -427,6 +427,36 @@ body.single-view .tabs{display:none}
 .flt-table td,.flt-table th{padding:8px 6px;font-size:12.5px}
 .flt-table td:last-child{text-align:right;white-space:nowrap}
 .gps-ok{color:var(--green);font-weight:700}
+/* pestañas del depósito */
+.dep-tabs{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.dtab{display:inline-flex;align-items:center;gap:6px;padding:8px 6px 8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:600;font-size:13px;color:var(--text2)}
+.dtab.solo{padding-right:12px}
+.dtab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.dtab .dx{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:16px;line-height:1;color:inherit;opacity:.7}
+.dtab .dx:hover{opacity:1;background:color-mix(in srgb,currentColor 15%,transparent)}
+.dtab.add{border-style:dashed;color:var(--blue);padding-right:12px}
+.dtab.venc{margin-left:auto;padding-right:12px}
+.dtab.venc.active{background:var(--red);border-color:var(--red)}
+.dtab .tab-badge{margin-left:2px}
+.loc.other{border-style:dashed}
+/* vencimientos */
+.venc-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start}
+.venc-list{overflow:hidden}
+.venc-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--line)}
+.venc-tools .box{position:relative;flex:1;min-width:200px}
+.venc-tools input{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--soft);outline:none}
+.venc-table{min-width:720px}
+.venc-table td{vertical-align:middle}
+.venc-table tr{cursor:default}
+.dleft{font-weight:700;font-variant-numeric:tabular-nums}
+.venc-cfg{padding:16px;display:flex;flex-direction:column;gap:10px}
+.venc-cfg h3{margin:0;font-size:15px}
+.venc-cfg p{margin:0;font-size:12.5px;color:var(--muted)}
+.cat-rows{display:grid;grid-template-columns:1fr 90px;gap:6px 10px;align-items:center;font-size:13px}
+.cat-rows input{padding:7px 8px;border:1px solid var(--line);border-radius:8px;background:var(--soft);width:100%}
+.switch{display:flex;gap:8px;align-items:center;font-size:13px;font-weight:600;cursor:pointer}
+.switch input{accent-color:var(--blue);width:16px;height:16px}
+@media (max-width:1180px){.venc-grid{grid-template-columns:minmax(0,1fr)}}
 /* pasillo elegido */
 .tag.clickable{pointer-events:auto;cursor:pointer}
 .tag.clickable:hover{background:var(--blue);color:#fff}
@@ -571,7 +601,7 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
       <span>Pedidos</span><b class="tab-badge" id="badge-pedidos" hidden></b></button>
     <button class="tab" data-view="deposito" role="tab">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/><path d="M7 21v-8h10v8M7 17h10"/></svg>
-      <span>Depósito</span></button>
+      <span>Depósito</span><b class="tab-badge" id="badge-deposito" hidden></b></button>
     <button class="tab" data-view="choferes" role="tab">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg>
       <span>Choferes</span><b class="tab-badge" id="badge-choferes" hidden></b></button>
@@ -634,7 +664,7 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
   <!-- ================= DEPÓSITO ================= -->
   <section class="view" id="view-deposito">
     <div class="view-head">
-      <div><h1>Depósito central</h1><p>Encontrá cualquier mercadería y su ubicación exacta: pasillo, posición y nivel.</p></div>
+      <div><h1 id="dep-title">Depósito central</h1><p id="dep-sub">Encontrá cualquier mercadería y su ubicación exacta: pasillo, posición y nivel.</p></div>
       <div class="head-actions">
         <button class="btn ghost" id="lay-edit" data-perm="editLayout" title="Agregar o mover pasillos y zonas">Editar estructura</button>
         <button class="btn ghost" id="desp-list" title="Ver la mercadería que salió">Despachos<b class="tab-badge" id="desp-count" style="background:var(--blue)" hidden></b></button>
@@ -645,6 +675,8 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
         </span>
       </div>
     </div>
+    <div class="dep-tabs" id="dep-tabs" role="tablist"></div>
+    <div id="dep-main">
     <div class="kpis" id="kpis-dep"></div>
     <div class="dep-grid">
       <aside class="card dep-panel">
@@ -667,6 +699,8 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
         <div class="webgl-fail">No se pudo cargar la vista 3D. Revisá tu conexión a internet y recargá la página.</div>
       </div>
     </div>
+    </div>
+    <div id="venc-view" hidden></div>
   </section>
   <!-- ================= PEDIDOS (oficina) ================= -->
   <section class="view" id="view-pedidos">
@@ -1342,38 +1376,59 @@ function normalizeLayout(L) {
   L = L && typeof L === 'object' ? L : DEFAULT_LAYOUT;
   const seen = new Set();
   return {
+    id: String(L.id || 'central'), nombre: String(L.nombre || 'Depósito central').slice(0, 40),
     ancho: clampN(L.ancho, 10, 80, 28), largo: clampN(L.largo, 10, 80, 33),
-    pasillos: (L.pasillos || []).map((a, i) => ({ id: String(a.id || 'p' + i), letra: String(a.letra || '').toUpperCase().slice(0, 1), x: clampN(a.x, -40, 40, 0), z: clampN(a.z, -40, 40, 0), pos: Math.round(clampN(a.pos, 1, 30, 10)), niv: Math.round(clampN(a.niv, 1, 6, 4)), vert: !!a.vert }))
+    pasillos: (L.pasillos || []).map((a, i) => ({ id: String(a.id || 'p' + i), letra: String(a.letra || '').toUpperCase().slice(0, 1), x: clampN(a.x, -40, 40, 0), z: clampN(a.z, -40, 40, 0), pos: Math.round(clampN(a.pos, 1, 30, 10)), niv: Math.round(clampN(a.niv, 1, 6, 4)), vert: !!a.vert, nombre: String(a.nombre || '').slice(0, 30) }))
       .filter(a => /^[A-Z]$/.test(a.letra) && !seen.has(a.letra) && seen.add(a.letra)),
     zonas: (L.zonas || []).map((z, i) => ({ id: String(z.id || 'z' + i), tipo: ZONE_T[z.tipo] ? z.tipo : 'otra', nombre: String(z.nombre || '').slice(0, 40), x: clampN(z.x, -40, 40, 0), z: clampN(z.z, -40, 40, 0), w: clampN(z.w, 1, 60, 4), d: clampN(z.d, 1, 60, 4) })),
   };
 }
-let LAYOUT = normalizeLayout(store.get('valsur.layout') || DEFAULT_LAYOUT);
-let ROWS = [], AISLE = {}, ALL_BINS = [];
+// Puede haber varios mapas (depósitos o galpones), cada uno con su estructura. Se muestran como pestañas.
+const normalizeMaps = list => {
+  const seen = new Set();
+  const out = (Array.isArray(list) ? list : []).map(normalizeLayout).filter(m => !seen.has(m.id) && seen.add(m.id));
+  return out.length ? out : [normalizeLayout({ ...DEFAULT_LAYOUT, id: 'central', nombre: 'Depósito central' })];
+};
+let MAPS = normalizeMaps(store.get('valsur.mapas') || [{ ...(store.get('valsur.layout') || DEFAULT_LAYOUT), id: 'central', nombre: 'Depósito central' }]);
+let curMap = MAPS.some(m => m.id === store.get('valsur.mapa-dep')) ? store.get('valsur.mapa-dep') : MAPS[0].id;
+let LAYOUT, ROWS = [], AISLE = {}, AISLE_BY = {}, ALL_BINS = [];
 const codeOf = b => `${b.row}-${String(b.bay + 1).padStart(2, '0')}-${b.lvl + 1}`;
-function rebuildBins() {
+const mapById = id => MAPS.find(m => m.id === id);
+const here = pl => pl.map === curMap;
+// Ubicación legible: con el nombre del mapa cuando hay más de uno
+const locLabel = pl => (MAPS.length > 1 ? (mapById(pl.map)?.nombre || '') + ' · ' : '') + pl.code;
+function setCurrentMap() {
+  if (!mapById(curMap)) curMap = MAPS[0].id;
+  LAYOUT = mapById(curMap);
   ROWS = LAYOUT.pasillos.map(a => a.letra).sort();
-  AISLE = Object.fromEntries(LAYOUT.pasillos.map(a => [a.letra, a]));
-  ALL_BINS = [];
-  LAYOUT.pasillos.forEach(a => { for (let j = 0; j < a.pos; j++) for (let l = 0; l < a.niv; l++) { const b = { row: a.letra, bay: j, lvl: l }; b.code = codeOf(b); ALL_BINS.push(b); } });
+  AISLE = AISLE_BY[curMap] || {};
+}
+function rebuildBins() {
+  AISLE_BY = {}; ALL_BINS = [];
+  MAPS.forEach(m => {
+    AISLE_BY[m.id] = Object.fromEntries(m.pasillos.map(a => [a.letra, a]));
+    m.pasillos.forEach(a => { for (let j = 0; j < a.pos; j++) for (let l = 0; l < a.niv; l++) { const b = { map: m.id, row: a.letra, bay: j, lvl: l }; b.code = codeOf(b); b.key = m.id + ':' + b.code; ALL_BINS.push(b); } });
+  });
+  setCurrentMap();
 }
 // Posición en el mapa de una ubicación (pasillo, posición, nivel)
-function binPos(row, bay, lvl) {
-  const a = AISLE[row], off = (bay - (a.pos - 1) / 2) * BAY_W;
+function binPos(row, bay, lvl, map = curMap) {
+  const a = AISLE_BY[map][row], off = (bay - (a.pos - 1) / 2) * BAY_W;
   return { x: a.vert ? a.x : a.x + off, y: SHELF_Y(lvl), z: a.vert ? a.z + off : a.z };
 }
 // Rectángulo que ocupa cada elemento en planta (centro y medidas en metros)
 const aisleRect = a => { const len = a.pos * BAY_W + .2, dep = 1.2; return { x: a.x, z: a.z, w: a.vert ? dep : len, d: a.vert ? len : dep }; };
 rebuildBins();
-const binByCode = code => ALL_BINS.find(b => b.code === code);
+const binByCode = (code, map = curMap) => ALL_BINS.find(b => b.map === map && b.code === code);
 let free = [], products = [], placements = [], pidSeq = 0;
 const resetBins = () => { free = ALL_BINS.slice(); };
 // Toma una posición libre: primero la pedida (pasillo/posición/nivel), si no, cualquiera del pasillo, si no, cualquiera.
-function takeBin(rows, { bay = null, lvl = null, random = false } = {}) {
+function takeBin(rows, { bay = null, lvl = null, random = false, map = curMap } = {}) {
+  const inMap = free.filter(b => b.map === map);
   const tiers = [
-    free.filter(b => rows.includes(b.row) && (bay == null || b.bay === bay) && (lvl == null || b.lvl === lvl)),
-    free.filter(b => rows.includes(b.row)),
-    free,
+    inMap.filter(b => rows.includes(b.row) && (bay == null || b.bay === bay) && (lvl == null || b.lvl === lvl)),
+    inMap.filter(b => rows.includes(b.row)),
+    inMap,
   ];
   const cand = tiers.find(t => t.length); if (!cand) return null;
   const b = random ? cand[Math.floor(rnd() * cand.length)] : cand[0];
@@ -1381,8 +1436,8 @@ function takeBin(rows, { bay = null, lvl = null, random = false } = {}) {
 }
 const ymd = d => d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : null;
 const fromYmd = s => { if (!s) return null; const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
-function newProduct(name, cat = 'General', sku = null, min = 10) {
-  const p = { id: 'P' + (pidSeq++), sku: sku || `${CATS[cat].ab}-${2000 + pidSeq}`, name, cat, min, places: [] };
+function newProduct(name, cat = 'General', sku = null, min = 10, aviso = null) {
+  const p = { id: 'P' + (pidSeq++), sku: sku || `${CATS[cat].ab}-${2000 + pidSeq}`, name, cat, min, aviso, places: [] };
   products.push(p); return p;
 }
 function addPlacement(p, b, qty, venc, lote = '—') {
@@ -1391,7 +1446,7 @@ function addPlacement(p, b, qty, venc, lote = '—') {
 }
 function finalizeInventory() {
   products = products.filter(p => p.places.length);
-  products.forEach(p => { p.total = p.places.reduce((a, pl) => a + pl.qty, 0); p.low = p.total < p.min; p.hay = norm([p.name, p.sku, p.cat, ...p.places.flatMap(pl => [pl.code, pl.lote, 'pasillo ' + pl.row])].join(' ')); });
+  products.forEach(p => { p.total = p.places.reduce((a, pl) => a + pl.qty, 0); p.low = p.total < p.min; p.hay = norm([p.name, p.sku, p.cat, ...p.places.flatMap(pl => [pl.code, pl.lote, 'pasillo ' + pl.row, mapById(pl.map)?.nombre || ''])].join(' ')); });
   products.sort((a, b) => a.name.localeCompare(b.name, 'es'));
 }
 function seedDemoInventory() {
@@ -1400,14 +1455,14 @@ function seedDemoInventory() {
     const c = CATS[cat];
     const p = newProduct(name, cat, `${c.ab}-${1000 + i * 7 + ri(1, 6)}`, ri(3, 8) * 10);
     const n = 1 + (rnd() < .55) + (rnd() < .2);
-    for (let k = 0; k < n; k++) addPlacement(p, takeBin(c.rows, { random: true }), ri(18, 260),
+    for (let k = 0; k < n; k++) addPlacement(p, takeBin(c.rows, { random: true, map: MAPS[0].id }), ri(18, 260),
       ['Alimentos', 'Bebidas', 'Higiene', 'Limpieza'].includes(cat) ? new Date(2026 + ri(0, 1), ri(0, 11), ri(1, 28)) : null, 'L' + ri(10000, 99999));
   }));
   // algunos con stock bajo para que las alertas sean realistas
   products.filter((_, i) => i % 9 === 4).forEach(p => p.places.forEach(pl => pl.qty = ri(3, 12)));
   finalizeInventory();
 }
-const invItems = () => products.map(p => ({ name: p.name, sku: p.sku, cat: p.cat, min: p.min, places: p.places.map(pl => ({ code: pl.code, qty: pl.qty, lote: pl.lote, venc: ymd(pl.venc) })) }));
+const invItems = () => products.map(p => ({ name: p.name, sku: p.sku, cat: p.cat, min: p.min, ...(p.aviso != null ? { aviso: p.aviso } : {}), places: p.places.map(pl => ({ map: pl.map, code: pl.code, qty: pl.qty, lote: pl.lote, venc: ymd(pl.venc) })) }));
 let lastInvJSON = '', rawInv = null;
 // En la versión publicada el inventario se comparte entre todas las computadoras de la oficina.
 function saveInventory() {
@@ -1419,8 +1474,8 @@ function loadInventory(data = store.get('valsur.inv')) {
   if (!Array.isArray(data)) return false;
   products = []; placements = []; resetBins();
   data.forEach(d => {
-    const p = newProduct(d.name, CATS[d.cat] ? d.cat : 'General', d.sku, d.min ?? 10);
-    (d.places || []).forEach(x => { const b = binByCode(x.code); const i = free.indexOf(b); if (i < 0) return; free.splice(i, 1); addPlacement(p, b, x.qty, fromYmd(x.venc), x.lote || '—'); });
+    const p = newProduct(d.name, CATS[d.cat] ? d.cat : 'General', d.sku, d.min ?? 10, d.aviso ?? null);
+    (d.places || []).forEach(x => { const b = binByCode(x.code, x.map || MAPS[0].id); const i = free.indexOf(b); if (i < 0) return; free.splice(i, 1); addPlacement(p, b, x.qty, fromYmd(x.venc), x.lote || '—'); });
   });
   finalizeInventory();
   return true;
@@ -1485,7 +1540,7 @@ function buildLayout() {
     [-.85, .85].forEach(sd => { const [x, z] = along(0, sd); lines.push([x, .005, z, rot, a.pos * BAY_W + .6]); });
     const hit = new THREE.Mesh(new THREE.BoxGeometry(a.pos * BAY_W + .3, a.niv * LVL_H + .4, 1.4), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
     hit.position.set(a.x, (a.niv * LVL_H + .4) / 2, a.z); hit.rotation.y = rot; hit.userData.aisle = a.letra; g.add(hit); D.hitBoxes.push(hit);
-    const lab = document.createElement('div'); lab.className = 'tag row clickable'; lab.textContent = 'Pasillo ' + a.letra;
+    const lab = document.createElement('div'); lab.className = 'tag row clickable'; lab.textContent = 'Pasillo ' + a.letra + (a.nombre ? ' · ' + a.nombre : '');
     lab.onclick = () => selectAisle(a.letra);
     const [lx, lz] = along(-(a.pos * BAY_W) / 2 - .9, 0);
     D.layLabels.push(D.addLabel(lab, new THREE.Vector3(lx, a.niv * LVL_H + .3, lz), 0));
@@ -1513,7 +1568,8 @@ const boxGeo = new THREE.BoxGeometry(1, 1, 1);
 const palletMat = () => new THREE.MeshLambertMaterial({ color: 0xc8a26b });
 function buildInventoryMeshes() {
   D.scene.children.filter(o => o.userData.inv).forEach(o => { D.scene.remove(o); o.traverse(m => m.material?.dispose?.()); });
-  placements.forEach(pl => {
+  placements.forEach(pl => { pl.obj = null; pl.mats = null; });
+  placements.filter(here).forEach(pl => {
     const g = new THREE.Group(); g.userData.inv = true;
     const bp = binPos(pl.row, pl.bay, pl.lvl), x = bp.x, y = bp.y + .02, z = bp.z;
     const pal = new THREE.Mesh(boxGeo, palletMat()); pal.scale.set(1.3, .12, .95); pal.position.set(0, .06, 0);
@@ -1540,8 +1596,8 @@ function sendFork(pl) {
 }
 function applyDepHighlight() {
   ds.pins.forEach(l => D.removeLabel(l)); ds.pins = [];
-  const inAisle = !ds.sel && ds.aisle ? placements.filter(pl => pl.row === ds.aisle) : null;
-  const sel = ds.sel ? (ds.selPlace ? [ds.selPlace] : ds.sel.places) : inAisle || [];
+  const inAisle = !ds.sel && ds.aisle ? placements.filter(pl => here(pl) && pl.row === ds.aisle) : null;
+  const sel = (ds.sel ? (ds.selPlace ? [ds.selPlace] : ds.sel.places) : inAisle || []).filter(here);
   const a = !ds.sel && ds.aisle && AISLE[ds.aisle];
   D.aisleMark.visible = !!a;
   if (a) {
@@ -1549,7 +1605,7 @@ function applyDepHighlight() {
     D.focus(new THREE.Vector3(a.x, 1, a.z), THREE.MathUtils.clamp(34 / (a.pos * BAY_W + 8), 1.1, 2.4) * (D.viewSize / 34));
   }
   const any = sel.length > 0;
-  placements.forEach(pl => {
+  placements.filter(pl => pl.obj).forEach(pl => {
     const on = sel.includes(pl);
     pl.mats.forEach((m, i) => {
       m.transparent = any && !on; m.opacity = any && !on ? .16 : 1;
@@ -1573,7 +1629,7 @@ function applyDepHighlight() {
 
 /* ---------- UI Depósito ---------- */
 function renderKPIsDep() {
-  const used = placements.length, total = ALL_BINS.length;
+  const used = placements.filter(here).length, total = ALL_BINS.filter(b => b.map === curMap).length || 1;
   const units = products.reduce((a, p) => a + p.total, 0), low = products.filter(p => p.low).length;
   const k = [
     ['#1f5eff', ICON.grid, 'Posiciones ocupadas', `${used}<span class="muted" style="font-size:14px;font-weight:600"> / ${total}</span>`, `<em class="muted">${Math.round(used / total * 100)}%</em>`],
@@ -1603,27 +1659,27 @@ function renderResults() {
       <div class="prod-top"><div class="cat-ic" style="--c:${c.color}">${c.ab}</div>
         <div style="min-width:0"><b>${highlight(p.name, ds.q)}</b><small>${highlight(p.sku, ds.q)} · ${p.cat}</small></div>
         <div class="qty num">${fmt(p.total)}<small>${p.low ? '<span class="low">STOCK BAJO</span>' : 'unidades'}</small></div></div>
-      <div class="locs">${p.places.map(pl => `<button class="loc ${ds.selPlace === pl ? 'sel' : ''}" data-pl="${p.id}|${pl.code}" title="Pasillo ${pl.row} · Posición ${pl.code.slice(2, 4)} · Nivel ${pl.lvl + 1}">${highlight(pl.code, ds.q)}</button>`).join('')}</div></div>`;
+      <div class="locs">${p.places.map(pl => `<button class="loc ${ds.selPlace === pl ? 'sel' : ''} ${here(pl) ? '' : 'other'}" data-pl="${p.id}|${pl.map}|${pl.code}" title="${esc(mapById(pl.map)?.nombre || '')} · Pasillo ${pl.row} · Posición ${pl.code.slice(2, 4)} · Nivel ${pl.lvl + 1}">${here(pl) || MAPS.length < 2 ? '' : esc(mapById(pl.map)?.nombre || '') + ' · '}${highlight(pl.code, ds.q)}</button>`).join('')}</div></div>`;
   }).join('') || `<div class="empty">No encontramos “${esc(ds.q)}”.<br>Probá con otro nombre, código o ubicación.</div>`;
 }
 $('#results').onclick = e => {
   const l = e.target.closest('[data-pl]');
-  if (l) { const [pid, code] = l.dataset.pl.split('|'); const p = products.find(p => p.id === pid); selectProduct(p, p.places.find(pl => pl.code === code)); return; }
+  if (l) { const [pid, map, code] = l.dataset.pl.split('|'); const p = products.find(p => p.id === pid); selectProduct(p, p.places.find(pl => pl.map === map && pl.code === code)); return; }
   const r = e.target.closest('[data-p]'); r && selectProduct(products.find(p => p.id === r.dataset.p));
 };
 $('#results').onkeydown = e => { if (e.key === 'Enter') { const r = e.target.closest('[data-p]'); r && selectProduct(products.find(p => p.id === r.dataset.p)); } };
-function vencCell(d) {
-  if (!d) return '<span class="muted">—</span>';
-  const s = docState(ymd(d));
-  return `<span class="num">${fmtDate(d)}</span>${s.k === 'ok' ? '' : ` <span class="vb" style="--c:${s.c}">${s.k === 'bad' ? 'Vencido' : s.label}</span>`}`;
+function vencCell(pl) {
+  if (!pl.venc) return '<span class="muted">—</span>';
+  const s = vstate(pl);
+  return `<span class="num">${fmtDate(pl.venc)}</span>${s.k === 'ok' ? '' : ` <span class="vb" style="--c:${s.c}">${s.short}</span>`}`;
 }
 function renderAisleDetail(box) {
-  const a = AISLE[ds.aisle], list = placements.filter(pl => pl.row === a.letra).sort((x, y) => x.bay - y.bay || x.lvl - y.lvl);
+  const a = AISLE[ds.aisle], list = placements.filter(pl => here(pl) && pl.row === a.letra).sort((x, y) => x.bay - y.bay || x.lvl - y.lvl);
   const tot = a.pos * a.niv, units = list.reduce((s, pl) => s + pl.qty, 0);
-  box.innerHTML = `<div class="sel-head"><div class="cat-ic" style="--c:var(--blue)">${a.letra}</div><div style="min-width:0"><b style="font-size:14px">Pasillo ${a.letra}</b><small>${a.pos} posiciones × ${a.niv} niveles · ${a.vert ? 'vertical' : 'horizontal'}</small></div><button class="x" data-close title="Cerrar">×</button></div>
+  box.innerHTML = `<div class="sel-head"><div class="cat-ic" style="--c:var(--blue)">${a.letra}</div><div style="min-width:0"><b style="font-size:14px">Pasillo ${a.letra}${a.nombre ? ' · ' + esc(a.nombre) : ''}</b><small>${a.pos} posiciones × ${a.niv} niveles · ${a.vert ? 'vertical' : 'horizontal'}</small></div><button class="x" data-close title="Cerrar">×</button></div>
     <div class="where"><div><small>Ocupadas</small><b>${list.length}/${tot}</b></div><div><small>Productos</small><b>${new Set(list.map(pl => pl.product)).size}</b></div><div><small>Unidades</small><b>${fmt(units)}</b></div></div>
     ${list.length ? `<div class="aisle-list"><table class="lots"><thead><tr><th>Ubicación</th><th>Producto</th><th style="text-align:right">Cant.</th></tr></thead><tbody>
-      ${list.map(pl => `<tr data-pl="${pl.code}"><td><b style="color:var(--blue)">${pl.code}</b></td><td>${esc(pl.product.name)}${pl.venc && docState(ymd(pl.venc)).k !== 'ok' ? ` <span class="vb" style="--c:${docState(ymd(pl.venc)).c}">${docState(ymd(pl.venc)).k === 'bad' ? 'Vencido' : 'Vence pronto'}</span>` : ''}</td><td class="num" style="text-align:right;font-weight:700">${fmt(pl.qty)}</td></tr>`).join('')}
+      ${list.map(pl => `<tr data-pl="${pl.code}"><td><b style="color:var(--blue)">${pl.code}</b></td><td>${esc(pl.product.name)}${pl.venc && vstate(pl).k !== 'ok' ? ` <span class="vb" style="--c:${vstate(pl).c}">${vstate(pl).short}</span>` : ''}</td><td class="num" style="text-align:right;font-weight:700">${fmt(pl.qty)}</td></tr>`).join('')}
     </tbody></table></div>` : '<div class="empty" style="padding:16px">Este pasillo está vacío.</div>'}`;
   box.classList.add('open');
 }
@@ -1634,10 +1690,12 @@ function renderDetail() {
   const pl = ds.selPlace || p.places[0], c = CATS[p.cat];
   box.innerHTML = `
     <div class="sel-head"><div class="cat-ic" style="--c:${c.color}">${c.ab}</div><div style="min-width:0"><b style="font-size:14px">${esc(p.name)}</b><small>${p.sku} · ${p.cat}</small></div><button class="x" data-close title="Cerrar">×</button></div>
+    ${MAPS.length > 1 ? `<div class="muted" style="font-size:12px;margin-top:8px">${esc(mapById(pl.map)?.nombre || '')}</div>` : ''}
     <div class="where"><div><small>Pasillo</small><b>${pl.row}</b></div><div><small>Posición</small><b>${pl.code.slice(2, 4)}</b></div><div><small>Nivel</small><b>${pl.lvl + 1}</b></div></div>
     <table class="lots"><thead><tr><th>Ubicación</th><th>Lote</th><th>Vence</th><th style="text-align:right">Cant.</th></tr></thead><tbody>
-    ${p.places.map(x => `<tr data-code="${x.code}" style="${x === pl ? 'background:var(--blue-50)' : ''}"><td><b style="color:var(--blue)">${x.code}</b></td><td>${x.lote}</td><td>${vencCell(x.venc)}</td><td class="num" style="text-align:right;font-weight:700">${x.qty}</td></tr>`).join('')}
+    ${p.places.map((x, i) => `<tr data-i="${i}" style="${x === pl ? 'background:var(--blue-50)' : ''}"><td><b style="color:var(--blue)">${esc(locLabel(x))}</b></td><td>${x.lote}</td><td>${vencCell(x)}</td><td class="num" style="text-align:right;font-weight:700">${x.qty}</td></tr>`).join('')}
     </tbody></table>
+    ${p.places.some(x => x.venc) ? `<div style="font-size:12px;margin-top:8px" class="muted">Aviso de vencimiento: ${alertDays(p)} días antes${can('despachar') ? ' · <button class="link" data-aviso>Cambiar</button>' : ''}</div>` : ''}
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px;flex-wrap:wrap">
       <span style="font-size:12px">Total <b class="num">${fmt(p.total)}</b> · mín. ${p.min} ${p.low ? '<span class="low">· REPONER</span>' : ''}</span>
       <span style="display:flex;gap:6px;flex-wrap:wrap">${p.places.length > 1 ? '<button class="btn ghost" data-all>Ver todas</button>' : ''}<button class="btn ghost" data-copy>Copiar ubicación</button>${can('despachar') ? '<button class="btn green" data-desp>Despachar</button>' : ''}</span>
@@ -1647,18 +1705,23 @@ function renderDetail() {
 $('#pdetail').onclick = e => {
   if (!ds.sel && ds.aisle) {
     if (e.target.closest('[data-close]')) { ds.aisle = null; renderDetail(); applyDepHighlight(); D.reset(); return; }
-    const r = e.target.closest('[data-pl]'); if (r) { const pl = placements.find(x => x.code === r.dataset.pl); pl && selectPlace(pl); }
+    const r = e.target.closest('[data-pl]'); if (r) { const pl = placements.find(x => here(x) && x.code === r.dataset.pl); pl && selectPlace(pl); }
     return;
   }
   const p = ds.sel; if (!p) return;
   if (e.target.closest('[data-close]')) return selectProduct(null);
   if (e.target.closest('[data-all]')) return selectProduct(p);
   if (e.target.closest('[data-desp]')) return despachar(p, ds.selPlace || p.places[0]);
-  if (e.target.closest('[data-copy]')) { const pl = ds.selPlace || p.places[0]; const txt = `${p.name} — Pasillo ${pl.row}, posición ${pl.code.slice(2, 4)}, nivel ${pl.lvl + 1} (${pl.code})`; navigator.clipboard?.writeText(txt).catch(() => {}); return toast('Ubicación copiada: ' + pl.code); }
-  const r = e.target.closest('[data-code]'); if (r) selectPlace(p.places.find(x => x.code === r.dataset.code));
+  if (e.target.closest('[data-aviso]')) return editAviso(p);
+  if (e.target.closest('[data-copy]')) { const pl = ds.selPlace || p.places[0]; const txt = `${p.name} — ${MAPS.length > 1 ? (mapById(pl.map)?.nombre || '') + ', ' : ''}pasillo ${pl.row}, posición ${pl.code.slice(2, 4)}, nivel ${pl.lvl + 1} (${pl.code})`; navigator.clipboard?.writeText(txt).catch(() => {}); return toast('Ubicación copiada: ' + pl.code); }
+  const r = e.target.closest('[data-i]'); if (r) selectPlace(p.places[+r.dataset.i]);
 };
 function selectProduct(p, pl = null) {
   ds.aisle = null;
+  // si la mercadería está en otro mapa, se abre ese mapa
+  const target = pl || (p && !p.places.some(here) ? p.places[0] : null);
+  if (target && !here(target)) switchMap(target.map, true);
+  if (depTab !== 'map') setDepTab('map');
   ds.sel = p; ds.selPlace = pl || (p && p.places.length === 1 ? p.places[0] : null);
   renderResults(); renderDetail(); applyDepHighlight();
   if (!p) D.reset();
@@ -1764,7 +1827,7 @@ function applyImport(rows, mode) {
     let p = products.find(p => norm(p.name) === norm(r.name)) || newProduct(r.name);
     const z = r.zone;
     if (z.bay != null && z.lvl != null) {
-      const same = placements.find(pl => pl.code === z.label && pl.product === p);
+      const same = placements.find(pl => here(pl) && pl.code === z.label && pl.product === p);
       if (same) { same.qty += r.qty; if (r.venc) same.venc = r.venc; return; }
     }
     const b = takeBin([z.row], { bay: z.bay, lvl: z.lvl });
@@ -1781,13 +1844,14 @@ function applyImport(rows, mode) {
 }
 function refreshInventory() {
   ds.sel = null; ds.selPlace = null; if (ds.aisle && !AISLE[ds.aisle]) ds.aisle = null;
+  setTimeout(() => { renderDepTabs(); if (depTab === 'venc') renderVenc(); maybeVencPopup(); });
   if (D) { buildInventoryMeshes(); applyDepHighlight(); D.reset(); }
   renderCats(); renderResults(); renderDetail(); renderKPIsDep();
 }
 function showImportPreview(file, res) {
   const { rows, errors } = res;
   const names = new Set(rows.map(r => norm(r.name))).size, units = rows.reduce((a, r) => a + r.qty, 0);
-  openModal(`<h2>Importar inventario</h2><p class="muted" style="margin:0">Archivo <b>${esc(file.name)}</b> · hoja “${esc(res.sheet)}”</p>
+  openModal(`<h2>Importar inventario</h2><p class="muted" style="margin:0">Archivo <b>${esc(file.name)}</b> · hoja “${esc(res.sheet)}” · se ubica en <b>${esc(LAYOUT.nombre)}</b></p>
     <div class="imp-sum"><div><b class="num">${rows.length}</b><small>filas válidas</small></div><div><b class="num">${names}</b><small>productos</small></div><div><b class="num">${fmt(units)}</b><small>unidades</small></div><div><b class="num" style="color:${errors.length ? 'var(--red)' : 'inherit'}">${errors.length}</b><small>con errores</small></div></div>
     ${rows.length ? `<table class="prev"><thead><tr><th>Fila</th><th>Nombre</th><th style="text-align:right">Cant.</th><th>Vence</th><th>Zona</th></tr></thead><tbody>
       ${rows.slice(0, 6).map(r => `<tr><td class="muted">${r.line}</td><td>${esc(r.name)}</td><td class="num" style="text-align:right">${fmt(r.qty)}</td><td class="num">${fmtDate(r.venc)}</td><td><b style="color:var(--blue)">${r.zone.label}</b></td></tr>`).join('')}
@@ -2108,7 +2172,7 @@ function login(user, pass) {
   const k = String(user).trim().toLowerCase(), u = USERS[k];
   if (!u || cyrb53(`valsur|${k}|${pass}`) !== u.h) return false;
   me.user = k; me.role = u.role; store.set('valsur.session', { user: k, at: Date.now() });
-  firstLoad = true; applyRole(); return true;
+  firstLoad = true; applyRole(); setTimeout(() => { renderDepTabs(); maybeVencPopup(); }, 300); return true;
 }
 function logout() { store.del('valsur.session'); me.user = null; me.role = null; closeModal(); applyRole(); }
 $('#login-card').onsubmit = e => {
@@ -2513,11 +2577,17 @@ async function initData() {
         const j = JSON.stringify(items); if (j === lastInvJSON) return;
         lastInvJSON = j; rawInv = items; loadInventory(items); refreshInventory();
       }, e => console.error(e));
-      sync.db.doc('deposito/layout').onSnapshot(snap => {
-        const L = snap.exists ? snap.data().layout : null;
-        if (!L || snap.metadata.hasPendingWrites || JSON.stringify(normalizeLayout(L)) === JSON.stringify(LAYOUT)) return;
-        applyLayout(L);
-      }, e => console.error(e));
+      // mapas del depósito (con migración desde la estructura única anterior)
+      let legacy = null, mapas = null;
+      const syncMaps = () => {
+        const list = mapas || (legacy ? [{ ...legacy, id: 'central', nombre: 'Depósito central' }] : null);
+        if (!list) return;
+        const j = JSON.stringify(normalizeMaps(list));
+        if (j === JSON.stringify(MAPS) || j === lastMapsJSON) return;
+        applyMaps(list);
+      };
+      sync.db.doc('deposito/mapas').onSnapshot(snap => { if (snap.metadata.hasPendingWrites) return; mapas = snap.exists ? snap.data().mapas : null; syncMaps(); }, e => console.error(e));
+      sync.db.doc('deposito/layout').onSnapshot(snap => { legacy = snap.exists ? snap.data().layout : null; syncMaps(); }, e => console.error(e));
       return;
     }
   }
@@ -2546,29 +2616,29 @@ function despachar(p, pl0) {
   const abiertos = pedidos.filter(x => !['entregado', 'cancelado'].includes(x.estado));
   openModal(`<form id="desp-form" novalidate><h2>Despachar mercadería</h2><p class="muted" style="margin:0">${esc(p.name)} · ${esc(p.sku)} · ${fmt(p.total)} unidades en stock</p>
     <div class="form-grid" style="margin-top:14px">
-      <label class="field" for="dp-code">Sacar de<select id="dp-code" name="code">${places.map(x => `<option value="${x.code}" ${x === pl0 ? 'selected' : ''}>${x.code} · ${fmt(x.qty)} u.${x.lote && x.lote !== '—' ? ' · lote ' + esc(x.lote) : ''}</option>`).join('')}</select></label>
+      <label class="field" for="dp-code">Sacar de<select id="dp-code" name="code">${places.map((x, i) => `<option value="${i}" ${x === pl0 ? 'selected' : ''}>${esc(locLabel(x))} · ${fmt(x.qty)} u.${x.lote && x.lote !== '—' ? ' · lote ' + esc(x.lote) : ''}</option>`).join('')}</select></label>
       <label class="field" for="dp-qty">Cantidad *<input id="dp-qty" name="qty" type="number" min="1" step="1" inputmode="numeric" required></label>
       <label class="field full" for="dp-ped">Para el pedido<select id="dp-ped" name="pedido"><option value="">Sin pedido / otro destino</option>${abiertos.map(x => `<option value="${x.id}">${esc(x.num)} · ${esc(x.cliente)}</option>`).join('')}</select></label>
       <label class="field full" for="dp-nota">Destino u observación<input id="dp-nota" name="nota" placeholder="Ej. Retiro en mostrador, reposición de sucursal"></label>
     </div>
     <div class="modal-actions"><button type="button" class="btn ghost" data-cancel>Cancelar</button><button class="btn green">Despachar</button></div></form>`, root => {
     const f = root.querySelector('form');
-    const upd = () => { const q = places.find(x => x.code === f.code.value)?.qty || 0; f.qty.max = q; f.qty.placeholder = 'Máximo ' + fmt(q); };
+    const upd = () => { const q = places[+f.code.value]?.qty || 0; f.qty.max = q; f.qty.placeholder = 'Máximo ' + fmt(q); };
     f.code.onchange = upd; upd();
     f.onsubmit = async e => {
       e.preventDefault();
-      const n = Math.floor(+f.qty.value), pl = places.find(x => x.code === f.code.value);
+      const n = Math.floor(+f.qty.value), pl = places[+f.code.value];
       if (!pl || !(n > 0)) { f.qty.focus(); return toast('Indicá cuántas unidades salen'); }
       if (n > pl.qty) { f.qty.focus(); return toast(`En ${pl.code} hay ${fmt(pl.qty)} unidades`); }
       const ped = f.pedido.value && DATA.pedidos.get(f.pedido.value), nota = f.nota.value.trim();
       pl.qty -= n;
-      if (pl.qty === 0) { places.splice(places.indexOf(pl), 1); placements.splice(placements.indexOf(pl), 1); free.push(binByCode(pl.code)); }
+      if (pl.qty === 0) { places.splice(places.indexOf(pl), 1); placements.splice(placements.indexOf(pl), 1); free.push(binByCode(pl.code, pl.map)); }
       finalizeInventory(); saveInventory();
       const at = Date.now();
-      await put('movimientos', 'm' + at.toString(36) + Math.random().toString(36).slice(2, 5), { at, tipo: 'salida', producto: p.name, sku: p.sku, code: pl.code, qty: n, pedidoId: ped ? ped.id : '', destino: ped ? `${ped.num} · ${ped.cliente}` : nota, nota: ped ? nota : '', usuario: me.user || '' });
+      await put('movimientos', 'm' + at.toString(36) + Math.random().toString(36).slice(2, 5), { at, tipo: 'salida', producto: p.name, sku: p.sku, code: locLabel(pl), qty: n, pedidoId: ped ? ped.id : '', destino: ped ? `${ped.num} · ${ped.cliente}` : nota, nota: ped ? nota : '', usuario: me.user || '' });
       closeModal();
       refreshInventory();
-      if (products.includes(p)) selectProduct(p);
+      if (products.includes(p) && depTab === 'map') selectProduct(p);
       toast(`Salieron ${fmt(n)} u. de ${p.name} (${pl.code})${pl.qty === 0 ? ' · la posición quedó libre' : ''}`);
     };
   });
@@ -2715,20 +2785,207 @@ $('#gps-panel').onclick = e => {
 };
 
 /* =========================================================
+   Vencimientos: alertas por fecha
+   ========================================================= */
+// Configuración: días de aviso general, por categoría y por producto (el más específico manda).
+const vencCfg = () => ({ dias: 30, cats: {}, aviso: true, ...(DATA.config.get('venc') || {}) });
+const alertDays = p => p.aviso ?? vencCfg().cats?.[p.cat] ?? vencCfg().dias;
+function vstate(pl) {
+  if (!pl.venc) return { k: 'none', c: '#94a3b8', short: '', rank: 9 };
+  const n = Math.ceil((pl.venc - new Date(new Date().toDateString())) / 864e5), lim = alertDays(pl.product);
+  if (n < 0) return { k: 'bad', n, c: '#ef4444', short: 'Vencido', label: `Vencido hace ${-n} día${n === -1 ? '' : 's'}`, rank: 0 };
+  if (n <= lim) return { k: 'warn', n, c: '#f59e0b', short: n === 0 ? 'Vence hoy' : `Vence en ${n} d`, label: n === 0 ? 'Vence hoy' : `Vence en ${n} día${n === 1 ? '' : 's'}`, rank: 1 };
+  return { k: 'ok', n, c: '#16a34a', short: 'Al día', label: `Faltan ${n} días`, rank: 2 };
+}
+const vencAlerts = () => placements.filter(pl => ['bad', 'warn'].includes(vstate(pl).k));
+const vv = { f: 'alerta', q: '' };
+const V_FILTERS = {
+  alerta:  ['En alerta', pl => ['bad', 'warn'].includes(vstate(pl).k)],
+  bad:     ['Vencidos', pl => vstate(pl).k === 'bad'],
+  warn:    ['Por vencer', pl => vstate(pl).k === 'warn'],
+  todos:   ['Todos con fecha', pl => !!pl.venc],
+};
+function renderVenc() {
+  const all = placements.filter(pl => pl.venc), cfg = vencCfg(), edit = can('despachar');
+  const bad = all.filter(pl => vstate(pl).k === 'bad'), warn = all.filter(pl => vstate(pl).k === 'warn'), soon = all.filter(pl => vstate(pl).k === 'ok' && vstate(pl).n <= 90);
+  const sum = l => fmt(l.reduce((a, pl) => a + pl.qty, 0));
+  const toks = norm(vv.q).split(/\s+/).filter(Boolean);
+  const list = all.filter(V_FILTERS[vv.f][1]).filter(pl => toks.every(t => norm([pl.product.name, pl.product.sku, pl.product.cat, pl.lote, locLabel(pl)].join(' ')).includes(t)))
+    .sort((a, b) => a.venc - b.venc);
+  const cats = [...new Set(products.filter(p => p.places.some(pl => pl.venc)).map(p => p.cat))];
+  setHTML($('#venc-view'), `
+    <div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+      <div class="card kpi clickable" data-f="bad"><div class="kpi-ic" style="background:color-mix(in srgb,#ef4444 12%,var(--card));color:#ef4444">${ICON.alert}</div><div><small>Vencidos</small><b class="num">${bad.length}</b><em class="muted">${sum(bad)} u.</em></div></div>
+      <div class="card kpi clickable" data-f="warn"><div class="kpi-ic" style="background:color-mix(in srgb,#f59e0b 12%,var(--card));color:#f59e0b">${ICON.clock}</div><div><small>Por vencer (en aviso)</small><b class="num">${warn.length}</b><em class="muted">${sum(warn)} u.</em></div></div>
+      <div class="card kpi clickable" data-f="todos"><div class="kpi-ic" style="background:color-mix(in srgb,#16a34a 12%,var(--card));color:#16a34a">${ICON.cal}</div><div><small>Vencen en 90 días</small><b class="num">${soon.length + warn.length}</b><em class="muted">lotes</em></div></div>
+    </div>
+    <div class="venc-grid">
+      <div class="card venc-list">
+        <div class="venc-tools"><div class="box"><input id="vv-q" type="text" placeholder="Buscar producto, lote o ubicación" value="${esc(vv.q)}" autocomplete="off"></div>
+          <div class="cats" style="padding:0">${Object.entries(V_FILTERS).map(([k, [l, f]]) => `<button class="chip ${vv.f === k ? 'active' : ''}" data-vf="${k}">${l} · ${all.filter(f).length}</button>`).join('')}</div></div>
+        <div class="table-wrap" style="max-height:560px">
+          <table class="venc-table"><thead><tr><th>Estado</th><th>Producto</th><th>Lote</th><th>Ubicación</th><th style="text-align:right">Cant.</th><th>Vence</th><th>Aviso</th><th></th></tr></thead><tbody>
+          ${list.map(pl => { const v = vstate(pl), i = placements.indexOf(pl); return `<tr data-i="${i}">
+            <td><span class="pill" style="--c:${v.c}">${v.k === 'ok' ? 'Al día' : v.short}</span></td>
+            <td><b>${esc(pl.product.name)}</b><br><small class="muted">${esc(pl.product.sku)} · ${esc(pl.product.cat)}</small></td>
+            <td class="num">${esc(pl.lote)}</td><td><b style="color:var(--blue)">${esc(locLabel(pl))}</b></td>
+            <td class="num" style="text-align:right;font-weight:700">${fmt(pl.qty)}</td>
+            <td><span class="num">${fmtDate(pl.venc)}</span><br><small class="dleft" style="color:${v.c}">${v.label}</small></td>
+            <td><small class="muted">${alertDays(pl.product)} días antes</small>${edit ? `<br><button class="link" data-av>Cambiar</button>` : ''}</td>
+            <td style="white-space:nowrap"><button class="btn ghost" data-ver>Ver</button>${edit ? ` <button class="btn ghost" data-desp>Despachar</button>` : ''}</td></tr>`; }).join('')
+          || `<tr><td colspan="8" class="empty">${all.length ? 'No hay lotes con este filtro. ¡Todo en orden!' : 'Ningún producto tiene fecha de vencimiento cargada.'}</td></tr>`}
+          </tbody></table></div>
+      </div>
+      <form class="card venc-cfg" id="venc-cfg">
+        <h3>Cuándo avisar</h3>
+        <p>Un lote entra “en aviso” cuando le quedan estos días o menos para vencer. Lo más específico manda: producto, después categoría, después el general.</p>
+        <label class="field" for="vc-dias">Aviso general (días antes)<input id="vc-dias" name="dias" type="number" min="0" max="365" value="${cfg.dias}" ${edit ? '' : 'disabled'}></label>
+        ${cats.length ? `<div class="mini-title" style="margin:4px 0 0">Por categoría (opcional)</div><div class="cat-rows">${cats.map(c => `<span>${esc(c)}</span><input type="number" min="0" max="365" name="cat:${esc(c)}" value="${cfg.cats?.[c] ?? ''}" placeholder="${cfg.dias}" aria-label="Días de aviso para ${esc(c)}" ${edit ? '' : 'disabled'}>`).join('')}</div>` : ''}
+        <label class="switch"><input type="checkbox" name="aviso" ${cfg.aviso !== false ? 'checked' : ''} ${edit ? '' : 'disabled'}>Mostrar un aviso al ingresar si hay lotes vencidos o por vencer</label>
+        ${edit ? '<button class="btn">Guardar avisos</button>' : '<p>Solo el jefe y el depósito pueden cambiar los avisos.</p>'}
+      </form>
+    </div>`);
+}
+$('#venc-view').addEventListener('input', e => { if (e.target.id === 'vv-q') { vv.q = e.target.value; const pos = e.target.selectionStart; renderVenc(); const i = $('#vv-q'); i.focus(); i.setSelectionRange(pos, pos); } });
+$('#venc-view').addEventListener('click', e => {
+  const k = e.target.closest('[data-f]'); if (k && !e.target.closest('form')) { vv.f = k.dataset.f; return renderVenc(); }
+  const f = e.target.closest('[data-vf]'); if (f) { vv.f = f.dataset.vf; return renderVenc(); }
+  const row = e.target.closest('tr[data-i]'); if (!row) return;
+  const pl = placements[+row.dataset.i]; if (!pl) return;
+  if (e.target.closest('[data-ver]')) { setDepTab('map'); selectPlace(pl); }
+  if (e.target.closest('[data-desp]')) despachar(pl.product, pl);
+  if (e.target.closest('[data-av]')) editAviso(pl.product);
+});
+$('#venc-view').addEventListener('submit', async e => {
+  e.preventDefault(); const f = e.target, cats = {};
+  [...f.elements].filter(x => x.name?.startsWith('cat:') && x.value !== '').forEach(x => cats[x.name.slice(4)] = clampN(x.value, 0, 365, 30));
+  if (await put('config', 'venc', { dias: clampN(f.dias.value, 0, 365, 30), cats, aviso: f.aviso.checked })) { toast('Avisos de vencimiento guardados'); renderVenc(); renderDepTabs(); }
+});
+onData('config', () => { renderDepTabs(); if (depTab === 'venc') renderVenc(); });
+function editAviso(p) {
+  const cfg = vencCfg(), def = cfg.cats?.[p.cat] ?? cfg.dias;
+  openModal(`<form id="av-form" novalidate><h2>Aviso de vencimiento</h2><p class="muted" style="margin:0">${esc(p.name)} · ${esc(p.cat)}</p>
+    <label class="field" for="av-d" style="margin-top:14px">Avisar con estos días de anticipación<input id="av-d" name="d" type="number" min="0" max="365" value="${p.aviso ?? ''}" placeholder="${def} (según ${cfg.cats?.[p.cat] != null ? 'la categoría' : 'el aviso general'})"></label>
+    <p class="muted" style="font-size:12.5px">Dejalo vacío para usar el aviso ${cfg.cats?.[p.cat] != null ? 'de la categoría' : 'general'} (${def} días).</p>
+    <div class="modal-actions"><button type="button" class="btn ghost" data-cancel>Cancelar</button><button class="btn">Guardar</button></div></form>`, root => {
+    const f = root.querySelector('form');
+    f.onsubmit = async e => {
+      e.preventDefault();
+      p.aviso = f.d.value === '' ? null : clampN(f.d.value, 0, 365, def);
+      closeModal(); await saveInventory();
+      renderDetail(); renderDepTabs(); if (depTab === 'venc') renderVenc();
+      toast(p.aviso == null ? 'Usa el aviso general' : `Avisa ${p.aviso} días antes`);
+    };
+  });
+}
+// aviso al ingresar (una vez por día y por usuario en este navegador)
+function maybeVencPopup() {
+  if (!['jefe', 'deposito'].includes(me.role) || vencCfg().aviso === false || !$('#modal').hidden) return;
+  const al = vencAlerts(); if (!al.length) return;
+  const key = 'valsur.venc-aviso.' + me.user, today = ymd(new Date());
+  if (store.get(key) === today) return;
+  store.set(key, today);
+  const bad = al.filter(pl => vstate(pl).k === 'bad').length;
+  openModal(`<h2>Alertas de vencimiento</h2><p class="muted" style="margin:0">${bad ? `<b style="color:var(--red)">${bad} lote${bad === 1 ? '' : 's'} vencido${bad === 1 ? '' : 's'}</b>${al.length - bad ? ' y ' : ''}` : ''}${al.length - bad ? `<b style="color:var(--amber-ink)">${al.length - bad} por vencer</b>` : ''} en el depósito.</p>
+    <ul class="errlist warn" style="margin-top:12px">${al.sort((a, b) => a.venc - b.venc).slice(0, 6).map(pl => `<li>${esc(pl.product.name)} · ${esc(locLabel(pl))} · ${vstate(pl).label}</li>`).join('')}</ul>
+    <div class="modal-actions"><button class="btn ghost" data-cancel>Más tarde</button><button class="btn" data-go>Ver vencimientos</button></div>`,
+    root => root.querySelector('[data-go]').onclick = () => { closeModal(); go('deposito'); vv.f = 'alerta'; setDepTab('venc'); });
+}
+
+/* =========================================================
    Editor de la estructura del depósito
    ========================================================= */
 // Aplica una estructura nueva: reubica el inventario por código y rearma el mapa 3D.
-function applyLayout(L) {
+function applyMaps(list) {
   const items = rawInv || invItems();
-  LAYOUT = normalizeLayout(L); rebuildBins();
+  MAPS = normalizeMaps(list); rebuildBins();
   loadInventory(items);
   if (D) buildLayout();
-  refreshInventory();
+  refreshInventory(); renderDepTabs();
 }
-async function saveLayout() {
-  if (sync.cloud) return dbWrite(() => sync.db.doc('deposito/layout').set({ layout: LAYOUT, updatedAt: Date.now() }));
-  store.set('valsur.layout', LAYOUT); return true;
+function applyLayout(L) { applyMaps(MAPS.map(m => m.id === curMap ? { ...L, id: curMap } : m)); }
+let lastMapsJSON = '';
+async function saveMaps() {
+  lastMapsJSON = JSON.stringify(MAPS);
+  if (sync.cloud) return dbWrite(() => sync.db.doc('deposito/mapas').set({ mapas: MAPS, updatedAt: Date.now() }));
+  store.set('valsur.mapas', MAPS); return true;
 }
+const saveLayout = saveMaps;
+// cambiar de mapa (pestaña)
+function switchMap(id, keepSel) {
+  if (!mapById(id)) return;
+  curMap = id; store.set('valsur.mapa-dep', id); setCurrentMap();
+  if (!keepSel) { ds.sel = null; ds.selPlace = null; }
+  ds.aisle = null;
+  if (D) { buildLayout(); buildInventoryMeshes(); applyDepHighlight(); if (!keepSel) D.reset(); }
+  renderKPIsDep(); renderResults(); renderDetail(); renderDepTabs();
+}
+let depTab = 'map';
+function setDepTab(t) {
+  depTab = t;
+  $('#dep-main').hidden = t !== 'map'; $('#venc-view').hidden = t !== 'venc';
+  renderDepTabs(); if (t === 'venc') renderVenc();
+}
+function renderDepTabs() {
+  const n = vencAlerts().length, editable = can('editLayout');
+  $('#dep-title').textContent = depTab === 'venc' ? 'Vencimientos' : LAYOUT.nombre;
+  $('#dep-sub').textContent = depTab === 'venc' ? 'Lotes vencidos y por vencer en todos los mapas, con avisos configurables.' : 'Encontrá cualquier mercadería y su ubicación exacta: pasillo, posición y nivel.';
+  setHTML($('#dep-tabs'), MAPS.map(m => `<button class="dtab ${depTab === 'map' && m.id === curMap ? 'active' : ''} ${editable && MAPS.length > 1 ? '' : 'solo'}" data-map="${m.id}" role="tab">${esc(m.nombre)}${editable && MAPS.length > 1 ? `<span class="dx" data-del="${m.id}" title="Borrar este mapa" role="button" aria-label="Borrar ${esc(m.nombre)}">×</span>` : ''}</button>`).join('')
+    + (editable ? '<button class="dtab add" data-new>+ Nuevo mapa</button>' : '')
+    + `<button class="dtab venc ${depTab === 'venc' ? 'active' : ''}" data-venc role="tab">Vencimientos${n ? `<b class="tab-badge">${n}</b>` : ''}</button>`);
+  const b = $('#badge-deposito'); b.hidden = !n || !['jefe', 'deposito'].includes(me.role); b.textContent = n;
+}
+$('#dep-tabs').onclick = e => {
+  const del = e.target.closest('[data-del]'); if (del) return deleteMap(del.dataset.del);
+  if (e.target.closest('[data-new]')) return newMap();
+  if (e.target.closest('[data-venc]')) return setDepTab('venc');
+  const t = e.target.closest('[data-map]'); if (!t) return;
+  if (depTab !== 'map') setDepTab('map');
+  if (t.dataset.map !== curMap) switchMap(t.dataset.map);
+};
+function newMap() {
+  openModal(`<form id="map-form" novalidate><h2>Nuevo mapa</h2><p class="muted" style="margin:0">Un mapa por cada depósito, galpón o sector. Después podés editar su estructura.</p>
+    <div class="form-grid" style="margin-top:14px">
+      <label class="field full" for="nm-name">Nombre *<input id="nm-name" name="nombre" maxlength="40" placeholder="Ej. Galpón 2, Cámara de frío" required></label>
+    </div>
+    <h4>¿Cómo empieza?</h4>
+    <div class="seg" style="flex-direction:column">
+      <label><input type="radio" name="base" value="vacio" checked><span><b>Vacío</b><span class="muted">Solo el galpón; agregás los pasillos y zonas.</span></span></label>
+      <label><input type="radio" name="base" value="copia"><span><b>Copiar la estructura de “${esc(LAYOUT.nombre)}”</b><span class="muted">Mismos pasillos y zonas, sin mercadería.</span></span></label>
+    </div>
+    <div class="modal-actions"><button type="button" class="btn ghost" data-cancel>Cancelar</button><button class="btn">Crear y editar</button></div></form>`, root => {
+    const f = root.querySelector('form');
+    f.onsubmit = async e => {
+      e.preventDefault();
+      const nombre = f.nombre.value.trim(); if (!nombre) { f.nombre.focus(); return toast('Poné un nombre para el mapa'); }
+      if (MAPS.some(m => norm(m.nombre) === norm(nombre))) { f.nombre.focus(); return toast('Ya hay un mapa con ese nombre'); }
+      const id = 'm' + Date.now().toString(36);
+      const base = f.base.value === 'copia' ? clone(LAYOUT) : { ancho: 24, largo: 20, pasillos: [], zonas: [] };
+      const nl = { ...base, id, nombre };
+      applyMaps([...MAPS, nl]);
+      if (!await saveMaps()) return;
+      closeModal(); if (depTab !== 'map') setDepTab('map'); switchMap(id); openLayoutEditor();
+      toast(`Mapa “${nombre}” creado`);
+    };
+  });
+}
+function deleteMap(id) {
+  const m = mapById(id); if (!m || MAPS.length < 2) return;
+  const ps = placements.filter(pl => pl.map === id), units = ps.reduce((a, pl) => a + pl.qty, 0);
+  confirmModal('Borrar mapa', `¿Borrar el mapa <b>${esc(m.nombre)}</b>?${ps.length ? ` <br><br><b style="color:var(--red)">Tiene ${ps.length} ubicaciones con mercadería (${fmt(units)} unidades) que también se van a borrar del inventario.</b>` : ' Está vacío.'} Esta acción no se puede deshacer.`, ps.length ? 'Borrar mapa y mercadería' : 'Borrar mapa', async () => {
+    if (ps.length) {
+      ps.forEach(pl => { pl.product.places.splice(pl.product.places.indexOf(pl), 1); placements.splice(placements.indexOf(pl), 1); });
+      finalizeInventory(); rawInv = invItems();
+    }
+    const rest = MAPS.filter(x => x.id !== id);
+    if (curMap === id) { curMap = rest[0].id; store.set('valsur.mapa-dep', curMap); }
+    applyMaps(rest);
+    if (!await saveMaps()) return;
+    if (ps.length) await saveInventory();
+    toast(`Mapa “${m.nombre}” borrado`);
+  });
+}
+
 const ed = { L: null, sel: null, undo: [], drag: null, dirty: false, origLetter: {} };
 const clone = o => JSON.parse(JSON.stringify(o));
 const snap5 = v => Math.round(v * 2) / 2;
@@ -2739,7 +2996,7 @@ const edFind = id => edItems().find(x => x.id === id);
 // Ocupación por pasillo (según la letra que tenía al abrir el editor)
 function occupied(a) {
   const old = ed.origLetter[a.id]; if (!old) return { n: 0, maxBay: -1, maxLvl: -1 };
-  const ps = placements.filter(pl => pl.row === old);
+  const ps = placements.filter(pl => here(pl) && pl.row === old);
   return { n: ps.length, maxBay: Math.max(-1, ...ps.map(pl => pl.bay)), maxLvl: Math.max(-1, ...ps.map(pl => pl.lvl)) };
 }
 function problems() {
@@ -2758,6 +3015,7 @@ function openLayoutEditor() {
   ed.L = clone(LAYOUT); ed.sel = null; ed.undo = []; ed.dirty = false;
   ed.origLetter = Object.fromEntries(LAYOUT.pasillos.map(a => [a.id, a.letra]));
   $('#lay-ed').hidden = false; document.body.style.overflow = 'hidden';
+  $('.lay-title b').textContent = LAYOUT.nombre;
   renderEd(); renderProps();
 }
 function closeLayoutEditor() { $('#lay-ed').hidden = true; document.body.style.overflow = ''; }
@@ -2785,7 +3043,8 @@ function renderEd() {
     for (let j = 1; j < a.pos; j++) { const o = -a.pos * BAY_W / 2 + j * BAY_W; ticks += a.vert ? `<line x1="${a.x - .6}" y1="${a.z + o}" x2="${a.x + .6}" y2="${a.z + o}"/>` : `<line x1="${a.x + o}" y1="${a.z - .6}" x2="${a.x + o}" y2="${a.z + .6}"/>`; }
     g += `<g class="g-aisle ${sel ? 'g-sel' : ''} ${bad.has(a.id) ? 'g-bad' : ''}" data-id="${a.id}">
       <rect class="body" x="${r.x - r.w / 2}" y="${r.z - r.d / 2}" width="${r.w}" height="${r.d}" rx=".12"/>${ticks}
-      <text x="${a.vert ? a.x : a.x - r.w / 2 - .6}" y="${a.vert ? a.z - r.d / 2 - .6 : a.z}" text-anchor="middle" dominant-baseline="middle" style="font-size:1px;fill:var(--blue)">${a.letra}</text></g>`;
+      <text x="${a.vert ? a.x : a.x - r.w / 2 - .6}" y="${a.vert ? a.z - r.d / 2 - .6 : a.z}" text-anchor="middle" dominant-baseline="middle" style="font-size:1px;fill:var(--blue)">${a.letra}</text>
+      ${a.nombre ? `<text x="${a.x}" y="${a.vert ? a.z + r.d / 2 + .55 : a.z - .95}" text-anchor="middle" dominant-baseline="middle" style="font-size:.6px;font-weight:600;fill:var(--muted)">${esc(a.nombre)}</text>` : ''}</g>`;
   });
   svg.innerHTML = g;
   const msgs = [...bad.values()].filter(Boolean);
@@ -2796,7 +3055,9 @@ function renderEd() {
 function renderProps() {
   const box = $('#lay-props'), el = ed.sel && edFind(ed.sel), L = ed.L;
   if (!el) {
-    box.innerHTML = `<h3>Depósito</h3><p>Tocá un pasillo o una zona para editarlo. Arrastralos para moverlos; cada cuadro de la grilla es 1 metro.</p>
+    box.innerHTML = `<h3>Mapa</h3>
+      <label class="field" for="lp-mapname">Nombre del mapa<input id="lp-mapname" maxlength="40" value="${esc(L.nombre)}" data-f="nombre"></label>
+      <p>Tocá un pasillo o una zona para editarlo. Arrastralos para moverlos; cada cuadro de la grilla es 1 metro.</p>
       <div class="row2"><label class="field" for="lp-w">Ancho (m)<input id="lp-w" type="number" min="10" max="80" step="1" value="${L.ancho}" data-f="ancho"></label>
       <label class="field" for="lp-l">Largo (m)<input id="lp-l" type="number" min="10" max="80" step="1" value="${L.largo}" data-f="largo"></label></div>
       <div class="stat">${L.pasillos.length} pasillos · ${L.pasillos.reduce((s, a) => s + a.pos * a.niv, 0)} ubicaciones · ${L.zonas.length} zonas</div>
@@ -2807,7 +3068,8 @@ function renderProps() {
     const oc = occupied(el), used = new Set(L.pasillos.filter(a => a !== el).map(a => a.letra));
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').filter(l => !used.has(l));
     box.innerHTML = `<h3>Pasillo ${el.letra}</h3>
-      <label class="field" for="lp-letra">Letra<select id="lp-letra" data-f="letra">${letters.map(l => `<option ${l === el.letra ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      <div class="row2"><label class="field" for="lp-letra">Letra<select id="lp-letra" data-f="letra">${letters.map(l => `<option ${l === el.letra ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      <label class="field" for="lp-anom">Nombre (opcional)<input id="lp-anom" maxlength="30" value="${esc(el.nombre || '')}" data-f="nombre" placeholder="Ej. Bebidas"></label></div>
       <div class="row2"><label class="field" for="lp-pos">Posiciones<input id="lp-pos" type="number" min="${Math.max(1, oc.maxBay + 1)}" max="30" value="${el.pos}" data-f="pos"></label>
       <label class="field" for="lp-niv">Niveles<input id="lp-niv" type="number" min="${Math.max(1, oc.maxLvl + 1)}" max="6" value="${el.niv}" data-f="niv"></label></div>
       <div class="field">Orientación<div class="seg2"><button type="button" data-vert="0" class="${el.vert ? '' : 'on'}">Horizontal</button><button type="button" data-vert="1" class="${el.vert ? 'on' : ''}">Vertical</button></div></div>
@@ -2831,8 +3093,13 @@ $('#lay-props').addEventListener('change', e => {
   const f = e.target.dataset.f; if (!f) return;
   if (ed.preEdit) { ed.undo.push(ed.preEdit); ed.preEdit = null; ed.dirty = true; } else pushUndo();
   const el = ed.sel && edFind(ed.sel), t = e.target;
+  if (!el && f === 'nombre') {
+    const v = t.value.trim().slice(0, 40);
+    if (!v || MAPS.some(m => m.id !== curMap && norm(m.nombre) === norm(v))) { t.value = ed.L.nombre; return toast(v ? 'Ya hay un mapa con ese nombre' : 'El mapa necesita un nombre'); }
+    ed.L.nombre = v; $('.lay-title b').textContent = v; return;
+  }
   if (!el) { ed.L[f] = clampN(t.value, 10, 80, ed.L[f]); }
-  else if (f === 'letra' || f === 'tipo' || f === 'nombre') el[f] = f === 'nombre' ? t.value.trim().slice(0, 40) : t.value;
+  else if (f === 'letra' || f === 'tipo' || f === 'nombre') el[f] = f === 'nombre' ? t.value.trim().slice(0, el.letra ? 30 : 40) : t.value;
   else { const min = +t.min || 1, max = +t.max || 60; el[f] = clampN(t.value, min, max, el[f]); if (f === 'pos' || f === 'niv') el[f] = Math.round(el[f]); }
   renderEd(); renderProps();
 });
@@ -2922,14 +3189,14 @@ $('#lay-ok').onclick = async () => {
   const ren = {};
   ed.L.pasillos.forEach(a => { const o = ed.origLetter[a.id]; if (o && o !== a.letra) ren[o] = a.letra; });
   const renamed = Object.keys(ren).length;
-  if (renamed) placements.forEach(pl => { if (ren[pl.row]) { pl.row = ren[pl.row]; pl.code = codeOf(pl); } });
+  if (renamed) placements.forEach(pl => { if (here(pl) && ren[pl.row]) { pl.row = ren[pl.row]; pl.code = codeOf(pl); } });
   rawInv = invItems();
   const L = ed.L;
   applyLayout(L);
   if (!await saveLayout()) return;
   if (renamed) await saveInventory();
   closeLayoutEditor();
-  toast('Estructura del depósito guardada');
+  toast(`Mapa “${LAYOUT.nombre}” guardado`);
 };
 $('#lay-edit').onclick = openLayoutEditor;
 
@@ -2991,6 +3258,7 @@ $('#theme-btn').onclick = () => setTheme(isDark() ? 'light' : 'dark');
    Arranque
    ========================================================= */
 renderLegend(); renderCats(); renderResults(); renderKPIsDep(); renderDrivers();
+setTimeout(() => { renderDepTabs(); maybeVencPopup(); });
 syncTrucks();
 setMapMode(mapMode);
 try {

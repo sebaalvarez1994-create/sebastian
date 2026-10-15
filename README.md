@@ -42,6 +42,23 @@ El usuario **jefe** edita la flota desde **Panel general → Flota → Editar fl
 
 Arriba del mapa hay dos pestañas: **Mapa ilustrativo** (el mapa 3D) y **Mapa real (GPS)**. La página publicada en Claude no puede mostrar mapas de calles ni conectarse al servidor del GPS, así que el mapa real lista cada vehículo con su estado, chofer y destino, y un botón **Ver en vivo** que abre el seguimiento en la plataforma del proveedor de GPS. Para activarlo, en **Editar flota** se pega el link de seguimiento de cada vehículo (el link para compartir ubicación que da el proveedor) y, opcionalmente, el nombre del proveedor y el link de su plataforma.
 
+## Varios mapas de depósito
+
+Cada depósito, galpón o sector puede tener su propio mapa. Aparecen como pestañas arriba del depósito:
+
+- **+ Nuevo mapa** crea uno con su nombre, vacío o copiando la estructura del mapa abierto, y abre el editor.
+- La **×** de cada pestaña borra ese mapa. Si tiene mercadería, avisa cuántas ubicaciones y unidades se van a borrar del inventario antes de confirmar. Siempre queda al menos un mapa.
+- En **Editar estructura** se cambia el nombre del mapa y se le puede poner un nombre a cada pasillo (por ejemplo, "Pasillo C · Bebidas").
+- El buscador encuentra mercadería en todos los mapas; si está en otro, la app abre ese mapa. Al importar un Excel, la mercadería se ubica en el mapa abierto.
+
+Crear, borrar y editar mapas lo pueden hacer los usuarios jefe y deposito.
+
+## Vencimientos
+
+La pestaña **Vencimientos** del depósito lista los lotes con fecha de vencimiento de todos los mapas: vencidos, por vencer (en aviso) y todos, con buscador, botón **Ver** (lo muestra en el mapa) y **Despachar**.
+
+En **Cuándo avisar** se define con cuántos días de anticipación un lote entra en aviso: un valor general, uno por categoría y, opcionalmente, uno por producto (desde la lista o desde la ficha del producto). Lo más específico manda. La cantidad de lotes en alerta aparece en la pestaña **Depósito**, y al ingresar los usuarios jefe y deposito ven un aviso una vez por día (se puede desactivar).
+
 ## Estructura del depósito
 
 En **Depósito → Editar estructura** (usuarios jefe y deposito) se abre un plano visto desde arriba, donde cada cuadro de la grilla es 1 metro:
