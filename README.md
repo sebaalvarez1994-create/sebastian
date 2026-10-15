@@ -36,6 +36,12 @@ El Panel Jefe muestra un mapa simbólico: la base Valsur, el taller mecánico, c
 - **Demorado** (calle con conos): el chofer reportó un problema.
 - **En taller**: el jefe lo mandó al taller desde el panel del vehículo.
 
+### Editar la flota y seguimiento GPS
+
+El usuario **jefe** edita la flota desde **Panel general → Flota → Editar flota** (o desde el panel de cada vehículo): agrega, modifica o quita vehículos (patente, modelo, tipo, año, capacidad, notas). Si cambia una patente, el chofer asignado sigue vinculado; si quita un vehículo, su chofer queda sin vehículo asignado.
+
+Arriba del mapa hay dos pestañas: **Mapa ilustrativo** (el mapa 3D) y **Mapa real (GPS)**. La página publicada en Claude no puede mostrar mapas de calles ni conectarse al servidor del GPS, así que el mapa real lista cada vehículo con su estado, chofer y destino, y un botón **Ver en vivo** que abre el seguimiento en la plataforma del proveedor de GPS. Para activarlo, en **Editar flota** se pega el link de seguimiento de cada vehículo (el link para compartir ubicación que da el proveedor) y, opcionalmente, el nombre del proveedor y el link de su plataforma.
+
 ## Despachos del depósito
 
 En **Depósito**, al elegir un producto aparece **Despachar**: se elige la ubicación, la cantidad y, opcionalmente, el pedido al que va. El stock se descuenta al instante (si la posición queda vacía, se libera) y el botón **Despachos** muestra el registro de salidas con fecha, cantidad, destino y quién lo hizo.

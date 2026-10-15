@@ -400,6 +400,33 @@ body.locked .topbar,body.locked main,body.locked footer{display:none}
 .user .btn{padding:6px 10px;font-size:12px}
 body.single-view .tabs{display:none}
 @media (prefers-reduced-motion:reduce){.shake{animation:none}}
+/* mapa ilustrativo / real */
+.map-switch{position:absolute;left:12px;top:12px;z-index:4;display:flex;gap:3px;padding:3px;border-radius:11px;background:var(--glass);border:1px solid var(--line);box-shadow:0 1px 3px rgba(15,23,42,.08)}
+.map-switch button{padding:6px 11px;border-radius:8px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.map-switch button.active{background:var(--blue);color:#fff}
+#stage-jefe.real canvas,#stage-jefe.real .labels,#stage-jefe.real .stage-tools,#stage-jefe.real .legend{visibility:hidden}
+.gps-panel{position:absolute;inset:0;z-index:3;overflow:auto;padding:60px 16px 16px;background:var(--card)}
+.gps-top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.gps-top h3{margin:0;font-size:16px}
+.gps-top p{margin:4px 0 0;font-size:12.5px;color:var(--muted);max-width:60ch}
+.gps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.gps-card{border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--soft)}
+.gps-card header{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.gps-card header b{font-size:15px;display:block}
+.gps-card header small{color:var(--muted);font-size:12px}
+.gps-card .row{font-size:12.5px;color:var(--text2);display:flex;gap:6px;align-items:flex-start;min-width:0}
+.gps-card .row svg{flex:none;margin-top:1px;color:var(--muted)}
+.gps-card .row span{min-width:0;overflow-wrap:anywhere}
+.gps-card .acts{display:flex;gap:6px;margin-top:auto;flex-wrap:wrap}
+.gps-card .acts .btn{flex:1;justify-content:center;text-decoration:none}
+.btn.off{opacity:.5;pointer-events:none}
+.fleet-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 0}
+.fleet-head b{font-size:14px}
+.fleet-head .btn{padding:6px 10px;font-size:12px}
+.flt-table{width:100%;min-width:560px;border-collapse:collapse}
+.flt-table td,.flt-table th{padding:8px 6px;font-size:12.5px}
+.flt-table td:last-child{text-align:right;white-space:nowrap}
+.gps-ok{color:var(--green);font-weight:700}
 /* despachos */
 .desp-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
 .desp-row:last-child{border:0}
@@ -526,13 +553,18 @@ footer{text-align:center;color:var(--muted2);font-size:12px;padding:0 0 20px}
     <div class="kpis" id="kpis-jefe"></div>
     <div class="jefe-grid">
       <div class="card stage" id="stage-jefe">
-        <div class="stage-hint">Arrastrá para rotar · rueda para acercar · tocá un vehículo</div>
+        <div class="map-switch" role="tablist" aria-label="Tipo de mapa">
+          <button class="active" data-map="ilus" role="tab" title="Arrastrá para rotar · rueda para acercar · tocá un vehículo">Mapa ilustrativo</button>
+          <button data-map="real" role="tab">Mapa real (GPS)</button>
+        </div>
+        <div class="gps-panel" id="gps-panel" hidden></div>
         <div class="stage-tools"><button data-z="in" title="Acercar">+</button><button data-z="out" title="Alejar">−</button><button data-z="reset" title="Vista general">⟲</button></div>
         <div class="legend" id="legend-jefe"></div>
         <div class="webgl-fail">No se pudo cargar la vista 3D. Revisá tu conexión a internet y recargá la página.</div>
       </div>
       <aside class="card side">
         <div class="side-sel" id="side-sel"></div>
+        <div class="fleet-head"><b>Flota</b><button class="btn ghost" id="fleet-edit">Editar flota</button></div>
         <div class="fleet-tabs" id="fleet-tabs"></div>
         <div class="fleet" id="fleet"></div>
       </aside>
@@ -727,8 +759,11 @@ const TRUCKS_DEF = [
   ['AD 552 TB', 'Iveco Tector'], ['AF 690 MX', 'Scania G410'], ['AH 031 QS', 'Ford Cargo 1723'],
   ['AE 447 CN', 'Mercedes-Benz Atego'], ['AG 918 LW', 'Volvo FM 380'], ['AC 276 HV', 'Iveco Daily'],
 ];
-const trucks = TRUCKS_DEF.map(([plate, model], i) => ({ id: 'T' + i, idx: i, plate, model, fuel: ri(45, 96), heading: 0, state: 'base', road: null, pedido: null, orders: [], since: null, wps: [] }));
-const vehKey = plate => plate.replace(/\s+/g, '-');
+const vehKey = plate => String(plate).trim().toUpperCase().replace(/[^A-Z0-9]+/g, '-').replace(/^-|-$/g, '');
+const VEH_TIPOS = ['Camión', 'Semirremolque', 'Furgón refrigerado', 'Utilitario', 'Camioneta'];
+// Flota inicial: se usa hasta que el jefe guarde la suya en "Editar flota".
+const DEFAULT_FLEET = TRUCKS_DEF.map(([plate, model], i) => ({ plate, model, tipo: i === 8 ? 'Utilitario' : i < 5 ? 'Semirremolque' : 'Camión', anio: '', capacidad: '', gpsUrl: '', gpsId: '', notas: '', orden: i }));
+let trucks = [];
 const truckBy = id => trucks.find(t => t.id === id);
 
 /* =========================================================
@@ -926,12 +961,7 @@ function buildJefeScene() {
   // camiones
   const ring = new THREE.Mesh(new THREE.RingGeometry(2.7, 3.05, 48), new THREE.MeshBasicMaterial({ color: 0x1f5eff, transparent: true, opacity: .8 }));
   ring.rotation.x = -Math.PI / 2; ring.position.y = .08; ring.visible = false; s.add(ring); J.ring = ring;
-  trucks.forEach(t => {
-    t.obj = truckModel(0x1f5eff); s.add(t.obj);
-    const el = document.createElement('div'); el.className = 'pin';
-    el.onclick = e => { e.stopPropagation(); selectTruck(t.id, true); };
-    t.pin = el; J.addLabel(el, t.obj, 2.6);
-  });
+  trucks.forEach(addTruckMesh);
   // clic sobre el modelo 3D
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); let down = null;
   J.renderer.domElement.addEventListener('pointerdown', e => down = [e.clientX, e.clientY]);
@@ -946,6 +976,12 @@ function buildJefeScene() {
   J.reset();
 }
 
+function addTruckMesh(t) {
+  t.obj = truckModel(0x1f5eff); J.scene.add(t.obj); t.placed = false;
+  const el = document.createElement('div'); el.className = 'pin';
+  el.onclick = e => { e.stopPropagation(); selectTruck(t.id, true); };
+  t.pin = el; t.pinLabel = J.addLabel(el, t.obj, 2.6);
+}
 function truckModel(cabColor) {
   const g = new THREE.Group(); g.userData.truck = true;
   box(4.6, .22, 1.2, 0x334155, 0, .28, 0, g);                     // chasis
@@ -1006,7 +1042,10 @@ function targetPose(t, now) {
     }
     case 'demorado': return { x: 1 + k * 6, z: DEMO_Z, h: 0 };
     case 'taller': return { x: -14, z: -29.6 + k * 2.4, h: Math.PI };
-    default: return { x: t.idx < 5 ? -16.6 : -11.2, z: -7.4 + (t.idx % 5) * 3.6 + (t.idx < 5 ? 0 : 1.8), h: 0 };
+    default: {
+      const per = Math.max(1, Math.ceil(trucks.length / 2)), sp = Math.min(3.6, 16 / Math.max(1, per - .5)), row = t.idx < per ? 0 : 1;
+      return { x: row ? -11.2 : -16.6, z: -7.6 + (t.idx % per) * sp + row * sp / 2, h: 0 };
+    }
   }
 }
 function stepFleet(dt) {
@@ -1088,14 +1127,15 @@ function renderSide() {
         <div class="fact"><small>Dónde está</small><b>${esc(where(t))}</b></div>
         <div class="fact"><small>Pedido actual</small><b>${t.pedido ? `<button class="link" data-pid="${t.pedido.id}">${esc(t.pedido.num)}</button>` : '—'}</b></div>
         <div class="fact"><small>Tiempo</small><b class="num">${truckEta(t) || '—'}</b></div>
-        <div class="fact"><small>Carga</small><b class="num">${fmt(os.reduce((a, p) => a + (+p.peso || 0), 0))} kg</b></div>
-        <div class="fact"><small>Combustible</small><b class="num">${t.fuel}%</b></div>
+        <div class="fact"><small>Carga</small><b class="num">${fmt(os.reduce((a, p) => a + (+p.peso || 0), 0))}${t.info?.capacidad ? ' / ' + fmt(+t.info.capacidad) : ''} kg</b></div>
+        <div class="fact"><small>Tipo</small><b>${esc([t.info?.tipo, t.info?.anio].filter(Boolean).join(' · ') || '—')}</b></div>
       </div>
+      ${t.info?.notas ? `<div class="drv-note">${esc(t.info.notas)}</div>` : ''}
       ${t.state === 'demorado' ? `<div class="note">${ICON.alert}<span><b>Demorado:</b> ${esc(t.pedido?.motivo || 'el chofer reportó un problema')}</span></div>` : ''}
       ${t.taller ? `<div class="note" style="background:var(--amber-50);color:var(--amber-ink)">${ICON.alert}<span><b>En el taller</b>${t.taller.nota ? ': ' + esc(t.taller.nota) : ''}</span></div>` : ''}
       ${drBad.length ? `<div class="note">${ICON.alert}<span>Documentación del chofer vencida: ${drBad.join(', ')}</span></div>` : ''}
       ${t.state === 'ruta' ? `<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600"><span>Recorrido estimado</span><span class="num">${truckProgress(t)}%</span></div><div class="bar" style="--c:${s.color}"><i style="width:${truckProgress(t)}%"></i></div>` : ''}
-      ${me.role === 'jefe' ? `<div style="margin-top:10px"><button class="btn ghost" data-taller>${t.taller ? 'Salió del taller' : 'Mandar al taller'}</button></div>` : ''}
+      ${me.role === 'jefe' ? `<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn ghost" data-taller>${t.taller ? 'Salió del taller' : 'Mandar al taller'}</button><button class="btn ghost" data-editveh>Editar vehículo</button>${t.info?.gpsUrl ? `<a class="btn" href="${esc(t.info.gpsUrl)}" target="_blank" rel="noopener">Ver en GPS</a>` : ''}</div>` : ''}
       <div class="mini-title">Pedidos del chofer (${os.length})</div>
       ${os.length ? os.map(orderCard).join('') : '<div class="muted" style="font-size:12px">Sin pedidos activos.</div>'}`);
     return;
@@ -1108,6 +1148,7 @@ function renderSide() {
 $('#side-sel').onclick = e => {
   if (e.target.closest('[data-close]')) selectTruck(null);
   const oc = e.target.closest('[data-pid]'); if (oc) openPedido(oc.dataset.pid);
+  if (e.target.closest('[data-editveh]')) { const t = truckBy(st.sel); t && vehicleForm(fleetList().find(v => v.plate === t.plate)); return; }
   if (e.target.closest('[data-taller]')) {
     const t = truckBy(st.sel); if (!t) return;
     if (t.taller) removeDoc('vehiculos', vehKey(t.plate)).then(ok => ok && toast(t.plate + ' volvió a la base'));
@@ -1184,7 +1225,7 @@ function selectTruck(id, focus) {
   if (!t) J.follow = null;
   renderAllJefe();
 }
-function renderAllJefe() { computeFleet(); renderKPIsJefe(); renderSide(); renderFleet(); renderPipeline(); renderOrders(); updatePins(); }
+function renderAllJefe() { computeFleet(); renderGps(); renderKPIsJefe(); renderSide(); renderFleet(); renderPipeline(); renderOrders(); updatePins(); }
 
 /* =========================================================
    Depósito: inventario y escena
@@ -1766,8 +1807,8 @@ function showDriver(d) {
    del artifact (compartida y en vivo). Abierta como archivo local, usa el navegador (modo demo).
    ========================================================= */
 const sync = { cloud: false, db: null, user: null, uid: null, owner: false, sample: null, loaded: new Set() };
-const DATA = { pedidos: new Map(), drivers: new Map(), vehiculos: new Map(), movimientos: new Map() };
-const dataListeners = { pedidos: [], drivers: [], vehiculos: [], movimientos: [] };
+const DATA = { pedidos: new Map(), drivers: new Map(), vehiculos: new Map(), movimientos: new Map(), flota: new Map(), config: new Map() };
+const dataListeners = { pedidos: [], drivers: [], vehiculos: [], movimientos: [], flota: [], config: [] };
 const onData = (name, fn) => dataListeners[name].push(fn);
 const emitData = name => dataListeners[name].forEach(fn => fn());
 function loadLocal(name) {
@@ -2249,10 +2290,14 @@ function updateBadges() {
 onData('drivers', () => { drivers = [...DATA.drivers.values()]; if (me.role) applyRole(); renderDrivers(); renderAllJefe(); renderPedidos(); renderDriverApp(); });
 onData('pedidos', () => { pedidos = [...DATA.pedidos.values()].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)); renderPedidos(); renderDriverApp(); renderAllJefe(); notifyChanges(); updateBadges(); });
 onData('vehiculos', () => renderAllJefe());
+onData('flota', () => { syncTrucks(); renderAllJefe(); renderGps(); renderDrivers(); });
+onData('config', () => renderGps());
 onData('movimientos', () => renderDespachos());
 function seedLocalDemo() {
   if (!loadLocal('drivers')) { seedDrivers().forEach(d => DATA.drivers.set(d.id, d)); saveLocal('drivers'); }
   if (!loadLocal('pedidos')) { demoPedidos().forEach(p => DATA.pedidos.set(p.id, p)); saveLocal('pedidos'); }
+  if (!loadLocal('flota')) { DEFAULT_FLEET.forEach(v => DATA.flota.set(vehKey(v.plate), { ...v, id: vehKey(v.plate) })); saveLocal('flota'); }
+  loadLocal('config');
   if (!loadLocal('vehiculos')) { DATA.vehiculos.set('AC-276-HV', { taller: true, nota: 'Service de 60.000 km', desde: Date.now() - 3 * 3600e3, id: 'AC-276-HV' }); saveLocal('vehiculos'); }
   loadLocal('movimientos');
 }
@@ -2274,7 +2319,7 @@ async function initData() {
     const [db, user, sample] = await Promise.all([claude.use('db'), claude.use('user'), claude.use('sample')]);
     if (db) {
       Object.assign(sync, { cloud: true, db, user, sample, uid: user ? await user.id() : null });
-      ['drivers', 'pedidos', 'vehiculos', 'movimientos'].forEach(subscribe);
+      ['drivers', 'pedidos', 'vehiculos', 'movimientos', 'flota', 'config'].forEach(subscribe);
       sync.db.doc('inventario/actual').onSnapshot(snap => {
         const items = snap.exists ? snap.data().items : null;
         if (!Array.isArray(items) || snap.metadata.hasPendingWrites) return;
@@ -2285,7 +2330,7 @@ async function initData() {
     }
   }
   seedLocalDemo();
-  ['drivers', 'pedidos', 'vehiculos', 'movimientos'].forEach(emitData);
+  ['drivers', 'pedidos', 'vehiculos', 'movimientos', 'flota', 'config'].forEach(emitData);
 }
 
 /* =========================================================
@@ -2336,6 +2381,146 @@ function despachar(p, pl0) {
     };
   });
 }
+
+/* =========================================================
+   Flota de vehículos (editable por el jefe) y seguimiento GPS
+   ========================================================= */
+const fleetList = () => {
+  const docs = [...DATA.flota.values()];
+  return (docs.length ? docs : DEFAULT_FLEET).slice().sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0) || a.plate.localeCompare(b.plate));
+};
+function syncTrucks() {
+  const old = new Map(trucks.map(t => [t.id, t]));
+  trucks = fleetList().map((v, i) => {
+    const id = vehKey(v.plate);
+    const t = old.get(id) || { id, fuel: ri(45, 96), heading: 0, state: 'base', road: null, pedido: null, orders: [], since: null, wps: [] };
+    old.delete(id);
+    return Object.assign(t, { idx: i, plate: v.plate, model: v.model, info: v });
+  });
+  if (J) {
+    old.forEach(t => { J.scene.remove(t.obj); t.pinLabel && J.removeLabel(t.pinLabel); });
+    trucks.forEach(t => { if (!t.obj) addTruckMesh(t); });
+  }
+  if (st.sel && !truckBy(st.sel)) { st.sel = null; if (J) { J.ring.visible = false; J.follow = null; } }
+}
+// En la base compartida la flota inicial se guarda la primera vez que el jefe la edita.
+async function ensureFleetSaved() {
+  if (DATA.flota.size) return true;
+  const r = await Promise.all(DEFAULT_FLEET.map(v => put('flota', vehKey(v.plate), v)));
+  return r.every(Boolean);
+}
+const normUrl = u => { u = String(u || '').trim(); return !u ? '' : /^https?:\/\//i.test(u) ? u : 'https://' + u; };
+const gpsConf = () => DATA.config.get('gps') || {};
+
+function fleetEditor() {
+  const rows = fleetList();
+  const g = gpsConf();
+  openModal(`<h2>Flota de vehículos</h2><p class="muted" style="margin:0">${rows.length} vehículos. Los cambios se ven al instante en el mapa y en los perfiles de los choferes.</p>
+    <div class="modal-actions" style="justify-content:flex-start;margin-top:12px"><button class="btn" data-add>+ Agregar vehículo</button></div>
+    <div class="table-wrap" style="padding:0;margin-top:6px"><table class="flt-table"><thead><tr><th>Patente</th><th>Vehículo</th><th>Chofer</th><th>GPS</th><th></th></tr></thead><tbody>
+    ${rows.map(v => { const d = drivers.find(x => x.vehicle === v.plate); return `<tr><td><b>${esc(v.plate)}</b></td><td>${esc(v.model)}<br><small class="muted">${esc([v.tipo, v.anio, v.capacidad ? fmt(+v.capacidad) + ' kg' : ''].filter(Boolean).join(' · '))}</small></td>
+      <td>${d ? esc(d.name) : '<span class="muted">Sin chofer</span>'}</td><td>${v.gpsUrl ? '<span class="gps-ok">Conectado</span>' : '<span class="muted">Sin link</span>'}</td>
+      <td><button class="btn ghost" data-ed="${esc(v.plate)}">Editar</button> <button class="btn ghost danger" data-del="${esc(v.plate)}">Quitar</button></td></tr>`; }).join('')}
+    </tbody></table></div>
+    <h4>Proveedor de GPS</h4>
+    <form id="gps-conf" class="form-grid" novalidate>
+      <label class="field" for="gc-name">Empresa o sistema<input id="gc-name" name="nombre" value="${esc(g.nombre || '')}" placeholder="Ej. Wialon, Traccar…"></label>
+      <label class="field" for="gc-url">Link de la plataforma (toda la flota)<input id="gc-url" name="url" value="${esc(g.url || '')}" placeholder="https://…"></label>
+      <div class="field full" style="flex-direction:row;justify-content:flex-end"><button class="btn ghost">Guardar proveedor</button></div>
+    </form>
+    <div class="modal-actions"><button class="btn" data-cancel>Listo</button></div>`, root => {
+    root.querySelector('[data-add]').onclick = () => vehicleForm(null);
+    root.querySelectorAll('[data-ed]').forEach(b => b.onclick = () => vehicleForm(fleetList().find(v => v.plate === b.dataset.ed)));
+    root.querySelectorAll('[data-del]').forEach(b => b.onclick = () => deleteVehicle(fleetList().find(v => v.plate === b.dataset.del)));
+    root.querySelector('#gps-conf').onsubmit = async e => {
+      e.preventDefault(); const f = e.target;
+      if (await put('config', 'gps', { nombre: f.nombre.value.trim(), url: normUrl(f.url.value) })) toast('Proveedor de GPS guardado');
+    };
+  });
+}
+function vehicleForm(v) {
+  const isNew = !v; v = v || { plate: '', model: '', tipo: 'Camión', anio: '', capacidad: '', gpsUrl: '', gpsId: '', notas: '' };
+  openModal(`<form id="veh-form" novalidate><h2>${isNew ? 'Agregar vehículo' : 'Editar ' + esc(v.plate)}</h2>
+    <div class="form-grid" style="margin-top:12px">
+      <label class="field" for="vf-plate">Patente *<input id="vf-plate" name="plate" value="${esc(v.plate)}" placeholder="AB 123 CD" autocapitalize="characters" required></label>
+      <label class="field" for="vf-model">Marca y modelo *<input id="vf-model" name="model" value="${esc(v.model)}" placeholder="Ej. Scania R450" required></label>
+      <label class="field" for="vf-tipo">Tipo<select id="vf-tipo" name="tipo">${VEH_TIPOS.map(t => `<option ${t === v.tipo ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+      <label class="field" for="vf-anio">Año<input id="vf-anio" name="anio" type="number" min="1980" max="2100" value="${esc(v.anio)}"></label>
+      <label class="field" for="vf-cap">Capacidad de carga (kg)<input id="vf-cap" name="capacidad" type="number" min="0" step="any" value="${esc(v.capacidad)}"></label>
+      <label class="field" for="vf-gpsid">Nombre o ID en el GPS<input id="vf-gpsid" name="gpsId" value="${esc(v.gpsId || '')}" placeholder="Como figura en la plataforma"></label>
+      <label class="field full" for="vf-gps">Link de seguimiento en vivo<input id="vf-gps" name="gpsUrl" value="${esc(v.gpsUrl || '')}" placeholder="Pegá el link para compartir la ubicación que da tu proveedor de GPS"></label>
+      <label class="field full" for="vf-notas">Notas<textarea id="vf-notas" name="notas" placeholder="Ej. Vence la VTV en marzo">${esc(v.notas || '')}</textarea></label>
+    </div>
+    <div class="modal-actions"><button type="button" class="btn ghost" data-back>Volver</button><button class="btn">${isNew ? 'Agregar' : 'Guardar'}</button></div></form>`, root => {
+    const f = root.querySelector('form');
+    root.querySelector('[data-back]').onclick = () => fleetEditor();
+    f.onsubmit = async e => {
+      e.preventDefault();
+      const plate = f.plate.value.trim().toUpperCase().replace(/\s+/g, ' '), model = f.model.value.trim(), key = vehKey(plate);
+      if (!key) { f.plate.focus(); return toast('Escribí la patente'); }
+      if (!model) { f.model.focus(); return toast('Escribí la marca y el modelo'); }
+      if (fleetList().some(x => vehKey(x.plate) === key && x.plate !== v.plate)) { f.plate.focus(); return toast('Ya hay un vehículo con esa patente'); }
+      if (!await ensureFleetSaved()) return;
+      const oldKey = isNew ? null : vehKey(v.plate);
+      const data = { plate, model, tipo: f.tipo.value, anio: f.anio.value, capacidad: f.capacidad.value, gpsId: f.gpsId.value.trim(), gpsUrl: normUrl(f.gpsUrl.value), notas: f.notas.value.trim(), orden: isNew ? fleetList().length : (v.orden ?? 0) };
+      if (!await put('flota', key, data)) return;
+      if (oldKey && oldKey !== key) { // cambió la patente: se mueve todo lo asociado
+        await removeDoc('flota', oldKey);
+        for (const d of drivers.filter(x => x.vehicle === v.plate)) await patch('drivers', d.id, { vehicle: plate });
+        const tl = DATA.vehiculos.get(oldKey); if (tl) { await put('vehiculos', key, tl); await removeDoc('vehiculos', oldKey); }
+      }
+      toast(isNew ? `${plate} agregado a la flota` : 'Vehículo actualizado');
+      fleetEditor();
+    };
+  });
+}
+function deleteVehicle(v) {
+  const d = drivers.filter(x => x.vehicle === v.plate);
+  confirmModal('Quitar vehículo', `¿Quitar <b>${esc(v.plate)}</b> (${esc(v.model)}) de la flota?${d.length ? ` ${esc(d.map(x => x.name).join(', '))} va a quedar sin vehículo asignado.` : ''}`, 'Quitar', async () => {
+    if (!await ensureFleetSaved()) return;
+    if (!await removeDoc('flota', vehKey(v.plate))) return;
+    for (const x of d) await patch('drivers', x.id, { vehicle: '' });
+    if (DATA.vehiculos.has(vehKey(v.plate))) await removeDoc('vehiculos', vehKey(v.plate));
+    toast(v.plate + ' quitado de la flota');
+    fleetEditor();
+  });
+}
+$('#fleet-edit').onclick = fleetEditor;
+
+/* ---------- Pestaña "Mapa real (GPS)" ---------- */
+// La página publicada no puede cargar mapas de calles ni conectarse al GPS, así que cada vehículo
+// abre su seguimiento en vivo en la plataforma del proveedor.
+let mapMode = store.get('valsur.mapa') === 'real' ? 'real' : 'ilus';
+function setMapMode(m) {
+  mapMode = m; store.set('valsur.mapa', m);
+  $('#stage-jefe').classList.toggle('real', m === 'real');
+  $('#gps-panel').hidden = m !== 'real';
+  document.querySelectorAll('.map-switch button').forEach(b => b.classList.toggle('active', b.dataset.map === m));
+  renderGps();
+}
+document.querySelectorAll('.map-switch button').forEach(b => b.onclick = () => setMapMode(b.dataset.map));
+function renderGps() {
+  if (mapMode !== 'real') return;
+  const g = gpsConf(), con = trucks.filter(t => t.info?.gpsUrl).length;
+  setHTML($('#gps-panel'), `<div class="gps-top"><div><h3>Seguimiento GPS${g.nombre ? ' · ' + esc(g.nombre) : ''}</h3>
+      <p>La ubicación en vivo de cada vehículo se abre en la plataforma de tu proveedor de GPS. ${con} de ${trucks.length} vehículos tienen su link cargado.</p></div>
+      <div class="head-actions" style="width:auto">${g.url ? `<a class="btn" href="${esc(g.url)}" target="_blank" rel="noopener">Abrir plataforma GPS</a>` : ''}<button class="btn ghost" data-cfg>Cargar links de GPS</button></div></div>
+    <div class="gps-grid">${trucks.map(t => {
+      const s = statusOf(t), p = t.pedido;
+      return `<article class="gps-card" data-t="${t.id}"><header><div><b>${esc(t.plate)}</b><small>${esc(t.model)}${t.info?.gpsId ? ' · GPS: ' + esc(t.info.gpsId) : ''}</small></div><span class="pill" style="--c:${s.color}">${s.label}</span></header>
+        <div class="row">${ICON.user}<span>${t.driver ? esc(t.driver.name) : 'Sin chofer'}</span></div>
+        <div class="row">${ICON.pin}<span>${p ? `${esc(p.cliente)} · ${esc([p.direccion, p.localidad].filter(Boolean).join(', '))}` : esc(where(t))}</span></div>
+        ${t.state === 'demorado' && p?.motivo ? `<div class="row" style="color:var(--red)">${ICON.alert}<span>${esc(p.motivo)}</span></div>` : ''}
+        <div class="acts">${t.info?.gpsUrl ? `<a class="btn" href="${esc(t.info.gpsUrl)}" target="_blank" rel="noopener">Ver en vivo</a>` : '<span class="btn ghost off" title="Cargá el link en Editar flota">Sin GPS</span>'}
+          ${p?.direccion ? `<a class="btn ghost" href="${mapsUrl(p)}" target="_blank" rel="noopener">Destino</a>` : ''}<button class="btn ghost" data-sel>Detalle</button></div>
+      </article>`;
+    }).join('')}</div>`);
+}
+$('#gps-panel').onclick = e => {
+  if (e.target.closest('[data-cfg]')) return fleetEditor();
+  const c = e.target.closest('[data-t]');
+  if (c && e.target.closest('[data-sel]')) { st.sel = c.dataset.t; renderAllJefe(); $('#side-sel').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+};
 
 /* =========================================================
    Navegación y buscador global
@@ -2395,6 +2580,8 @@ $('#theme-btn').onclick = () => setTheme(isDark() ? 'light' : 'dark');
    Arranque
    ========================================================= */
 renderLegend(); renderCats(); renderResults(); renderKPIsDep(); renderDrivers();
+syncTrucks();
+setMapMode(mapMode);
 try {
   buildJefeScene(); buildDepScene();
 } catch (err) {
@@ -2418,7 +2605,7 @@ function loop() {
     if (t) { J.ring.position.x = t.obj.position.x; J.ring.position.z = t.obj.position.z; J.ring.scale.setScalar(1 + Math.sin(performance.now() / 300) * .05); }
   }
   if (D) stepFork(dt);
-  if (st.view === 'jefe' && J) J.update();
+  if (st.view === 'jefe' && J && mapMode === 'ilus') J.update();
   if (st.view === 'deposito' && D) D.update();
   requestAnimationFrame(loop);
 }
